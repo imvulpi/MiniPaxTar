@@ -21,8 +21,10 @@
     typedef unsigned long long mptar_uint64;
     typedef signed long long mptar_int64;
 
-    #if defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 8)
+    #if defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 8) || defined(_WIN64)
         typedef unsigned long long mptar_size_t;
+    #elif defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 2) 
+        typedef unsigned short mptar_size_t;
     #else
         typedef unsigned long mptar_size_t;
     #endif
