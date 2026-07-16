@@ -56,6 +56,10 @@ typedef struct {
     mptar_uint32 uid;
     mptar_uint32 gid;
     mptar_uint64 modtime;
+#ifdef MPTAR_SUPPORT_SPECIAL
+    mptar_uint32 dev_minor;
+    mptar_uint32 dev_major;
+#endif
     char typeflag; // \0 / 0 - file, 1 - link, 2 - symlink, 3/4 - char/block special, 5 - directory 
 } mptar_metadata;
 

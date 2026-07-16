@@ -295,6 +295,13 @@ int write_base_header(tar_header* header, mptar_metadata* meta){
     write_tar_octal(header->uid, (mptar_uint64)meta->uid, 8);
     write_tar_octal(header->mode, (mptar_uint64)meta->mode, 8);
 
+#ifdef MPTAR_SUPPORT_SPECIAL
+    if (meta->typeflag == '3' || meta->typeflag == '4') {
+        write_tar_octal(header->devmajor, meta->devmajor, 8);
+        write_tar_octal(header->devminor, meta->devminor, 8);
+    }
+#endif
+    
     mptar_uint64 size_to_write = meta->size;
     if (size_to_write >= TAR_MAX_SIZE) {
         size_to_write = 0;
@@ -327,6 +334,12 @@ int write_pax_header(mptar_writer* ctx, mptar_uint64 size, mptar_metadata* meta)
 }
 
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
+    #ifndef MPTAR_SUPPORT_SPECIAL
+        if (meta->typeflag == '3' || meta->typeflag == '4') {
+            return -3; // Special file are not supported in this build because dev minor/major is disabled.
+        }
+    #endif
+    
     mptar_size_t path_size = strlen(meta->path);
     mptar_size_t link_target_size = meta->link_target == MPTAR_NULL ? 0 : strlen(meta->link_target);
     bool large_path = (path_size > TAR_NAME_LENGTH);
