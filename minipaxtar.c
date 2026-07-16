@@ -36,19 +36,14 @@ void memset(void* data, char value, mptar_size_t amount){
     }
 }
 
-typedef _Bool bool;
-#define true 1
-#define false 0
-
 #else
 
 #include <string.h>
-#include <stdbool.h>
 #include <stdlib.h>
 
 #endif
 
-#ifndef MPTAR_CUSTOM_U64TOA
+#ifndef MPTAR_CUSTOM_IU64TOA
 
 char* u64toa(mptar_uint64 value, char* str, mptar_size_t str_size){
     if (str == MPTAR_NULL || str_size < 2) {
@@ -84,6 +79,18 @@ char* u64toa(mptar_uint64 value, char* str, mptar_size_t str_size){
     }
 
     return str;
+}
+
+void i64toa(mptar_int64 value, char* buf, int buf_size) {
+    if (value < 0) {
+        if (buf_size > 1) {
+            buf[0] = '-';
+            mptar_uint64 abs_val = ~(mptar_uint64)value + 1; 
+            u64toa(abs_val, buf + 1, buf_size - 1);
+        }
+    } else {
+        u64toa((mptar_uint64)value, buf, buf_size);
+    }
 }
 
 #endif
@@ -201,6 +208,45 @@ char* u64_to_tar_octal(mptar_uint64 value, char* str, mptar_size_t str_size)
     return str;
 }
 
+char* format_pax_timestamp(mptar_int64 sec, mptar_uint32 nsec, char* str, mptar_size_t size){
+    i64toa(sec, str, size);
+    mptar_size_t int_size = strlen(str);
+
+    if (nsec == 0 || int_size + 2 >= size) { // needs space for '.' and a digit
+        return str;
+    }
+
+    str[int_size] = '.';
+    if(size - int_size < 11){
+        return str;
+    }
+
+    char* nsec_start = str + int_size + 1;
+    u64toa(nsec, nsec_start, 10);
+    mptar_size_t nsec_len = strlen(nsec_start);
+    if (nsec_len < 9) {
+        mptar_size_t shift = 9 - nsec_len;
+        
+        for (mptar_size_t i = nsec_len; i > 0; i--) {
+            nsec_start[i - 1 + shift] = nsec_start[i - 1];
+        }
+        
+        for (mptar_size_t i = 0; i < shift; i++) {
+            nsec_start[i] = '0';
+        }
+    }
+
+    mptar_size_t end = 8;
+    while (end > 0 && nsec_start[end] == '0') {
+        nsec_start[end] = '\0';
+        end--;
+    }
+
+    nsec_start[9] = '\0';
+
+    return str;
+}
+
 int write_tar_octal(char* dst, mptar_uint64 value, mptar_size_t size){
     char str_buf[size];
     char* str = u64_to_tar_octal(value, str_buf, size);
@@ -307,7 +353,10 @@ int write_base_header(tar_header* header, mptar_metadata* meta){
         size_to_write = 0;
     }
     write_tar_octal(header->size, size_to_write, 12);
-    write_tar_octal(header->modtime, (mptar_uint64)meta->modtime, 12);
+
+    if(meta->mtime.has_value){
+        write_tar_octal(header->mtime, (mptar_uint64)meta->mtime.value.sec, 12); // Does not support negative numbers
+    }
     header->typeflag = meta->typeflag;
     memcpy(header->magic, "ustar\0", 6);
     memcpy(header->version, "00", 2);
@@ -325,7 +374,7 @@ int write_pax_header(mptar_writer* ctx, mptar_uint64 size, mptar_metadata* meta)
     temp_meta.mode = meta->mode;
     temp_meta.uid = meta->uid;
     temp_meta.gid = meta->gid;
-    temp_meta.modtime = meta->modtime;
+    temp_meta.mtime = meta->mtime;
     temp_meta.typeflag = 'x';
     write_base_header(header, &temp_meta);
     ctx->cfg.write(ctx->cfg.write_user_data, header_bytes, 512);
@@ -334,18 +383,23 @@ int write_pax_header(mptar_writer* ctx, mptar_uint64 size, mptar_metadata* meta)
 }
 
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
-    #ifndef MPTAR_SUPPORT_SPECIAL
-        if (meta->typeflag == '3' || meta->typeflag == '4') {
-            return -3; // Special file are not supported in this build because dev minor/major is disabled.
-        }
-    #endif
+#ifndef MPTAR_SUPPORT_SPECIAL
+    if (meta->typeflag == '3' || meta->typeflag == '4') {
+        return -3; // Special file are not supported in this build because dev minor/major is disabled.
+    }
+#endif
     
     mptar_size_t path_size = strlen(meta->path);
     mptar_size_t link_target_size = meta->link_target == MPTAR_NULL ? 0 : strlen(meta->link_target);
     bool large_path = (path_size > TAR_NAME_LENGTH);
     bool large_size = (meta->size >= TAR_MAX_SIZE);
     bool large_link_target = (link_target_size > TAR_LINKNAME_LENGTH);
-    bool need_pax = large_path || large_size || large_link_target;
+#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+    bool times_need_pax = (meta->mtime.has_value && (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0)) || meta->atime.has_value || meta->ctime.has_value;
+#else
+    bool times_need_pax = meta->mtime.has_value && (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0);
+#endif
+    bool need_pax = large_path || large_size || large_link_target || times_need_pax;
 
     if(need_pax)
     {
@@ -372,6 +426,40 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
             pax_link_target_size = calculate_framed_len(link_target_size + PAX_LINK_PATH_KEYWORD_SIZE);
             pax_header_size += pax_link_target_size;
         }
+
+        mptar_uint32 pax_mtime_size = 0;
+        char mtime_str_buf[32];
+        mptar_size_t mtime_str_len;
+
+        if(meta->mtime.has_value && meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0){
+            format_pax_timestamp(meta->mtime.value.sec, meta->mtime.value.nsec, mtime_str_buf, 32);
+            mtime_str_len = strlen(mtime_str_buf);
+            pax_mtime_size = calculate_framed_len(mtime_str_len + PAX_TIMES_KEYWORD_SIZE);
+            pax_header_size += pax_mtime_size;
+        }
+
+#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+        mptar_uint32 pax_atime_size = 0;
+        mptar_uint32 pax_ctime_size = 0;
+        char atime_str_buf[32];
+        char ctime_str_buf[32];
+        mptar_size_t atime_str_len;
+        mptar_size_t ctime_str_len;
+
+        if(meta->atime.has_value){
+            format_pax_timestamp(meta->atime.value.sec, meta->atime.value.nsec, atime_str_buf, 32);
+            atime_str_len = strlen(atime_str_buf);
+            pax_atime_size = calculate_framed_len(atime_str_len + PAX_TIMES_KEYWORD_SIZE);
+            pax_header_size += pax_atime_size;
+        }
+
+        if(meta->ctime.has_value){
+            format_pax_timestamp(meta->ctime.value.sec, meta->ctime.value.nsec, ctime_str_buf, 32);
+            ctime_str_len = strlen(ctime_str_buf);
+            pax_ctime_size = calculate_framed_len(ctime_str_len + PAX_TIMES_KEYWORD_SIZE);
+            pax_header_size += pax_ctime_size;
+        }
+#endif
 
         write_pax_header(ctx, pax_header_size, meta);
 
@@ -401,6 +489,35 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
             ctx->cfg.write(ctx->cfg.write_user_data, meta->link_target, link_target_size);
             ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
         }
+
+        if(meta->mtime.has_value && meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0){
+            char mtime_pax_str[11];
+            u64toa(pax_mtime_size, mtime_pax_str, sizeof(mtime_pax_str));
+            ctx->cfg.write(ctx->cfg.write_user_data, mtime_pax_str, strlen(mtime_pax_str));
+            ctx->cfg.write(ctx->cfg.write_user_data, " mtime=", 7);
+            ctx->cfg.write(ctx->cfg.write_user_data, mtime_str_buf, mtime_str_len);
+            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+        }
+
+#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+        if(meta->atime.has_value){
+            char atime_pax_str[11];
+            u64toa(pax_atime_size, atime_pax_str, sizeof(atime_pax_str));
+            ctx->cfg.write(ctx->cfg.write_user_data, atime_pax_str, strlen(atime_pax_str));
+            ctx->cfg.write(ctx->cfg.write_user_data, " atime=", 7);
+            ctx->cfg.write(ctx->cfg.write_user_data, atime_str_buf, atime_str_len);
+            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+        }
+
+        if(meta->ctime.has_value){
+            char ctime_pax_str[11];
+            u64toa(pax_ctime_size, ctime_pax_str, sizeof(ctime_pax_str));
+            ctx->cfg.write(ctx->cfg.write_user_data, ctime_pax_str, strlen(ctime_pax_str));
+            ctx->cfg.write(ctx->cfg.write_user_data, " ctime=", 7);
+            ctx->cfg.write(ctx->cfg.write_user_data, ctime_str_buf, ctime_str_len);
+            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+        }
+#endif
 
         mptar_size_t rounded_size = (pax_header_size + 511) & ~511;
         mptar_size_t padding_needed = rounded_size - pax_header_size;

@@ -30,10 +30,18 @@
     #endif
 
     #define MPTAR_NULL ((void*)0)
+
+#ifndef bool
+    typedef _Bool bool;
+    #define true 1
+    #define false 0
+#endif
+
 #else
     #include <stdint.h>
     #include <stddef.h>
-    
+    #include <stdbool.h>
+
     typedef int64_t mptar_int64;
     typedef int32_t mptar_int32;
     typedef int16_t mptar_int16;
@@ -54,6 +62,7 @@
 #define PAX_PATH_KEYWORD_SIZE 7
 #define PAX_SIZE_KEYWORD_SIZE 7
 #define PAX_LINK_PATH_KEYWORD_SIZE 11
+#define PAX_TIMES_KEYWORD_SIZE 8
 
 #define TAR_NAME_LENGTH 99
 #define TAR_LINKNAME_LENGTH 99
@@ -62,17 +71,34 @@
 #define TAR_MAX_SIZE 8589934592ULL
 
 typedef struct {
+    mptar_int64 sec; // Standard Unix timestamp (seconds)
+    mptar_uint32 nsec; // Nanoseconds (0 to 999,999,999) for subsecond precision
+} mptar_timespec;
+
+typedef struct {
+    mptar_timespec value;
+    bool has_value;
+} mptar_opt_time;
+
+typedef struct {
     const char* path;
     const char* link_target;
     mptar_uint64 size;
     mptar_uint32 mode;
     mptar_uint32 uid;
     mptar_uint32 gid;
-    mptar_uint64 modtime;
+    mptar_opt_time mtime;
+
+#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+    mptar_opt_time atime; // Access time
+    mptar_opt_time ctime; // Change time
+#endif
+
 #ifdef MPTAR_SUPPORT_SPECIAL
     mptar_uint32 dev_minor;
     mptar_uint32 dev_major;
 #endif
+
     char typeflag; // \0 / 0 - file, 1 - link, 2 - symlink, 3/4 - char/block special, 5 - directory 
 } mptar_metadata;
 
@@ -100,7 +126,7 @@ typedef struct {
     char uid[8];
     char gid[8];
     char size[12];
-    char modtime[12]; 
+    char mtime[12]; 
     char checksum[8];
     char typeflag;
     char linkname[100];
