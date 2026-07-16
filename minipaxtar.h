@@ -35,25 +35,48 @@
     #define MPTAR_NULL NULL
 #endif
 
+// Static sizes for the PAX keywords. All entries have 3 never changing bytes and keyword which is variable.
+// Never changing characters are: SPACE, =, NEWLINE
+
+#define PAX_PATH_KEYWORD_SIZE 7
+#define PAX_SIZE_KEYWORD_SIZE 7
+#define PAX_LINK_PATH_KEYWORD_SIZE 11
+
+#define TAR_NAME_LENGTH 99
+#define TAR_LINKNAME_LENGTH 99
+#define TAR_PREFIX_LENGTH 154
+#define TAR_NAME_SIZE 100
+#define TAR_MAX_SIZE 8589934592ULL
+
 typedef struct {
-    const char* path;     // Unlimited length in memory
-    mptar_uint64 size;        // True 64-bit size
-    mptar_uint32 mode;        // Octal permissions
-    mptar_uint32 uid;         // Numeric Owner ID
-    mptar_uint32 gid;         // Numeric Group ID
-    mptar_uint64 mtime;       // Modification Timestamp
-    char typeflag;        // '0' = file, '5' = directory
+    const char* path;
+    const char* link_target;
+    mptar_uint64 size;
+    mptar_uint32 mode;
+    mptar_uint32 uid;
+    mptar_uint32 gid;
+    mptar_uint64 modtime;
+    char typeflag; // \0 / 0 - file, 1 - link, 2 - symlink, 3/4 - char/block special, 5 - directory 
 } mptar_metadata;
 
 typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
-typedef struct {
-    mptar_write_fn write_fn;
-    void* user_data;
-    mptar_uint64 bytes_left;
-} mptar_write_ctx;
+typedef void* (*mptar_alloc_fn)(void* user_data, mptar_size_t size);
+typedef void (*mptar_free_fn)(void* user_data, void* ptr);
 
-// STANDARD HEADER:
-// Octal strings have to be null/space terminated.
+typedef struct {
+    mptar_write_fn write;
+    void* write_user_data;
+
+    mptar_alloc_fn alloc;
+    mptar_free_fn free;
+    void* alloc_user_data;
+} mptar_config;
+
+typedef struct {
+    mptar_config cfg;
+    mptar_uint64 bytes_left;
+} mptar_writer;
+
 typedef struct {
     char name[100];
     char mode[8];
@@ -61,7 +84,7 @@ typedef struct {
     char gid[8];
     char size[12];
     char modtime[12]; 
-    char checksum[8]; // Sum of all of the bytes (unsighed chars) of the header written into 6-digit octal and a \0 with a space.
+    char checksum[8];
     char typeflag;
     char linkname[100];
     char magic[6];
@@ -74,13 +97,7 @@ typedef struct {
     char padding[12];
 } tar_header;
 
-// PAX:
-// Pax supports some keywords: path and size.
-// When a file triggers a PAX requirement it follows this:
-// Line Length + " " + KEYWORD + "=" + VALUE + "\n"
-// Where:
-//  Line length is the length of the line including the length of the characters defining the length.
-
-int mptar_write_header(mptar_write_ctx* write_ctx, const mptar_metadata* meta);
-int mptar_write_data_chunk(mptar_write_ctx* write_ctx, const void* buffer, mptar_size_t size);
-int mptar_write_finalize(mptar_write_ctx* write_ctx, const mptar_metadata* meta);
+int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);
+int mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar_size_t size);
+int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
+int mptar_close_archive(mptar_writer *ctx);
