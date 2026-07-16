@@ -1,19 +1,25 @@
 #ifdef MPTAR_NO_STD
     typedef unsigned char mptar_uint8;
+    typedef signed char mptar_int8;
     
     #if defined(__INT_MAX__) && (__INT_MAX__ == 32767)
         typedef unsigned int mptar_uint16;
+        typedef signed int mptar_int16;
     #else
         typedef unsigned short mptar_uint16;
+        typedef signed short mptar_int16;
     #endif
 
     #if defined(__INT_MAX__) && (__INT_MAX__ == 2147483647)
         typedef unsigned int mptar_uint32;
+        typedef signed int mptar_int32;
     #else
         typedef unsigned long mptar_uint32;
+        typedef signed long mptar_int32;
     #endif
 
     typedef unsigned long long mptar_uint64;
+    typedef signed long long mptar_int64;
 
     #if defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ == 8)
         typedef unsigned long long mptar_size_t;
@@ -26,6 +32,11 @@
     #include <stdint.h>
     #include <stddef.h>
     
+    typedef int64_t mptar_int64;
+    typedef int32_t mptar_int32;
+    typedef int16_t mptar_int16;
+    typedef int8_t mptar_int8;
+
     typedef uint64_t mptar_uint64;
     typedef uint32_t mptar_uint32;
     typedef uint16_t mptar_uint16;
