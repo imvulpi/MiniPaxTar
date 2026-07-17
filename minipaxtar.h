@@ -105,20 +105,28 @@ typedef struct {
 typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
 typedef void* (*mptar_alloc_fn)(void* user_data, mptar_size_t size);
 typedef void (*mptar_free_fn)(void* user_data, void* ptr);
+typedef mptar_size_t (*mptar_read_fn)(void* user_data, void* buffer, mptar_size_t size);
 
 typedef struct {
-    mptar_write_fn write;
-    void* write_user_data;
-
     mptar_alloc_fn alloc;
     mptar_free_fn free;
     void* alloc_user_data;
-} mptar_config;
+} mptar_alloc_cfg;
 
 typedef struct {
-    mptar_config cfg;
+    mptar_alloc_cfg memory;
+    mptar_write_fn write;
+    void* write_user_data;
     mptar_uint64 bytes_left;
 } mptar_writer;
+
+typedef struct {
+    mptar_alloc_cfg memory;
+    mptar_read_fn read;
+    void* read_user_data;
+    mptar_uint64 bytes_left;
+    mptar_uint64 offset;
+} mptar_reader;
 
 typedef struct {
     char name[100];
@@ -144,3 +152,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);
 int mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar_size_t size);
 int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
 int mptar_close_archive(mptar_writer *ctx);
+
+int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
+mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size);
+int mptar_skip_data(mptar_reader* reader);

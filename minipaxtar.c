@@ -157,7 +157,7 @@ void stream_zeroes(mptar_writer* ctx, mptar_size_t padding_needed) {
         mptar_size_t remaining = padding_needed - written;
         mptar_size_t chunk_size = (remaining > 16) ? 16 : remaining;
 
-        ctx->cfg.write(ctx->cfg.write_user_data, zero_chunk, chunk_size);
+        ctx->write(ctx->write_user_data, zero_chunk, chunk_size);
         written += chunk_size;
     }
 }
@@ -374,7 +374,7 @@ int write_base_header(tar_header* header, mptar_metadata* meta){
 }
 
 int write_pax_header(mptar_writer* ctx, mptar_uint64 size, mptar_metadata* meta){
-    char* header_bytes = ctx->cfg.alloc(ctx->cfg.alloc_user_data, 512);
+    char* header_bytes = ctx->memory.alloc(ctx->memory.alloc_user_data, 512);
     tar_header* header = (tar_header*)header_bytes;
 
     mptar_metadata temp_meta = {0};
@@ -386,8 +386,8 @@ int write_pax_header(mptar_writer* ctx, mptar_uint64 size, mptar_metadata* meta)
     temp_meta.mtime = meta->mtime;
     temp_meta.typeflag = 'x';
     write_base_header(header, &temp_meta);
-    ctx->cfg.write(ctx->cfg.write_user_data, header_bytes, 512);
-    ctx->cfg.free(ctx->cfg.alloc_user_data, header_bytes);
+    ctx->write(ctx->write_user_data, header_bytes, 512);
+    ctx->memory.free(ctx->memory.alloc_user_data, header_bytes);
     return 0;
 }
 
@@ -475,56 +475,56 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         if (large_path) {
             char path_pax_str[11];
             u64toa(pax_path_size, path_pax_str, sizeof(path_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, path_pax_str, strlen(path_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, " path=", 6);
-            ctx->cfg.write(ctx->cfg.write_user_data, meta->path, path_size);
-            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+            ctx->write(ctx->write_user_data, path_pax_str, strlen(path_pax_str));
+            ctx->write(ctx->write_user_data, " path=", 6);
+            ctx->write(ctx->write_user_data, meta->path, path_size);
+            ctx->write(ctx->write_user_data, "\n", 1);
         }
 
         if (large_size) {
             char size_pax_str[11];
             u64toa(pax_size_size, size_pax_str, sizeof(size_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, size_pax_str, strlen(size_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, " size=", 6);
-            ctx->cfg.write(ctx->cfg.write_user_data, size_str_buf, size_str_len);
-            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+            ctx->write(ctx->write_user_data, size_pax_str, strlen(size_pax_str));
+            ctx->write(ctx->write_user_data, " size=", 6);
+            ctx->write(ctx->write_user_data, size_str_buf, size_str_len);
+            ctx->write(ctx->write_user_data, "\n", 1);
         }
 
         if(large_link_target){
             char linkpath_pax_str[11];
             u64toa(pax_link_target_size, linkpath_pax_str, sizeof(linkpath_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, linkpath_pax_str, strlen(linkpath_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, " linkpath=", 10);
-            ctx->cfg.write(ctx->cfg.write_user_data, meta->link_target, link_target_size);
-            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+            ctx->write(ctx->write_user_data, linkpath_pax_str, strlen(linkpath_pax_str));
+            ctx->write(ctx->write_user_data, " linkpath=", 10);
+            ctx->write(ctx->write_user_data, meta->link_target, link_target_size);
+            ctx->write(ctx->write_user_data, "\n", 1);
         }
 
         if(meta->mtime.has_value && meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0){
             char mtime_pax_str[11];
             u64toa(pax_mtime_size, mtime_pax_str, sizeof(mtime_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, mtime_pax_str, strlen(mtime_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, " mtime=", 7);
-            ctx->cfg.write(ctx->cfg.write_user_data, mtime_str_buf, mtime_str_len);
-            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+            ctx->write(ctx->write_user_data, mtime_pax_str, strlen(mtime_pax_str));
+            ctx->write(ctx->write_user_data, " mtime=", 7);
+            ctx->write(ctx->write_user_data, mtime_str_buf, mtime_str_len);
+            ctx->write(ctx->write_user_data, "\n", 1);
         }
 
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
         if(meta->atime.has_value){
             char atime_pax_str[11];
             u64toa(pax_atime_size, atime_pax_str, sizeof(atime_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, atime_pax_str, strlen(atime_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, " atime=", 7);
-            ctx->cfg.write(ctx->cfg.write_user_data, atime_str_buf, atime_str_len);
-            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+            ctx->write(ctx->write_user_data, atime_pax_str, strlen(atime_pax_str));
+            ctx->write(ctx->write_user_data, " atime=", 7);
+            ctx->write(ctx->write_user_data, atime_str_buf, atime_str_len);
+            ctx->write(ctx->write_user_data, "\n", 1);
         }
 
         if(meta->ctime.has_value){
             char ctime_pax_str[11];
             u64toa(pax_ctime_size, ctime_pax_str, sizeof(ctime_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, ctime_pax_str, strlen(ctime_pax_str));
-            ctx->cfg.write(ctx->cfg.write_user_data, " ctime=", 7);
-            ctx->cfg.write(ctx->cfg.write_user_data, ctime_str_buf, ctime_str_len);
-            ctx->cfg.write(ctx->cfg.write_user_data, "\n", 1);
+            ctx->write(ctx->write_user_data, ctime_pax_str, strlen(ctime_pax_str));
+            ctx->write(ctx->write_user_data, " ctime=", 7);
+            ctx->write(ctx->write_user_data, ctime_str_buf, ctime_str_len);
+            ctx->write(ctx->write_user_data, "\n", 1);
         }
 #endif
 
@@ -533,11 +533,11 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         stream_zeroes(ctx, padding_needed);
     }
 
-    char* header_bytes = ctx->cfg.alloc(ctx->cfg.alloc_user_data, 512);
+    char* header_bytes = ctx->memory.alloc(ctx->memory.alloc_user_data, 512);
     tar_header* header = (tar_header*)header_bytes;
     write_base_header(header, meta);
-    ctx->cfg.write(ctx->cfg.write_user_data, header_bytes, 512);
-    ctx->cfg.free(ctx->cfg.alloc_user_data, header_bytes);
+    ctx->write(ctx->write_user_data, header_bytes, 512);
+    ctx->memory.free(ctx->memory.alloc_user_data, header_bytes);
     ctx->bytes_left = meta->size;
 
     return 0;
@@ -549,7 +549,7 @@ int mptar_write_data_chunk(mptar_writer *ctx, const void *buffer, mptar_size_t s
         return -1; // Too much was requested to be written.
     }
 
-    mptar_size_t written = ctx->cfg.write(ctx->cfg.write_user_data, buffer, size);
+    mptar_size_t written = ctx->write(ctx->write_user_data, buffer, size);
     if(written != size) return -2; // Error from write fn
 
     ctx->bytes_left -= size;
@@ -576,5 +576,21 @@ int mptar_write_finalize(mptar_writer *ctx, const mptar_metadata *meta)
 int mptar_close_archive(mptar_writer *ctx)
 {
     stream_zeroes(ctx, 1024);
+    return 0;
+}
+
+int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta)
+{
+
+    return 0;
+}
+
+mptar_size_t mptar_read_data_chunk(mptar_reader *reader, void *buffer, mptar_size_t size)
+{
+    return 0;
+}
+
+int mptar_skip_data(mptar_reader *reader)
+{
     return 0;
 }
