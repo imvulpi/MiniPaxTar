@@ -93,6 +93,11 @@ void i64toa(mptar_int64 value, char* buf, int buf_size) {
     }
 }
 
+#else
+
+extern char* u64toa(mptar_uint64 value, char* str, mptar_size_t str_size);
+extern void i64toa(mptar_int64 value, char* buf, int buf_size);
+
 #endif
 
 #ifndef MPTAR_CUSTOM_U64TOO
@@ -129,6 +134,10 @@ char* u64too(mptar_uint64 value, char* str, mptar_size_t size) {
 
     return str;
 }
+
+#else
+
+extern char* u64too(mptar_uint64 value, char* str, mptar_size_t size);
 
 #endif
 
