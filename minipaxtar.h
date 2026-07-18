@@ -1,3 +1,6 @@
+#define MPTAR_NO_STD
+#define MPTAR_SUPPORT_EXTRA_TIMES
+
 #ifdef MPTAR_NO_STD
     typedef unsigned char mptar_uint8;
     typedef signed char mptar_int8;
@@ -70,6 +73,15 @@
 #define TAR_NAME_SIZE 100
 #define TAR_MAX_SIZE 8589934592ULL
 
+#define MPTAR_PAX_HAS_PATH        (1 << 0)
+#define MPTAR_PAX_HAS_LINK        (1 << 1)
+#define MPTAR_PAX_HAS_SIZE        (1 << 2)
+#define MPTAR_PAX_HAS_MTIME       (1 << 3)
+#define MPTAR_PAX_HAS_UID         (1 << 4)
+#define MPTAR_PAX_HAS_GID         (1 << 5)
+#define MPTAR_PAX_HAS_ATIME       (1 << 6)
+#define MPTAR_PAX_HAS_CTIME       (1 << 7)
+
 typedef struct {
     mptar_int64 sec; // Standard Unix timestamp (seconds)
     mptar_uint32 nsec; // Nanoseconds (0 to 999,999,999) for subsecond precision
@@ -111,17 +123,17 @@ typedef struct {
     mptar_alloc_fn alloc;
     mptar_free_fn free;
     void* alloc_user_data;
-} mptar_alloc_cfg;
+} mptar_memory_cfg;
 
 typedef struct {
-    mptar_alloc_cfg memory;
+    mptar_memory_cfg memory;
     mptar_write_fn write;
     void* write_user_data;
     mptar_uint64 bytes_left;
 } mptar_writer;
 
 typedef struct {
-    mptar_alloc_cfg memory;
+    mptar_memory_cfg memory;
     mptar_read_fn read;
     void* read_user_data;
     mptar_uint64 bytes_left;

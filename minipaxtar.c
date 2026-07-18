@@ -10,6 +10,14 @@ mptar_size_t strlen(const char* str){
     }
 }
 
+mptar_size_t strnlen(const char* str, mptar_size_t max_limit) {
+    mptar_size_t count = 0;
+    while (count < max_limit && str[count] != '\0') {
+        count++;
+    }
+    return count;
+}
+
 void memcpy(void* dest, const void* src, mptar_size_t n) {
     char* d = (char*)dest;
     const char* s = (const char*)src;
@@ -34,6 +42,19 @@ void memset(void* data, char value, mptar_size_t amount){
     {
         bytes[i] = value;
     }
+}
+
+int memcmp(const void* s1, const void* s2, mptar_size_t size) {
+    const unsigned char* p1 = (const unsigned char*)s1;
+    const unsigned char* p2 = (const unsigned char*)s2;
+
+    for (mptar_size_t i = 0; i < size; i++) {
+        if (p1[i] != p2[i]) {
+            return (p1[i] < p2[i]) ? -1 : 1;
+        }
+    }
+
+    return 0;
 }
 
 #else
@@ -100,55 +121,6 @@ extern void i64toa(mptar_int64 value, char* buf, int buf_size);
 
 #endif
 
-#ifndef MPTAR_CUSTOM_U64TOO
-
-char* u64too(mptar_uint64 value, char* str, mptar_size_t size) {
-    if (str == MPTAR_NULL || size < 2) return MPTAR_NULL;
-
-    mptar_size_t i = 0;
-
-    if (value == 0) {
-        str[i++] = '0';
-        str[i] = '\0';
-        return str;
-    }
-
-    while (value > 0 && i < (size - 1)) {
-        str[i++] = (char)((value & 7) + '0');         
-        value >>= 3; 
-    }
-
-    if (value > 0) return MPTAR_NULL;
-
-    str[i] = '\0';
-
-    mptar_size_t start = 0;
-    mptar_size_t end = i - 1;
-    while (start < end) {
-        char temp = str[start];
-        str[start] = str[end];
-        str[end] = temp;
-        start++;
-        end--;
-    }
-
-    return str;
-}
-
-#else
-
-extern char* u64too(mptar_uint64 value, char* str, mptar_size_t size);
-
-#endif
-
-mptar_size_t safe_bounded_strlen(const char* str, mptar_size_t max_limit) {
-    mptar_size_t count = 0;
-    while (count < max_limit && str[count] != '\0') {
-        count++;
-    }
-    return count;
-}
-
 void stream_zeroes(mptar_writer* ctx, mptar_size_t padding_needed) {
     const char zero_chunk[16] = {0}; 
     mptar_size_t written = 0;
@@ -206,14 +178,29 @@ mptar_uint32 calculate_framed_len(mptar_uint32 data_len) {
 
 char* u64_to_tar_octal(mptar_uint64 value, char* str, mptar_size_t str_size)
 {
-    char temp[str_size];
-    memcpy(&temp, str, str_size); 
-
-    char* octal_str = u64too(value, temp, str_size);
-    mptar_size_t octal_str_len = strlen(octal_str);
-    
+    if (str_size == 0) return str;
     memset(str, '0', str_size);
-    memcpy(&str[str_size - octal_str_len - 1], octal_str, octal_str_len + 1);
+    str[str_size - 1] = '\0';
+    
+    mptar_size_t i = str_size - 2;
+    
+    if (value == 0) {
+        str[i] = '0';
+        return str;
+    }
+
+    while (value > 0 && i < str_size) {
+        str[i] = '0' + (char)(value & 7);
+        value >>= 3;
+        
+        if (value > 0) {
+            if (i == 0) {
+                break;
+            }
+            i--;
+        }
+    }
+
     return str;
 }
 
@@ -296,7 +283,7 @@ int write_basic_path(char* header_name, char* header_prefix, char* full_path)
         }
     }
 
-    if(last_safe_slash == MPTAR_NULL || safe_bounded_strlen(last_safe_slash + 1, 100) > 99){
+    if(last_safe_slash == MPTAR_NULL || strnlen(last_safe_slash + 1, 100) > 99){
         memcpy(header_name, full_path, TAR_NAME_SIZE);
         header_name[TAR_NAME_LENGTH] = '\0';
         current = header_name + TAR_NAME_LENGTH - 1;
@@ -320,8 +307,8 @@ int write_basic_path(char* header_name, char* header_prefix, char* full_path)
     return 0;
 }
 
-void write_tar_checksum(char* header_block) {
-    unsigned int sum = 0;    
+mptar_uint32 calculate_checksum(char* header_block){
+    mptar_uint32 sum = 0;    
     for (int i = 0; i < 512; i++) {
         // 8 checksum field bytes (148 to 155) have to be treated as spaces (ASCII for 32)
         if (i == 148) {
@@ -331,7 +318,11 @@ void write_tar_checksum(char* header_block) {
             sum += (unsigned char)header_block[i];
         }
     }
+    return sum;
+}
 
+void write_tar_checksum(char* header_block) {
+    mptar_int32 sum = calculate_checksum(header_block);
     write_tar_octal(header_block + 148, (mptar_uint64)sum, 7);
     header_block[155] = ' ';
 }
@@ -579,18 +570,395 @@ int mptar_close_archive(mptar_writer *ctx)
     return 0;
 }
 
-int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta)
-{
+mptar_uint64 tar_octal_to_u64(const char* str, mptar_size_t str_size) {
+    mptar_uint64 result = 0;
+    mptar_size_t i = 0;
+
+    while (i < str_size && (str[i] == ' ' || str[i] == '0')) {
+        i++;
+    }
+
+    while (i < str_size) {
+        char c = str[i];
+
+        if (c == '\0' || c == ' ') {
+            break;
+        }
+
+        if (c < '0' || c > '7') {
+            break;
+        }
+
+        result = (result << 3) + (c - '0');
+        i++;
+    }
+
+    return result;
+}
+
+int verify_header_checksum(const tar_header* header) {
+    const unsigned char* bytes = (const unsigned char*)header;
+    mptar_uint32 unsigned_sum = 0;
+    mptar_int32 signed_sum = 0;
+
+    if (header->typeflag == '\0' && header->name[0] == '\0') {
+        mptar_size_t zero_chars = 0;
+        for (mptar_size_t i = 0; i < 16; i++) {
+            if (bytes[i] == 0) zero_chars++;
+        }
+        if (zero_chars == 16) {
+            return -2; // EOF
+        }
+    }
+
+    for (mptar_size_t i = 0; i < 512; i++) {
+        if (i == 148) { // 8 checksum field bytes (148 to 155) have to be treated as spaces (ASCII for 32)
+            unsigned_sum += 256; // 32 * 8
+            signed_sum += 256;
+            i = 155;
+        } else {
+            unsigned_sum += bytes[i];
+            signed_sum += (signed char)bytes[i];
+        }
+    }
+
+    mptar_uint32 stored_checksum = (mptar_uint32)tar_octal_to_u64(header->checksum, 8);
+
+    if (unsigned_sum == stored_checksum || (mptar_uint32)signed_sum == stored_checksum) {
+        return 0;
+    }
+
+    return -1; // CHECKSUM FAIL
+}
+
+static mptar_uint64 atou64(const char* str, mptar_size_t len) {
+    mptar_uint64 val = 0;
+    for (mptar_size_t i = 0; i < len; i++) {
+        if (str[i] < '0' || str[i] > '9') break;
+        val = (val * 10) + (str[i] - '0');
+    }
+    return val;
+}
+
+static void parse_pax_time(const char* val_str, mptar_size_t val_len, mptar_opt_time* out_time) {
+    mptar_size_t dot_i = 0;
+    while (dot_i < val_len && val_str[dot_i] != '.') {
+        dot_i++;
+    }
+
+    out_time->value.sec = (mptar_int64)atou64(val_str, dot_i);
+    out_time->value.nsec = 0;
+
+    if (dot_i < val_len && val_str[dot_i] == '.') {
+        mptar_size_t frac_start = dot_i + 1;
+        mptar_size_t frac_len = val_len - frac_start;
+        
+        // up to 9 digits of ns
+        mptar_uint32 nsec = 0;
+        mptar_uint32 multiplier = 100000000;
+        
+        for (mptar_size_t i = 0; i < frac_len && i < 9; i++) {
+            char c = val_str[frac_start + i];
+            if (c >= '0' && c <= '9') {
+                nsec += (c - '0') * multiplier;
+            }
+            multiplier /= 10;
+        }
+        out_time->value.nsec = nsec;
+    }
+    out_time->has_value = true;
+}
+
+static int reconstruct_ustar_path(mptar_reader* reader, const tar_header* header, mptar_metadata* out_meta) {
+    mptar_size_t name_len = strnlen(header->name, 100);
+    mptar_size_t prefix_len = strnlen(header->prefix, 155);
+
+    if (prefix_len > 0) {
+        mptar_size_t full_len = prefix_len + 1 + name_len;
+        char* allocated_path = (char*)reader->memory.alloc(reader->memory.alloc_user_data, full_len + 1);
+        if (!allocated_path) return -4; // Out of memory
+
+        memcpy(allocated_path, header->prefix, prefix_len);
+        allocated_path[prefix_len] = '/';
+        memcpy(allocated_path + prefix_len + 1, header->name, name_len);
+        allocated_path[full_len] = '\0';
+        out_meta->path = allocated_path;
+    } else if (name_len > 0) {
+        char* allocated_path = (char*)reader->memory.alloc(reader->memory.alloc_user_data, name_len + 1);
+        if (!allocated_path) return -4;
+
+        memcpy(allocated_path, header->name, name_len);
+        allocated_path[name_len] = '\0';
+        out_meta->path = allocated_path;
+    }
+    
+    return 0;
+}
+
+static const char* alloc_pax_string(mptar_memory_cfg* mem, const char* src, mptar_size_t len) {
+    char* dst = (char*)mem->alloc(mem->alloc_user_data, len + 1);
+    if (!dst) return MPTAR_NULL;
+    memcpy(dst, src, len);
+    dst[len] = '\0';
+    return dst;
+}
+
+static void mptar_apply_pax_kv(mptar_reader* reader, const char* key, mptar_size_t key_len, 
+    const char* val, mptar_size_t val_len, mptar_metadata* meta, mptar_uint32* pax_flags) {
+    
+    if (key_len == 4 && memcmp(key, "path", 4) == 0) {
+        meta->path = alloc_pax_string(&reader->memory, val, val_len);
+        *pax_flags |= MPTAR_PAX_HAS_PATH;
+    } 
+    else if (key_len == 8 && memcmp(key, "linkpath", 8) == 0) {
+        meta->link_target = alloc_pax_string(&reader->memory, val, val_len);
+        *pax_flags |= MPTAR_PAX_HAS_LINK;
+    }
+    else if (key_len == 4 && memcmp(key, "size", 4) == 0) {
+        meta->size = atou64(val, val_len);
+        *pax_flags |= MPTAR_PAX_HAS_SIZE;
+    } 
+    else if (key_len == 3 && memcmp(key, "uid", 3) == 0) {
+        meta->uid = (mptar_uint32)atou64(val, val_len);
+        *pax_flags |= MPTAR_PAX_HAS_UID;
+    } 
+    else if (key_len == 3 && memcmp(key, "gid", 3) == 0) {
+        meta->gid = (mptar_uint32)atou64(val, val_len);
+        *pax_flags |= MPTAR_PAX_HAS_GID;
+    }
+    else if (key_len == 5 && memcmp(key, "mtime", 5) == 0) {
+        parse_pax_time(val, val_len, &meta->mtime);
+        *pax_flags |= MPTAR_PAX_HAS_MTIME;
+    }
+#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+    else if (key_len == 5 && memcmp(key, "atime", 5) == 0) {
+        parse_pax_time(val, val_len, &meta->atime);
+        *pax_flags |= MPTAR_PAX_HAS_ATIME;
+    } 
+    else if (key_len == 5 && memcmp(key, "ctime", 5) == 0) {
+        parse_pax_time(val, val_len, &meta->ctime);
+        *pax_flags |= MPTAR_PAX_HAS_CTIME;
+    }
+#endif
+}
+
+int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_size, mptar_metadata* meta, mptar_uint32* pax_flags) {
+    if (total_pax_size == 0) return 0;
+
+    char* buffer = (char*)reader->memory.alloc(reader->memory.alloc_user_data, (mptar_size_t)total_pax_size);
+    if (!buffer) return -1; // Out of memory
+
+    if (reader->read(reader->read_user_data, buffer, (mptar_size_t)total_pax_size) != total_pax_size) {
+        reader->memory.free(reader->memory.alloc_user_data, buffer);
+        return -3; // Read error
+    }
+    reader->offset += total_pax_size;
+
+    // reads the remaining padding
+    mptar_uint64 remainder = total_pax_size % 512;
+    if (remainder > 0) {
+        char dummy[512];
+        mptar_size_t pad = 512 - (mptar_size_t)remainder;
+        reader->read(reader->read_user_data, dummy, pad);
+        reader->offset += pad;
+    }
+
+    mptar_size_t i = 0;
+    while (i < total_pax_size) {
+        mptar_size_t len_start = i;
+        while (i < total_pax_size && buffer[i] != ' ') {
+            i++;
+        }
+        if (i >= total_pax_size) break;
+        
+        mptar_uint64 record_len = atou64(&buffer[len_start], i - len_start);
+        i++; // Advances past space
+
+        mptar_size_t key_start = i;
+        while (i < total_pax_size && buffer[i] != '=') {
+            i++;
+        }
+        if (i >= total_pax_size) break;
+        
+        mptar_size_t key_len = i - key_start;
+        i++; // Advances past '='
+
+        mptar_size_t val_start = i;
+        mptar_size_t target_next_record = len_start + (mptar_size_t)record_len;
+        mptar_size_t val_len = target_next_record - val_start - 1; // Subtract 1 for '\n'
+
+        mptar_apply_pax_kv(reader, &buffer[key_start], key_len, &buffer[val_start], val_len, meta, pax_flags);
+
+        i = target_next_record;
+    }
+
+    reader->memory.free(reader->memory.alloc_user_data, buffer);
+    return 0;
+}
+
+static void mptar_parse_base_ustar(const tar_header* header, mptar_metadata* out_meta) {
+    out_meta->size = tar_octal_to_u64(header->size, 12);
+    out_meta->mode = (mptar_uint32)tar_octal_to_u64(header->mode, 8);
+    out_meta->uid  = (mptar_uint32)tar_octal_to_u64(header->uid, 8);
+    out_meta->gid  = (mptar_uint32)tar_octal_to_u64(header->gid, 8);
+    out_meta->typeflag = header->typeflag;
+    
+    out_meta->mtime.value.sec = (mptar_int64)tar_octal_to_u64(header->mtime, 12);
+    out_meta->mtime.value.nsec = 0;
+    out_meta->mtime.has_value = true;
+
+#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+    out_meta->atime.has_value = false;
+    out_meta->ctime.has_value = false;
+#endif
+
+#ifdef MPTAR_SUPPORT_SPECIAL
+    out_meta->dev_major = (mptar_uint32)tar_octal_to_u64(header->devmajor, 8);
+    out_meta->dev_minor = (mptar_uint32)tar_octal_to_u64(header->devminor, 8);
+#endif
+}
+
+static mptar_size_t mptar_consume_stream_bytes(mptar_reader* reader, mptar_size_t count) {
+    if (count == 0) return 0;
+
+    char discard_buf[128];
+    mptar_size_t total_consumed = 0;
+
+    while (total_consumed < count) {
+        mptar_size_t chunk = count - total_consumed;
+        if (chunk > sizeof(discard_buf)) {
+            chunk = sizeof(discard_buf);
+        }
+
+        mptar_size_t bytes_read = reader->read(reader->read_user_data, discard_buf, chunk);
+        if (bytes_read == 0) {
+            break; // Unexpected stream termination
+        }
+
+        total_consumed += bytes_read;
+        reader->offset += bytes_read;
+    }
+
+    return total_consumed;
+}
+
+int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
+    out_meta->path = 0;
+    out_meta->link_target = 0;
+
+    mptar_uint32 pax_flags = 0;
+    char header_bytes[512];
+    
+    while (1) {
+        if (reader->read(reader->read_user_data, header_bytes, 512) != 512) {
+            return -3;
+        }
+        reader->offset += 512;
+
+        tar_header* header = (tar_header*)header_bytes;
+        int res = verify_header_checksum(header);
+        if (res != 0) return res;
+
+        if (header->typeflag == 'x') {
+            mptar_uint64 pax_size = tar_octal_to_u64(header->size, 12);            
+            int pax_res = mptar_parse_pax_block(reader, pax_size, out_meta, &pax_flags);
+            if (pax_res != 0) return pax_res;
+
+            continue;
+        }
+
+        mptar_metadata pax_staged = *out_meta;
+        mptar_parse_base_ustar(header, out_meta);
+
+        if (pax_flags & MPTAR_PAX_HAS_SIZE)  { out_meta->size = pax_staged.size; }
+        if (pax_flags & MPTAR_PAX_HAS_UID)   { out_meta->uid  = pax_staged.uid;  }
+        if (pax_flags & MPTAR_PAX_HAS_GID)   { out_meta->gid  = pax_staged.gid;  }
+        if (pax_flags & MPTAR_PAX_HAS_MTIME) { 
+            out_meta->mtime = pax_staged.mtime; 
+        }
+
+#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+        if (pax_flags & MPTAR_PAX_HAS_ATIME) { out_meta->atime = pax_staged.atime; }
+        if (pax_flags & MPTAR_PAX_HAS_CTIME) { out_meta->ctime = pax_staged.ctime; }
+#endif
+
+        if (pax_flags & MPTAR_PAX_HAS_PATH) {
+            out_meta->path = pax_staged.path;
+        } else {
+            int path_res = reconstruct_ustar_path(reader, header, out_meta);
+            if (path_res != 0) return path_res;
+        }
+
+        if (pax_flags & MPTAR_PAX_HAS_LINK) {
+            out_meta->link_target = pax_staged.link_target;
+        } else {
+            mptar_size_t link_len = strnlen(header->linkname, 100);
+            if (link_len > 0) {
+                char* allocated_link = (char*)reader->memory.alloc(reader->memory.alloc_user_data, link_len + 1);
+                if (!allocated_link) return -4; // Out Of Memory
+                memcpy(allocated_link, header->linkname, link_len);
+                allocated_link[link_len] = '\0';
+                out_meta->link_target = allocated_link;
+            }
+        }
+
+        reader->bytes_left = out_meta->size;
+        break;
+    }
 
     return 0;
 }
 
-mptar_size_t mptar_read_data_chunk(mptar_reader *reader, void *buffer, mptar_size_t size)
-{
-    return 0;
+mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size) {
+    if (!reader || !buffer || size == 0 || reader->bytes_left == 0) {
+        return 0;
+    }
+
+    mptar_size_t bytes_to_read = size;
+    if (bytes_to_read > reader->bytes_left) {
+        bytes_to_read = reader->bytes_left;
+    }
+
+    mptar_size_t bytes_read = reader->read(reader->read_user_data, buffer, bytes_to_read);
+    
+    reader->bytes_left -= bytes_read;
+    reader->offset += bytes_read;
+
+    // discards padding
+    if (reader->bytes_left == 0) {
+        mptar_size_t remainder = reader->offset % 512;
+        if (remainder > 0) {
+            mptar_size_t padding_needed = 512 - remainder;
+            mptar_consume_stream_bytes(reader, padding_needed);
+        }
+    }
+
+    return bytes_read;
 }
 
-int mptar_skip_data(mptar_reader *reader)
-{
+int mptar_skip_data(mptar_reader* reader) {
+    if (!reader) {
+        return -1; // invalid arg
+    }
+
+    mptar_size_t payload_left = reader->bytes_left;
+    if (payload_left > 0) {
+        mptar_size_t skipped = mptar_consume_stream_bytes(reader, payload_left);
+        if (skipped < payload_left) {
+            return -2; // eof
+        }
+        reader->bytes_left = 0;
+    }
+
+    // padding to be cleared
+    mptar_size_t remainder = reader->offset % 512;
+    if (remainder > 0) {
+        mptar_size_t padding_needed = 512 - remainder;
+        mptar_size_t skipped_pad = mptar_consume_stream_bytes(reader, padding_needed);
+        if (skipped_pad < padding_needed) {
+            return -2; // eof
+        }
+    }
+
     return 0;
 }
