@@ -1,4 +1,3 @@
-#define MPTAR_NO_STD
 #define MPTAR_SUPPORT_EXTRA_TIMES
 
 #ifdef MPTAR_NO_STD
@@ -33,7 +32,9 @@
     #endif
 
     #define MPTAR_NULL ((void*)0)
-
+    #define MPTAR_INT64_MAX (9223372036854775807LL)
+    #define MPTAR_INT64_MIN (-MPTAR_INT64_MAX - 1LL)
+    #define MPTAR_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
 #ifndef bool
     typedef _Bool bool;
     #define true 1
@@ -57,20 +58,43 @@
     typedef size_t   mptar_size_t;
     
     #define MPTAR_NULL NULL
+    #define MPTAR_INT64_MIN INT64_MIN
+    #define MPTAR_INT64_MAX INT64_MAX
+    #define MPTAR_UINT64_MAX UINT64_MAX
 #endif
 
-// Static sizes for the PAX keywords. All entries have 3 never changing bytes and keyword which is variable.
-// Never changing characters are: SPACE, =, NEWLINE
+#define MPTAR_OK                       0   /* Operation completed successfully */
+#define MPTAR_EOF                      1   /* End of Archive reached (two consecutive null blocks) */
+#define MPTAR_NEEDS_PAX                2   /* Item cannot fit in standard USTAR and requires a PAX extended header. */
 
-#define PAX_PATH_KEYWORD_SIZE 7
-#define PAX_SIZE_KEYWORD_SIZE 7
-#define PAX_LINK_PATH_KEYWORD_SIZE 11
-#define PAX_TIMES_KEYWORD_SIZE 8
+#define MPTAR_ERR_INVALID_ARG         -1   /* NULL context pointers or zero-length arguments passed */
+#define MPTAR_ERR_ALLOC               -2   /* Memory allocation failed or returned an invalid pointer */
+#define MPTAR_ERR_IO_READ             -3   /* Read callback failed to return the requested number of bytes */
+#define MPTAR_ERR_IO_WRITE            -4   /* Write callback failed to write the complete chunk to storage */
+#define MPTAR_ERR_CHECKSUM            -5   /* Header checksum verification failed; record is corrupted */
+#define MPTAR_ERR_UNSUPPORTED_TYPE    -6   /* Encountered an explicit special file type (FIFO, Block, Char) not supported */
+#define MPTAR_ERR_WRITE_OVERFLOW      -7   /* Requested write size exceeds remaining available bytes_left for current file payload */
+#define MPTAR_ERR_INCOMPLETE_PAYLOAD  -8   /* mptar_write_finalize called while bytes_left is still greater than 0 */
+#define MPTAR_ERR_MALFORMED           -9   /* Archive format anomaly or structural corruption was detected. */
+#define MPTAR_ERR_OVERFLOW            -10  /* An arithmetic wrap-around or internal buffer write boundary violation detected */
+#define MPTAR_ERR_PATH_TOO_LONG       -11  /* File path exceeds the native physical limits of a standard USTAR block. */
+
+#define MPTAR_PAX_STATIC_CHARS 3
+#define MPTAR_PAX_KEY_LEN_PATH 4
+#define MPTAR_PAX_KEY_LEN_SIZE 4
+#define MPTAR_PAX_KEY_LEN_LINK 8
+#define MPTAR_PAX_KEY_LEN_TIME 5
+
+#define MPTAR_PAX_OVERHEAD_PATH (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS) // 7
+#define MPTAR_PAX_OVERHEAD_SIZE (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS) // 7
+#define MPTAR_PAX_OVERHEAD_LINK (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS) // 11
+#define MPTAR_PAX_OVERHEAD_TIME (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS) // 8
 
 #define TAR_NAME_LENGTH 99
 #define TAR_LINKNAME_LENGTH 99
 #define TAR_PREFIX_LENGTH 154
 #define TAR_NAME_SIZE 100
+#define TAR_PREFIX_SIZE 155
 #define TAR_MAX_SIZE 8589934592ULL
 
 #define MPTAR_PAX_HAS_PATH        (1 << 0)
@@ -111,7 +135,7 @@ typedef struct {
     mptar_uint32 dev_major;
 #endif
 
-    char typeflag; // \0 / 0 - file, 1 - link, 2 - symlink, 3/4 - char/block special, 5 - directory 
+    char typeflag;
 } mptar_metadata;
 
 typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
@@ -161,10 +185,10 @@ typedef struct {
 } tar_header;
 
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);
-int mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar_size_t size);
+mptar_size_t mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar_size_t size, int *out_err);
 int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
 int mptar_close_archive(mptar_writer *ctx);
 
 int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
-mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size);
+mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err);
 int mptar_skip_data(mptar_reader* reader);
