@@ -145,7 +145,7 @@ extern char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, 
 
 #ifndef MPTAR_CUSTOM_I64TOA
 
-static char* mptar_i64toa(mptar_int64 value, char* buf, int buf_size, int *out_err) {
+static char* mptar_i64toa(mptar_int64 value, char* buf, mptar_size_t buf_size, int *out_err) {
     if (out_err) *out_err = MPTAR_OK;
     
     if (buf == MPTAR_NULL || buf_size <= 1) {
@@ -169,13 +169,13 @@ static char* mptar_i64toa(mptar_int64 value, char* buf, int buf_size, int *out_e
         buf[0] = '-';
         return buf;
     } else {
-        return mptar_u64toa((mptar_uint64)value, buf, (mptar_size_t)buf_size, out_err);
+        return mptar_u64toa((mptar_uint64)value, buf, buf_size, out_err);
     }
 }
 
 #else
 
-extern char* mptar_i64toa(mptar_int64 value, char* buf, int buf_size, int *out_err);
+extern char* mptar_i64toa(mptar_int64 value, char* buf, mptar_size_t buf_size, int *out_err);
 
 #endif
 
