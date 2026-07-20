@@ -532,7 +532,7 @@ static int mptar_write_pax_header(mptar_writer* ctx, mptar_uint64 size, const mp
         return MPTAR_ERR_INVALID_ARG;
     }
 
-    char* header_bytes = ctx->memory.alloc(ctx->memory.alloc_user_data, 512);
+    char* header_bytes = (char*)ctx->memory.alloc(ctx->memory.alloc_user_data, 512);
     if(header_bytes == MPTAR_NULL){
         return MPTAR_ERR_ALLOC;
     }
@@ -587,7 +587,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
 
     bool mtime_needs_pax = meta->mtime.has_value && 
         (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0
-        || (meta->mtime.value.sec > MPTAR_USTAR_MAX_OCTAL_12B && ((ctx->flags & MPTAR_CTX_ALLOW_PAX_FOR_OCTAL) != 0)));
+        || (meta->mtime.value.sec > (mptar_int64)MPTAR_USTAR_MAX_OCTAL_12B && ((ctx->flags & MPTAR_CTX_ALLOW_PAX_FOR_OCTAL) != 0)));
     
     #ifdef MPTAR_SUPPORT_EXTRA_TIMES
         bool times_need_pax = mtime_needs_pax || meta->atime.has_value || meta->ctime.has_value;
@@ -627,26 +627,26 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
 #endif
 
         if (large_path) {
-            pax_path_size = mptar_pax_calculate_record_len(path_len + MPTAR_PAX_OVERHEAD_PATH);
+            pax_path_size = mptar_pax_calculate_record_len((mptar_uint32)path_len + MPTAR_PAX_OVERHEAD_PATH);
             pax_header_size += pax_path_size;
         }
 
         if (large_size) {
             mptar_u64toa(meta->size, size_str_buf, sizeof(size_str_buf), MPTAR_NULL);
             size_str_len = mptar_strlen(size_str_buf);
-            pax_size_size = mptar_pax_calculate_record_len(size_str_len + MPTAR_PAX_OVERHEAD_SIZE);
+            pax_size_size = mptar_pax_calculate_record_len((mptar_uint32)size_str_len + MPTAR_PAX_OVERHEAD_SIZE);
             pax_header_size += pax_size_size;
         }
         
         if (large_link_target) {
-            pax_link_target_size = mptar_pax_calculate_record_len(link_target_size + MPTAR_PAX_OVERHEAD_LINK);
+            pax_link_target_size = mptar_pax_calculate_record_len((mptar_uint32)link_target_size + MPTAR_PAX_OVERHEAD_LINK);
             pax_header_size += pax_link_target_size;
         }
 
         if (mtime_needs_pax) {
             mptar_pax_format_time(meta->mtime.value.sec, meta->mtime.value.nsec, mtime_str_buf, sizeof(mtime_str_buf), MPTAR_NULL);
             mtime_str_len = mptar_strlen(mtime_str_buf);
-            pax_mtime_size = mptar_pax_calculate_record_len(mtime_str_len + MPTAR_PAX_OVERHEAD_TIME);
+            pax_mtime_size = mptar_pax_calculate_record_len((mptar_uint32)mtime_str_len + MPTAR_PAX_OVERHEAD_TIME);
             pax_header_size += pax_mtime_size;
         }
 
@@ -654,14 +654,14 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         if (meta->atime.has_value) {
             mptar_pax_format_time(meta->atime.value.sec, meta->atime.value.nsec, atime_str_buf, sizeof(atime_str_buf), MPTAR_NULL);
             atime_str_len = mptar_strlen(atime_str_buf);
-            pax_atime_size = mptar_pax_calculate_record_len(atime_str_len + MPTAR_PAX_OVERHEAD_TIME);
+            pax_atime_size = mptar_pax_calculate_record_len((mptar_uint32)atime_str_len + MPTAR_PAX_OVERHEAD_TIME);
             pax_header_size += pax_atime_size;
         }
 
         if (meta->ctime.has_value) {
             mptar_pax_format_time(meta->ctime.value.sec, meta->ctime.value.nsec, ctime_str_buf, sizeof(ctime_str_buf), MPTAR_NULL);
             ctime_str_len = mptar_strlen(ctime_str_buf);
-            pax_ctime_size = mptar_pax_calculate_record_len(ctime_str_len + MPTAR_PAX_OVERHEAD_TIME);
+            pax_ctime_size = mptar_pax_calculate_record_len((mptar_uint32)ctime_str_len + MPTAR_PAX_OVERHEAD_TIME);
             pax_header_size += pax_ctime_size;
         }
 #endif
@@ -669,24 +669,24 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         if (uid_needs_pax) {
             mptar_u64toa(meta->uid, uid_str_buf, sizeof(uid_str_buf), MPTAR_NULL);
             uid_str_len = mptar_strlen(uid_str_buf);
-            pax_uid_size = mptar_pax_calculate_record_len(uid_str_len + MPTAR_PAX_OVERHEAD_UID);
+            pax_uid_size = mptar_pax_calculate_record_len((mptar_uint32)uid_str_len + MPTAR_PAX_OVERHEAD_UID);
             pax_header_size += pax_uid_size;
         }
 
         if (gid_needs_pax) {
             mptar_u64toa(meta->gid, gid_str_buf, sizeof(gid_str_buf), MPTAR_NULL);
             gid_str_len = mptar_strlen(gid_str_buf);
-            pax_gid_size = mptar_pax_calculate_record_len(gid_str_len + MPTAR_PAX_OVERHEAD_GID);
+            pax_gid_size = mptar_pax_calculate_record_len((mptar_uint32)gid_str_len + MPTAR_PAX_OVERHEAD_GID);
             pax_header_size += pax_gid_size;
         }
 
         if (uname_needs_pax) {
-            pax_uname_size = mptar_pax_calculate_record_len(uname_len + MPTAR_PAX_OVERHEAD_UNAME);
+            pax_uname_size = mptar_pax_calculate_record_len((mptar_uint32)uname_len + MPTAR_PAX_OVERHEAD_UNAME);
             pax_header_size += pax_uname_size;
         }
 
         if (gname_needs_pax) {
-            pax_gname_size = mptar_pax_calculate_record_len(gname_len + MPTAR_PAX_OVERHEAD_GNAME);
+            pax_gname_size = mptar_pax_calculate_record_len((mptar_uint32)gname_len + MPTAR_PAX_OVERHEAD_GNAME);
             pax_header_size += pax_gname_size;
         }
 
@@ -753,13 +753,13 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         }
     }
 
-    char* header_bytes = ctx->memory.alloc(ctx->memory.alloc_user_data, 512);
+    char* header_bytes = (char*)ctx->memory.alloc(ctx->memory.alloc_user_data, 512);
     if (header_bytes == MPTAR_NULL) {
         return MPTAR_ERR_ALLOC;
     }
 
     mptar_header* header = (mptar_header*)header_bytes;
-    mptar_write_ustar_header(header, (mptar_metadata*)meta);
+    mptar_write_ustar_header(header, meta);
 
     mptar_size_t written = ctx->write(ctx->write_user_data, header_bytes, 512);
     ctx->memory.free(ctx->memory.alloc_user_data, header_bytes);
