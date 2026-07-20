@@ -180,8 +180,8 @@ typedef struct {
 
     mptar_uint32 mode;
 #ifdef MPTAR_SUPPORT_SPECIAL
-    mptar_uint32 dev_minor;
-    mptar_uint32 dev_major;
+    mptar_uint32 devminor;
+    mptar_uint32 devmajor;
 #endif
 
     char typeflag;

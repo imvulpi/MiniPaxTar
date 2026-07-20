@@ -1414,15 +1414,15 @@ static int mptar_parse_ustar_header(const mptar_header* header, mptar_metadata* 
 
 #ifdef MPTAR_SUPPORT_SPECIAL
     error = MPTAR_OK;
-    out_meta->dev_major = (mptar_uint32)mptar_parse_octal_field(header->devmajor, 8, &error);
+    out_meta->devmajor = (mptar_uint32)mptar_parse_octal_field(header->devmajor, 8, &error);
     if (error != MPTAR_OK) {
-        out_meta->dev_major = 0;
+        out_meta->devmajor = 0;
     }
 
     error = MPTAR_OK;
-    out_meta->dev_minor = (mptar_uint32)mptar_parse_octal_field(header->devminor, 8, &error);
+    out_meta->devminor = (mptar_uint32)mptar_parse_octal_field(header->devminor, 8, &error);
     if (error != MPTAR_OK) {
-        out_meta->dev_minor = 0;
+        out_meta->devminor = 0;
     }
 #endif
     
