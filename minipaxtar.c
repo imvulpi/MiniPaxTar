@@ -92,7 +92,7 @@ static int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
 
 #endif /* MPTAR_NO_STD */
 
-#ifndef MPTAR_WITHOUT_WRITE
+#ifndef MPTAR_NO_WRITE
 
 #if defined(MPTAR_CUSTOM_IU64TOA)
     #define MPTAR_CUSTOM_U64TOA
@@ -843,9 +843,9 @@ int mptar_close_archive(mptar_writer *ctx)
     return MPTAR_OK;
 }
 
-#endif /* MPTAR_WITHOUT_WRITE */
+#endif /* MPTAR_NO_WRITE */
 
-#ifndef MPTAR_WITHOUT_READ
+#ifndef MPTAR_NO_READ
 
 #if defined(MPTAR_CUSTOM_ATOIU64)
     #define MPTAR_CUSTOM_ATOU64
@@ -1675,4 +1675,4 @@ MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN /* Reason: metadata strings in reading ap
 MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
 }
 
-#endif /* MPTAR_WITHOUT_READ */
+#endif /* MPTAR_NO_READ */

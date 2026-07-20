@@ -197,7 +197,7 @@ typedef struct {
     void* alloc_user_data;
 } mptar_memory_cfg;
 
-#ifndef MPTAR_WITHOUT_READ
+#ifndef MPTAR_NO_READ
 
 typedef mptar_size_t (*mptar_read_fn)(void* user_data, void* buffer, mptar_size_t size);
 
@@ -214,9 +214,9 @@ mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_siz
 int mptar_skip_data(mptar_reader* reader);
 void mptar_reader_free_metadata(mptar_reader* reader, mptar_metadata* meta);
 
-#endif /* MPTAR_WITHOUT_READ */
+#endif /* MPTAR_NO_READ */
 
-#ifndef MPTAR_WITHOUT_WRITE
+#ifndef MPTAR_NO_WRITE
 
 typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
 
@@ -233,7 +233,7 @@ mptar_size_t mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar
 int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
 int mptar_close_archive(mptar_writer *ctx);
 
-#endif /* MPTAR_WITHOUT_WRITE */
+#endif /* MPTAR_NO_WRITE */
 
 /* Compile time pragmas: */ 
 #if defined(__clang__)
