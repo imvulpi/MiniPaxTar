@@ -492,7 +492,7 @@ static int mptar_write_ustar_header(mptar_header* header, mptar_metadata* meta){
 #endif
     
     mptar_uint64 size_to_write = meta->size;
-    if (size_to_write >= MPTAR_USTAR_MAX_FILE_SIZE) {
+    if (size_to_write >= MPTAR_USTAR_MAX_OCTAL_12B) {
         size_to_write = 0;
         result_status = MPTAR_NEEDS_PAX;
     }
@@ -558,9 +558,12 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
     mptar_size_t path_len = mptar_strlen(meta->path);
     mptar_size_t link_target_size = (meta->link_target == MPTAR_NULL) ? 0 : mptar_strlen(meta->link_target);
     bool large_path = !mptar_can_path_fit_ustar(meta->path, path_len);
-    bool large_size = (meta->size >= MPTAR_USTAR_MAX_FILE_SIZE);
+    bool large_size = ctx->allow_pax_for_octal && (meta->size >= MPTAR_USTAR_MAX_OCTAL_12B);
     bool large_link_target = (link_target_size > MPTAR_USTAR_MAX_LEN_LINKNAME);
-    bool mtime_needs_pax = meta->mtime.has_value && (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0);
+    bool mtime_needs_pax = meta->mtime.has_value && 
+        (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0
+        || (meta->mtime.value.sec > MPTAR_USTAR_MAX_OCTAL_12B && ctx->allow_pax_for_octal));
+    
     #ifdef MPTAR_SUPPORT_EXTRA_TIMES
         bool times_need_pax = mtime_needs_pax || meta->atime.has_value || meta->ctime.has_value;
     #else

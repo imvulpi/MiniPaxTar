@@ -96,7 +96,11 @@
 #define MPTAR_USTAR_MAX_LEN_NAME (MPTAR_USTAR_SIZE_NAME - 1)
 #define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1)
 #define MPTAR_USTAR_MAX_LEN_PREFIX (MPTAR_USTAR_SIZE_PREFIX - 1)
-#define MPTAR_USTAR_MAX_FILE_SIZE 8589934592ULL
+
+
+#define MPTAR_USTAR_MAX_OCTAL_12B 8589934591ULL
+#define MPTAR_USTAR_MAX_OCTAL_8B  2097151ULL
+#define MPTAR_BINARY_MAX_8B       MPTAR_INT64_MAX
 
 #define MPTAR_PAX_HAS_PATH        (1 << 0)
 #define MPTAR_PAX_HAS_LINK        (1 << 1)
@@ -191,6 +195,7 @@ int mptar_skip_data(mptar_reader* reader);
 typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
 
 typedef struct {
+    bool allow_pax_for_octal;
     mptar_memory_cfg memory;
     mptar_write_fn write;
     void* write_user_data;
