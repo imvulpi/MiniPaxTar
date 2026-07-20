@@ -7,7 +7,6 @@
 
 #define mptar_strlen  strlen
 #define mptar_strnlen strnlen
-#define mptar_strcpy  strcpy
 #define mptar_strncpy strncpy
 #define mptar_memcpy  memcpy
 #define mptar_memset  memset
@@ -31,22 +30,6 @@ static mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit) {
         count++;
     }
     return count;
-}
-
-static mptar_size_t mptar_strcpy(char* dest, const char* src) {
-    if (!dest) return 0;
-    if (!src) {
-        dest[0] = '\0';
-        return 0;
-    }
-
-    mptar_size_t i = 0;
-    while (src[i] != '\0') {
-        dest[i] = src[i];
-        i++;
-    }
-    dest[i] = '\0';
-    return i;
 }
 
 static char* mptar_strncpy(char* dst, const char* src, mptar_size_t n) {
