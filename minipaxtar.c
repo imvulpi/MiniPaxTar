@@ -612,10 +612,10 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         mptar_size_t uid_str_len = 0;
         mptar_size_t gid_str_len = 0;
 
-        mptar_size_t pax_uid_size = 0;
-        mptar_size_t pax_gid_size = 0;
-        mptar_size_t pax_uname_size = 0;
-        mptar_size_t pax_gname_size = 0;
+        mptar_uint32 pax_uid_size = 0;
+        mptar_uint32 pax_gid_size = 0;
+        mptar_uint32 pax_uname_size = 0;
+        mptar_uint32 pax_gname_size = 0;
 
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
         mptar_uint32 pax_atime_size = 0;
