@@ -230,7 +230,7 @@ static mptar_uint32 mptar_pax_calculate_record_len(mptar_uint32 data_len) {
 }
 
 static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str, mptar_size_t size, int *out_err){
-    if (out_err) *out_err = MPTAR_OK;
+    if(out_err) *out_err = MPTAR_OK;
     if(str == MPTAR_NULL || size == 0){
         if(out_err) *out_err = MPTAR_ERR_INVALID_ARG;
         return MPTAR_NULL;
@@ -238,7 +238,7 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
 
     int error = MPTAR_OK;
     mptar_i64toa(sec, str, size, &error);
-    if(error != MPTAR_OK) {
+    if (error != MPTAR_OK) {
         if(out_err) *out_err = error;
         return MPTAR_NULL;
     }
@@ -261,12 +261,14 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
     char formatted_nsec[10];
     mptar_size_t leading_zeros = 9 - nsec_len;
 
-    for (mptar_size_t i = 0; i < leading_zeros; i++) {
-        formatted_nsec[i] = '0';
+    if (leading_zeros > 0) {
+        mptar_memset(formatted_nsec, '0', leading_zeros);
     }
-    for (mptar_size_t i = 0; i < nsec_len; i++) {
-        formatted_nsec[leading_zeros + i] = nsec_buf[i];
+
+    if (nsec_len > 0) {
+        mptar_memcpy(&formatted_nsec[leading_zeros], nsec_buf, nsec_len);
     }
+
     formatted_nsec[9] = '\0';
 
     int end = 8;
@@ -274,6 +276,7 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
         formatted_nsec[end] = '\0';
         end--;
     }
+
     mptar_size_t final_nsec_len = mptar_strlen(formatted_nsec);
 
     if (int_size + 1 + final_nsec_len + 1 > size) { // int string + . + ns str + \0
@@ -281,9 +284,7 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
     }
 
     str[int_size] = '.';
-    for (mptar_size_t i = 0; i < final_nsec_len; i++) {
-        str[int_size + 1 + i] = formatted_nsec[i];
-    }
+    mptar_memcpy(&str[int_size + 1], formatted_nsec, final_nsec_len);
     str[int_size + 1 + final_nsec_len] = '\0';
 
     return str;
