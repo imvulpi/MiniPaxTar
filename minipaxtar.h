@@ -210,6 +210,7 @@ typedef struct {
 int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
 mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err);
 int mptar_skip_data(mptar_reader* reader);
+void mptar_reader_free_metadata(mptar_reader* reader, mptar_metadata* meta);
 
 #endif /* MPTAR_WITHOUT_READ */
 
@@ -231,3 +232,39 @@ int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
 int mptar_close_archive(mptar_writer *ctx);
 
 #endif /* MPTAR_WITHOUT_WRITE */
+
+// Compile time pragmas: 
+#if defined(__clang__)
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
+        _Pragma("clang diagnostic push") \
+        _Pragma("clang diagnostic ignored \"-Wcast-qual\"")
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
+        _Pragma("clang diagnostic pop")
+#elif defined(__GNUC__) || defined(__GNUG__)
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
+        _Pragma("GCC diagnostic push") \
+        _Pragma("GCC diagnostic ignored \"-Wcast-qual\"")
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
+        _Pragma("GCC diagnostic pop")
+#elif defined(_MSC_VER)
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
+        __pragma(warning(push)) \
+        __pragma(warning(disable: 4197))
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
+        __pragma(warning(pop))
+#else
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN
+    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
+#endif
+
+#if defined(__clang__)
+    #define MPTAR_START_INTERNAL_PARSING \
+        _Pragma("clang diagnostic push") \
+        _Pragma("clang diagnostic ignored \"-Wunsafe-buffer-usage\"") \
+        _Pragma("clang diagnostic ignored \"-Wvla\"")
+    #define MPTAR_END_INTERNAL_PARSING \
+        _Pragma("clang diagnostic pop")
+#else
+    #define MPTAR_START_INTERNAL_PARSING
+    #define MPTAR_END_INTERNAL_PARSING
+#endif

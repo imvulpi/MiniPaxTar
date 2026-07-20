@@ -1300,6 +1300,7 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
         reader->offset += pad;
     }
 
+    int res = MPTAR_OK;
     mptar_size_t i = 0;
     while (i < size_t_pax) {
         mptar_size_t len_start = i;
@@ -1308,18 +1309,16 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
         }
 
         if (i >= size_t_pax) {
-            reader->memory.free(reader->memory.alloc_user_data, buffer);
-            return MPTAR_ERR_MALFORMED;
+            res = MPTAR_ERR_MALFORMED;
+            goto error_cleanup;
         }
         
-        int error = MPTAR_OK;
-        mptar_uint64 record_len = mptar_atou64(&buffer[len_start], i - len_start, &error);
-        if (error != MPTAR_OK) {
-            reader->memory.free(reader->memory.alloc_user_data, buffer);
-            return error;
+        mptar_uint64 record_len = mptar_atou64(&buffer[len_start], i - len_start, &res);
+        if (res != MPTAR_OK) {
+            goto error_cleanup;
         } else if (record_len > (mptar_uint64)size_t_pax || record_len == 0) {
-            reader->memory.free(reader->memory.alloc_user_data, buffer);
-            return MPTAR_ERR_MALFORMED;
+            res = MPTAR_ERR_MALFORMED;
+            goto error_cleanup;
         }
 
         i++; // Advances past ' '
@@ -1330,8 +1329,8 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
         }
 
         if (i >= size_t_pax) {
-            reader->memory.free(reader->memory.alloc_user_data, buffer);
-            return MPTAR_ERR_MALFORMED;
+            res = MPTAR_ERR_MALFORMED;
+            goto error_cleanup;
         }
         
         mptar_size_t key_len = i - key_start;
@@ -1341,11 +1340,11 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
         mptar_size_t target_next_record = len_start + (mptar_size_t)record_len;
 
         if (target_next_record > size_t_pax || target_next_record <= val_start) {
-            reader->memory.free(reader->memory.alloc_user_data, buffer);
-            return MPTAR_ERR_MALFORMED;
+            res = MPTAR_ERR_MALFORMED;
+            goto error_cleanup;
         } else if (buffer[target_next_record - 1] != '\n') {
-            reader->memory.free(reader->memory.alloc_user_data, buffer);
-            return MPTAR_ERR_MALFORMED;
+            res = MPTAR_ERR_MALFORMED;
+            goto error_cleanup;
         }
 
         mptar_size_t val_len = target_next_record - val_start - 1;
@@ -1356,6 +1355,11 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
 
     reader->memory.free(reader->memory.alloc_user_data, buffer);
     return MPTAR_OK;
+
+error_cleanup:
+    reader->memory.free(reader->memory.alloc_user_data, buffer);
+    mptar_reader_free_metadata(reader, meta);
+    return res;
 }
 
 static int mptar_parse_ustar_header(const mptar_header* header, mptar_metadata* out_meta) {
@@ -1570,26 +1574,7 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
     return MPTAR_OK;
 
 error_cleanup:
-    if (out_meta->path) {
-        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
-        out_meta->path = MPTAR_NULL;
-    }
-
-    if (out_meta->link_target) {
-        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
-        out_meta->link_target = MPTAR_NULL;
-    }
-    
-    if (out_meta->uname) {
-        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->uname);
-        out_meta->uname = MPTAR_NULL;
-    }
-    
-    if (out_meta->gname) {
-        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->gname);
-        out_meta->gname = MPTAR_NULL;
-    }
-
+    mptar_reader_free_metadata(reader, out_meta);
     return res;
 }
 
@@ -1651,6 +1636,32 @@ int mptar_skip_data(mptar_reader* reader) {
     }
 
     return MPTAR_OK;
+}
+
+void mptar_reader_free_metadata(mptar_reader *reader, mptar_metadata *meta)
+{
+    if (!reader || !meta) return;
+
+MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN // Reason: metadata strings in reading api are allocated dynamically.
+    if (meta->path) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)meta->path);
+        meta->path = MPTAR_NULL;
+    }
+    if (meta->link_target) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)meta->link_target);
+        meta->link_target = MPTAR_NULL;
+    }
+    if (meta->uname) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)meta->uname);
+        meta->uname = MPTAR_NULL;
+    }
+    if (meta->gname) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)meta->gname);
+        meta->gname = MPTAR_NULL;
+    }
+    
+
+MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
 }
 
 #endif /* MPTAR_WITHOUT_READ */
