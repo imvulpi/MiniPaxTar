@@ -657,8 +657,8 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         }
 #endif
 
-        mptar_size_t rounded_size = (pax_header_size + 511) & ~511;
-        mptar_size_t padding_needed = rounded_size - pax_header_size;
+        mptar_size_t remainder = (mptar_size_t)(pax_header_size % 512);
+        mptar_size_t padding_needed = (remainder > 0) ? (512 - remainder) : 0;
         if (padding_needed > 0) {
             res = mptar_stream_write_zeroes(ctx, padding_needed);
             if (res != MPTAR_OK) return res;
