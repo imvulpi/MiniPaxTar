@@ -90,12 +90,13 @@
 #define MPTAR_PAX_OVERHEAD_LINK (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS) // 11
 #define MPTAR_PAX_OVERHEAD_TIME (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS) // 8
 
-#define TAR_NAME_LENGTH 99
-#define TAR_LINKNAME_LENGTH 99
-#define TAR_PREFIX_LENGTH 154
-#define TAR_NAME_SIZE 100
-#define TAR_PREFIX_SIZE 155
-#define TAR_MAX_SIZE 8589934592ULL
+#define MPTAR_USTAR_SIZE_LINKNAME 100
+#define MPTAR_USTAR_SIZE_NAME 100
+#define MPTAR_USTAR_SIZE_PREFIX 155
+#define MPTAR_USTAR_MAX_LEN_NAME (MPTAR_USTAR_SIZE_NAME - 1)
+#define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1)
+#define MPTAR_USTAR_MAX_LEN_PREFIX (MPTAR_USTAR_SIZE_PREFIX - 1)
+#define MPTAR_USTAR_MAX_FILE_SIZE 8589934592ULL
 
 #define MPTAR_PAX_HAS_PATH        (1 << 0)
 #define MPTAR_PAX_HAS_LINK        (1 << 1)
@@ -105,6 +106,26 @@
 #define MPTAR_PAX_HAS_GID         (1 << 5)
 #define MPTAR_PAX_HAS_ATIME       (1 << 6)
 #define MPTAR_PAX_HAS_CTIME       (1 << 7)
+
+typedef struct {
+    char name[100];
+    char mode[8];
+    char uid[8];
+    char gid[8];
+    char size[12];
+    char mtime[12]; 
+    char checksum[8];
+    char typeflag;
+    char linkname[100];
+    char magic[6];
+    char version[2];
+    char uname[32];
+    char gname[32];
+    char devmajor[8];
+    char devminor[8];
+    char prefix[155];
+    char padding[12];
+} mptar_header;
 
 typedef struct {
     mptar_int64 sec; // Standard Unix timestamp (seconds)
@@ -138,10 +159,8 @@ typedef struct {
     char typeflag;
 } mptar_metadata;
 
-typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
 typedef void* (*mptar_alloc_fn)(void* user_data, mptar_size_t size);
 typedef void (*mptar_free_fn)(void* user_data, void* ptr);
-typedef mptar_size_t (*mptar_read_fn)(void* user_data, void* buffer, mptar_size_t size);
 
 typedef struct {
     mptar_alloc_fn alloc;
@@ -149,12 +168,9 @@ typedef struct {
     void* alloc_user_data;
 } mptar_memory_cfg;
 
-typedef struct {
-    mptar_memory_cfg memory;
-    mptar_write_fn write;
-    void* write_user_data;
-    mptar_uint64 bytes_left;
-} mptar_writer;
+#ifndef MPTAR_WITHOUT_READ
+
+typedef mptar_size_t (*mptar_read_fn)(void* user_data, void* buffer, mptar_size_t size);
 
 typedef struct {
     mptar_memory_cfg memory;
@@ -164,31 +180,26 @@ typedef struct {
     mptar_uint64 offset;
 } mptar_reader;
 
+int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
+mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err);
+int mptar_skip_data(mptar_reader* reader);
+
+#endif /* MPTAR_WITHOUT_READ */
+
+#ifndef MPTAR_WITHOUT_WRITE
+
+typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
+
 typedef struct {
-    char name[100];
-    char mode[8];
-    char uid[8];
-    char gid[8];
-    char size[12];
-    char mtime[12]; 
-    char checksum[8];
-    char typeflag;
-    char linkname[100];
-    char magic[6];
-    char version[2];
-    char uname[32];
-    char gname[32];
-    char devmajor[8];
-    char devminor[8];
-    char prefix[155];
-    char padding[12];
-} tar_header;
+    mptar_memory_cfg memory;
+    mptar_write_fn write;
+    void* write_user_data;
+    mptar_uint64 bytes_left;
+} mptar_writer;
 
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);
 mptar_size_t mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar_size_t size, int *out_err);
 int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
 int mptar_close_archive(mptar_writer *ctx);
 
-int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
-mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err);
-int mptar_skip_data(mptar_reader* reader);
+#endif /* MPTAR_WITHOUT_WRITE */
