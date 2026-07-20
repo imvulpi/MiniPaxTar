@@ -201,7 +201,7 @@ static int mptar_stream_write_zeroes(mptar_writer* ctx, mptar_size_t padding_nee
 static mptar_uint32 mptar_pax_calculate_record_len(mptar_uint32 data_len) {
     if (data_len > 4294967285U) return 0; // ERR: Would overflow
 
-    int digits = 1;
+    mptar_uint32 digits = 1;
     if (data_len >= 1000000000U) digits = 10;
     else if (data_len >= 100000000U) digits = 9;
     else if (data_len >= 10000000U)  digits = 8;
@@ -214,7 +214,7 @@ static mptar_uint32 mptar_pax_calculate_record_len(mptar_uint32 data_len) {
 
     mptar_uint32 total = data_len + digits;
     
-    int final_digits = 1;
+    mptar_uint32 final_digits = 1;
     if (total >= 1000000000U) final_digits = 10;
     else if (total >= 100000000U) final_digits = 9;
     else if (total >= 10000000U)  final_digits = 8;
