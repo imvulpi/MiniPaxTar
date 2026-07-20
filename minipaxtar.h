@@ -127,6 +127,9 @@
 #define MPTAR_PAX_HAS_UNAME (1 << 8)
 #define MPTAR_PAX_HAS_GNAME (1 << 9)
 
+// --- Writer Flags ---
+#define MPTAR_CTX_ALLOW_PAX_FOR_OCTAL   (1U << 0)  /* 0x01 */
+
 typedef struct {
     char name[100];
     char mode[8];
@@ -218,7 +221,7 @@ typedef struct {
     mptar_memory_cfg memory;
     mptar_write_fn write;
     void* write_user_data;
-    bool allow_pax_for_octal;
+    mptar_uint32 flags;
 } mptar_writer;
 
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);

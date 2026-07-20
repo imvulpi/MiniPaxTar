@@ -592,16 +592,16 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
     mptar_size_t gname_len = (meta->gname == MPTAR_NULL) ? 0 : mptar_strlen(meta->gname);
 
     bool large_path = !mptar_can_path_fit_ustar(meta->path, path_len);
-    bool large_size = ctx->allow_pax_for_octal && (meta->size >= MPTAR_USTAR_MAX_OCTAL_12B);
+    bool large_size = ((ctx->flags & MPTAR_CTX_ALLOW_PAX_FOR_OCTAL) != 0) && (meta->size >= MPTAR_USTAR_MAX_OCTAL_12B);
     bool large_link_target = (link_target_size > MPTAR_USTAR_MAX_LEN_LINKNAME);
-    bool uid_needs_pax = (meta->uid > MPTAR_USTAR_MAX_OCTAL_8B) && (ctx->allow_pax_for_octal || meta->uid > MPTAR_BINARY_MAX_8B);
-    bool gid_needs_pax = (meta->gid > MPTAR_USTAR_MAX_OCTAL_8B) && (ctx->allow_pax_for_octal || meta->gid > MPTAR_BINARY_MAX_8B);
+    bool uid_needs_pax = (meta->uid > MPTAR_USTAR_MAX_OCTAL_8B) && (((ctx->flags & MPTAR_CTX_ALLOW_PAX_FOR_OCTAL) != 0) || meta->uid > MPTAR_BINARY_MAX_8B);
+    bool gid_needs_pax = (meta->gid > MPTAR_USTAR_MAX_OCTAL_8B) && (((ctx->flags & MPTAR_CTX_ALLOW_PAX_FOR_OCTAL) != 0) || meta->gid > MPTAR_BINARY_MAX_8B);
     bool uname_needs_pax = (uname_len > MPTAR_USTAR_MAX_LEN_UNAME);
     bool gname_needs_pax = (gname_len > MPTAR_USTAR_MAX_LEN_GNAME);
 
     bool mtime_needs_pax = meta->mtime.has_value && 
         (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0
-        || (meta->mtime.value.sec > MPTAR_USTAR_MAX_OCTAL_12B && ctx->allow_pax_for_octal));
+        || (meta->mtime.value.sec > MPTAR_USTAR_MAX_OCTAL_12B && ((ctx->flags & MPTAR_CTX_ALLOW_PAX_FOR_OCTAL) != 0)));
     
     #ifdef MPTAR_SUPPORT_EXTRA_TIMES
         bool times_need_pax = mtime_needs_pax || meta->atime.has_value || meta->ctime.has_value;
@@ -1431,7 +1431,7 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
     out_meta->link_target = MPTAR_NULL;
     out_meta->uname = MPTAR_NULL;
     out_meta->gname = MPTAR_NULL;
-    
+
     mptar_uint32 pax_flags = 0;
     char header_bytes[512];
     int res = MPTAR_OK;
