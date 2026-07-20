@@ -595,6 +595,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         bool times_need_pax = mtime_needs_pax;
     #endif
 
+    int res = MPTAR_OK;
     bool need_pax = large_path || large_size || large_link_target || uid_needs_pax || gid_needs_pax || uname_needs_pax || gname_needs_pax || times_need_pax;
     if(need_pax) {
         mptar_uint64 pax_header_size = 0;
@@ -632,7 +633,8 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         }
 
         if (large_size) {
-            mptar_u64toa(meta->size, size_str_buf, sizeof(size_str_buf), MPTAR_NULL);
+            mptar_u64toa(meta->size, size_str_buf, sizeof(size_str_buf), &res);
+            if (res != MPTAR_OK) return res;
             size_str_len = mptar_strlen(size_str_buf);
             pax_size_size = mptar_pax_calculate_record_len((mptar_uint32)size_str_len + MPTAR_PAX_OVERHEAD_SIZE);
             pax_header_size += pax_size_size;
@@ -644,7 +646,8 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         }
 
         if (mtime_needs_pax) {
-            mptar_pax_format_time(meta->mtime.value.sec, meta->mtime.value.nsec, mtime_str_buf, sizeof(mtime_str_buf), MPTAR_NULL);
+            mptar_pax_format_time(meta->mtime.value.sec, meta->mtime.value.nsec, mtime_str_buf, sizeof(mtime_str_buf), &res);
+            if (res != MPTAR_OK) return res;
             mtime_str_len = mptar_strlen(mtime_str_buf);
             pax_mtime_size = mptar_pax_calculate_record_len((mptar_uint32)mtime_str_len + MPTAR_PAX_OVERHEAD_TIME);
             pax_header_size += pax_mtime_size;
@@ -652,14 +655,16 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
 
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
         if (meta->atime.has_value) {
-            mptar_pax_format_time(meta->atime.value.sec, meta->atime.value.nsec, atime_str_buf, sizeof(atime_str_buf), MPTAR_NULL);
+            mptar_pax_format_time(meta->atime.value.sec, meta->atime.value.nsec, atime_str_buf, sizeof(atime_str_buf), &res);
+            if (res != MPTAR_OK) return res;
             atime_str_len = mptar_strlen(atime_str_buf);
             pax_atime_size = mptar_pax_calculate_record_len((mptar_uint32)atime_str_len + MPTAR_PAX_OVERHEAD_TIME);
             pax_header_size += pax_atime_size;
         }
 
         if (meta->ctime.has_value) {
-            mptar_pax_format_time(meta->ctime.value.sec, meta->ctime.value.nsec, ctime_str_buf, sizeof(ctime_str_buf), MPTAR_NULL);
+            mptar_pax_format_time(meta->ctime.value.sec, meta->ctime.value.nsec, ctime_str_buf, sizeof(ctime_str_buf), &res);
+            if (res != MPTAR_OK) return res;
             ctime_str_len = mptar_strlen(ctime_str_buf);
             pax_ctime_size = mptar_pax_calculate_record_len((mptar_uint32)ctime_str_len + MPTAR_PAX_OVERHEAD_TIME);
             pax_header_size += pax_ctime_size;
@@ -667,14 +672,16 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
 #endif
 
         if (uid_needs_pax) {
-            mptar_u64toa(meta->uid, uid_str_buf, sizeof(uid_str_buf), MPTAR_NULL);
+            mptar_u64toa(meta->uid, uid_str_buf, sizeof(uid_str_buf), &res);
+            if (res != MPTAR_OK) return res;
             uid_str_len = mptar_strlen(uid_str_buf);
             pax_uid_size = mptar_pax_calculate_record_len((mptar_uint32)uid_str_len + MPTAR_PAX_OVERHEAD_UID);
             pax_header_size += pax_uid_size;
         }
 
         if (gid_needs_pax) {
-            mptar_u64toa(meta->gid, gid_str_buf, sizeof(gid_str_buf), MPTAR_NULL);
+            mptar_u64toa(meta->gid, gid_str_buf, sizeof(gid_str_buf), &res);
+            if (res != MPTAR_OK) return res;
             gid_str_len = mptar_strlen(gid_str_buf);
             pax_gid_size = mptar_pax_calculate_record_len((mptar_uint32)gid_str_len + MPTAR_PAX_OVERHEAD_GID);
             pax_header_size += pax_gid_size;
@@ -690,7 +697,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
             pax_header_size += pax_gname_size;
         }
 
-        int res = mptar_write_pax_header(ctx, pax_header_size, (mptar_metadata*)meta);
+        res = mptar_write_pax_header(ctx, pax_header_size, meta);
         if (res != MPTAR_OK) return res;
 
         if (large_path) {
@@ -770,7 +777,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
 
     ctx->bytes_left = meta->size;
 
-    return MPTAR_OK;
+    return MPTAR_OK;    
 }
 
 mptar_size_t mptar_write_data_chunk(mptar_writer *ctx, const void *buffer, mptar_size_t size, int *out_err)
