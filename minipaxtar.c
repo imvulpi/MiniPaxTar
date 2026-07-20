@@ -399,7 +399,7 @@ static bool mptar_can_path_fit_ustar(const char* path, mptar_size_t len) {
     return false;
 }
 
-static int mptar_write_ustar_path(char* header_name, char* header_prefix, char* full_path)
+static int mptar_write_ustar_path(char* header_name, char* header_prefix, const char* full_path)
 {
     if(header_name == MPTAR_NULL || full_path == MPTAR_NULL) return MPTAR_ERR_INVALID_ARG; // header_prefix can be null.
 
@@ -461,7 +461,7 @@ static int mptar_write_ustar_path(char* header_name, char* header_prefix, char* 
     return MPTAR_OK;
 }
 
-static int mptar_write_ustar_header(mptar_header* header, mptar_metadata* meta){
+static int mptar_write_ustar_header(mptar_header* header, const mptar_metadata* meta){
     if (header == MPTAR_NULL || meta == MPTAR_NULL) {
         return MPTAR_ERR_INVALID_ARG;
     }
@@ -475,14 +475,14 @@ static int mptar_write_ustar_header(mptar_header* header, mptar_metadata* meta){
 
     if (meta->typeflag == '1' || meta->typeflag == '2') {
         if (meta->link_target != MPTAR_NULL) {
-            int link_res = mptar_write_ustar_path(header->linkname, MPTAR_NULL, (char*)meta->link_target);
+            int link_res = mptar_write_ustar_path(header->linkname, MPTAR_NULL, meta->link_target);
             if (link_res == MPTAR_NEEDS_PAX) {
                 result_status = MPTAR_NEEDS_PAX;
             }
         }
     }
 
-    int path_res = mptar_write_ustar_path(header->name, header->prefix, (char*)meta->path);
+    int path_res = mptar_write_ustar_path(header->name, header->prefix, meta->path);
     if (path_res == MPTAR_NEEDS_PAX) {
         result_status = MPTAR_NEEDS_PAX;
     }
@@ -527,7 +527,7 @@ static int mptar_write_ustar_header(mptar_header* header, mptar_metadata* meta){
     return result_status;
 }
 
-static int mptar_write_pax_header(mptar_writer* ctx, mptar_uint64 size, mptar_metadata* meta){
+static int mptar_write_pax_header(mptar_writer* ctx, mptar_uint64 size, const mptar_metadata* meta){
     if (ctx == MPTAR_NULL || meta == MPTAR_NULL) {
         return MPTAR_ERR_INVALID_ARG;
     }
