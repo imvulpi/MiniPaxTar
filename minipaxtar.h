@@ -184,6 +184,7 @@ typedef struct {
 #endif
 
     char typeflag;
+    bool internal_alloc;
 } mptar_metadata;
 
 typedef void* (*mptar_alloc_fn)(void* user_data, mptar_size_t size);

@@ -1427,6 +1427,7 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
     out_meta->link_target = MPTAR_NULL;
     out_meta->uname = MPTAR_NULL;
     out_meta->gname = MPTAR_NULL;
+    out_meta->internal_alloc = true;
 
     mptar_uint32 pax_flags = 0;
     char header_bytes[512];
@@ -1640,7 +1641,7 @@ int mptar_skip_data(mptar_reader* reader) {
 
 void mptar_reader_free_metadata(mptar_reader *reader, mptar_metadata *meta)
 {
-    if (!reader || !meta) return;
+    if (!reader || !meta || !meta->internal_alloc) return;
 
 MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN // Reason: metadata strings in reading api are allocated dynamically.
     if (meta->path) {
@@ -1660,6 +1661,7 @@ MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN // Reason: metadata strings in reading ap
         meta->gname = MPTAR_NULL;
     }
     
+    meta->internal_alloc = false;
 
 MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
 }
