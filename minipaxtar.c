@@ -8,6 +8,7 @@
 #define mptar_strlen  strlen
 #define mptar_strnlen strnlen
 #define mptar_strcpy  strcpy
+#define mptar_strncpy strncpy
 #define mptar_memcpy  memcpy
 #define mptar_memset  memset
 #define mptar_memcmp  memcmp
@@ -46,6 +47,26 @@ static mptar_size_t mptar_strcpy(char* dest, const char* src) {
     }
     dest[i] = '\0';
     return i;
+}
+
+static char* mptar_strncpy(char* dst, const char* src, mptar_size_t n) {
+    if (dst == MPTAR_NULL || n == 0) return dst;
+    
+    mptar_size_t i = 0;
+    
+    if (src != MPTAR_NULL) {
+        while (i < n && src[i] != '\0') {
+            dst[i] = src[i];
+            i++;
+        }
+    }
+    
+    while (i < n) {
+        dst[i] = '\0';
+        i++;
+    }
+    
+    return dst;
 }
 
 static void mptar_memcpy(void* dest, const void* src, mptar_size_t n) {
@@ -480,8 +501,18 @@ static int mptar_write_ustar_header(mptar_header* header, mptar_metadata* meta){
         result_status = MPTAR_NEEDS_PAX;
     }
     
-    mptar_write_octal_field(header->gid, (mptar_uint64)meta->gid, 8);
-    mptar_write_octal_field(header->uid, (mptar_uint64)meta->uid, 8);
+    if (meta->uname != MPTAR_NULL) {
+        mptar_strncpy(header->uname, meta->uname, 32);
+        header->uname[31] = '\0';
+    }
+
+    if (meta->gname != MPTAR_NULL) {
+        mptar_strncpy(header->gname, meta->gname, 32);
+        header->gname[31] = '\0';
+    }
+
+    mptar_write_octal_field(header->gid, meta->gid, 8);
+    mptar_write_octal_field(header->uid, meta->uid, 8);
     mptar_write_octal_field(header->mode, (mptar_uint64)meta->mode, 8);
 
 #ifdef MPTAR_SUPPORT_SPECIAL
@@ -557,9 +588,17 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
     
     mptar_size_t path_len = mptar_strlen(meta->path);
     mptar_size_t link_target_size = (meta->link_target == MPTAR_NULL) ? 0 : mptar_strlen(meta->link_target);
+    mptar_size_t uname_len = (meta->uname == MPTAR_NULL) ? 0 : mptar_strlen(meta->uname);
+    mptar_size_t gname_len = (meta->gname == MPTAR_NULL) ? 0 : mptar_strlen(meta->gname);
+
     bool large_path = !mptar_can_path_fit_ustar(meta->path, path_len);
     bool large_size = ctx->allow_pax_for_octal && (meta->size >= MPTAR_USTAR_MAX_OCTAL_12B);
     bool large_link_target = (link_target_size > MPTAR_USTAR_MAX_LEN_LINKNAME);
+    bool uid_needs_pax = (meta->uid > MPTAR_USTAR_MAX_OCTAL_8B) && (ctx->allow_pax_for_octal || meta->uid > MPTAR_BINARY_MAX_8B);
+    bool gid_needs_pax = (meta->gid > MPTAR_USTAR_MAX_OCTAL_8B) && (ctx->allow_pax_for_octal || meta->gid > MPTAR_BINARY_MAX_8B);
+    bool uname_needs_pax = (uname_len > MPTAR_USTAR_MAX_LEN_UNAME);
+    bool gname_needs_pax = (gname_len > MPTAR_USTAR_MAX_LEN_GNAME);
+
     bool mtime_needs_pax = meta->mtime.has_value && 
         (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0
         || (meta->mtime.value.sec > MPTAR_USTAR_MAX_OCTAL_12B && ctx->allow_pax_for_octal));
@@ -570,8 +609,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         bool times_need_pax = mtime_needs_pax;
     #endif
 
-    bool need_pax = large_path || large_size || large_link_target || times_need_pax;
-
+    bool need_pax = large_path || large_size || large_link_target || uid_needs_pax || gid_needs_pax || uname_needs_pax || gname_needs_pax || times_need_pax;
     if(need_pax) {
         mptar_uint64 pax_header_size = 0;
         char size_str_buf[21] = {0};
@@ -583,6 +621,15 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         mptar_uint32 pax_mtime_size = 0;
         char mtime_str_buf[32];
         mptar_size_t mtime_str_len = 0;
+        char uid_str_buf[24];
+        char gid_str_buf[24];
+        mptar_size_t uid_str_len = 0;
+        mptar_size_t gid_str_len = 0;
+
+        mptar_size_t pax_uid_size = 0;
+        mptar_size_t pax_gid_size = 0;
+        mptar_size_t pax_uname_size = 0;
+        mptar_size_t pax_gname_size = 0;
 
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
         mptar_uint32 pax_atime_size = 0;
@@ -633,6 +680,30 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         }
 #endif
 
+        if (uid_needs_pax) {
+            mptar_u64toa(meta->uid, uid_str_buf, sizeof(uid_str_buf), MPTAR_NULL);
+            uid_str_len = mptar_strlen(uid_str_buf);
+            pax_uid_size = mptar_pax_calculate_record_len(uid_str_len + MPTAR_PAX_OVERHEAD_UID);
+            pax_header_size += pax_uid_size;
+        }
+
+        if (gid_needs_pax) {
+            mptar_u64toa(meta->gid, gid_str_buf, sizeof(gid_str_buf), MPTAR_NULL);
+            gid_str_len = mptar_strlen(gid_str_buf);
+            pax_gid_size = mptar_pax_calculate_record_len(gid_str_len + MPTAR_PAX_OVERHEAD_GID);
+            pax_header_size += pax_gid_size;
+        }
+
+        if (uname_needs_pax) {
+            pax_uname_size = mptar_pax_calculate_record_len(uname_len + MPTAR_PAX_OVERHEAD_UNAME);
+            pax_header_size += pax_uname_size;
+        }
+
+        if (gname_needs_pax) {
+            pax_gname_size = mptar_pax_calculate_record_len(gname_len + MPTAR_PAX_OVERHEAD_GNAME);
+            pax_header_size += pax_gname_size;
+        }
+
         int res = mptar_write_pax_header(ctx, pax_header_size, (mptar_metadata*)meta);
         if (res != MPTAR_OK) return res;
 
@@ -667,6 +738,26 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
             if (res != MPTAR_OK) return res;
         }
 #endif
+
+        if (uid_needs_pax) {
+            res = mptar_pax_stream_record(ctx, pax_uid_size, "uid", uid_str_buf, uid_str_len);
+            if (res != MPTAR_OK) return res;
+        }
+
+        if (gid_needs_pax) {
+            res = mptar_pax_stream_record(ctx, pax_gid_size, "gid", gid_str_buf, gid_str_len);
+            if (res != MPTAR_OK) return res;
+        }
+
+        if (uname_needs_pax) {
+            res = mptar_pax_stream_record(ctx, pax_uname_size, "uname", meta->uname, uname_len);
+            if (res != MPTAR_OK) return res;
+        }
+
+        if (gname_needs_pax) {
+            res = mptar_pax_stream_record(ctx, pax_gname_size, "gname", meta->gname, gname_len);
+            if (res != MPTAR_OK) return res;
+        }
 
         mptar_size_t remainder = (mptar_size_t)(pax_header_size % 512);
         mptar_size_t padding_needed = (remainder > 0) ? (512 - remainder) : 0;
@@ -1161,14 +1252,10 @@ static void mptar_apply_pax_kv(mptar_reader* reader, const char* key, mptar_size
         mptar_apply_pax_u64(val, val_len, &meta->size, pax_flags, MPTAR_PAX_HAS_SIZE);
     } 
     else if (key_len == 3 && mptar_memcmp(key, "uid", 3) == 0) {
-        mptar_uint64 tmp_uid = meta->uid;
-        mptar_apply_pax_u64(val, val_len, &tmp_uid, pax_flags, MPTAR_PAX_HAS_UID);
-        meta->uid = (mptar_uint32)tmp_uid;
+        mptar_apply_pax_u64(val, val_len, &meta->uid, pax_flags, MPTAR_PAX_HAS_UID);
     } 
     else if (key_len == 3 && mptar_memcmp(key, "gid", 3) == 0) {
-        mptar_uint64 tmp_gid = meta->gid;
-        mptar_apply_pax_u64(val, val_len, &tmp_gid, pax_flags, MPTAR_PAX_HAS_GID);
-        meta->gid = (mptar_uint32)tmp_gid;
+        mptar_apply_pax_u64(val, val_len, &meta->gid, pax_flags, MPTAR_PAX_HAS_GID);
     }
     else if (key_len == 5 && mptar_memcmp(key, "mtime", 5) == 0) {
         mptar_apply_pax_time(val, val_len, &meta->mtime, pax_flags, MPTAR_PAX_HAS_MTIME);
@@ -1290,13 +1377,13 @@ static int mptar_parse_ustar_header(const mptar_header* header, mptar_metadata* 
     }
 
     error = MPTAR_OK;
-    out_meta->uid = (mptar_uint32)mptar_parse_octal_field(header->uid, 8, &error);
+    out_meta->uid = mptar_parse_octal_field(header->uid, 8, &error);
     if (error != MPTAR_OK) {
         out_meta->uid = 0;
     }
 
     error = MPTAR_OK;
-    out_meta->gid = (mptar_uint32)mptar_parse_octal_field(header->gid, 8, &error);
+    out_meta->gid = mptar_parse_octal_field(header->gid, 8, &error);
     if (error != MPTAR_OK) {
         out_meta->gid = 0;
     }

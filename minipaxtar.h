@@ -79,28 +79,40 @@
 #define MPTAR_ERR_OVERFLOW            -10  /* An arithmetic wrap-around or internal buffer write boundary violation detected */
 #define MPTAR_ERR_PATH_TOO_LONG       -11  /* File path exceeds the native physical limits of a standard USTAR block. */
 
-#define MPTAR_PAX_STATIC_CHARS 3
-#define MPTAR_PAX_KEY_LEN_PATH 4
-#define MPTAR_PAX_KEY_LEN_SIZE 4
-#define MPTAR_PAX_KEY_LEN_LINK 8
-#define MPTAR_PAX_KEY_LEN_TIME 5
+#define MPTAR_PAX_KEY_LEN_PATH   4
+#define MPTAR_PAX_KEY_LEN_SIZE   4
+#define MPTAR_PAX_KEY_LEN_LINK   8
+#define MPTAR_PAX_KEY_LEN_TIME   5
+#define MPTAR_PAX_KEY_LEN_UID    3 
+#define MPTAR_PAX_KEY_LEN_GID    3 
+#define MPTAR_PAX_KEY_LEN_UNAME  5 
+#define MPTAR_PAX_KEY_LEN_GNAME  5 
 
-#define MPTAR_PAX_OVERHEAD_PATH (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS) // 7
-#define MPTAR_PAX_OVERHEAD_SIZE (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS) // 7
-#define MPTAR_PAX_OVERHEAD_LINK (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS) // 11
-#define MPTAR_PAX_OVERHEAD_TIME (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS) // 8
+#define MPTAR_PAX_STATIC_CHARS 3 /* Space (' '), Equals ('='), and Newline ('\n') */
+
+#define MPTAR_PAX_OVERHEAD_PATH  (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS) // 7
+#define MPTAR_PAX_OVERHEAD_SIZE  (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS) // 7
+#define MPTAR_PAX_OVERHEAD_LINK  (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS) // 11
+#define MPTAR_PAX_OVERHEAD_TIME  (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS) // 8
+#define MPTAR_PAX_OVERHEAD_UID   (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
+#define MPTAR_PAX_OVERHEAD_GID   (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
+#define MPTAR_PAX_OVERHEAD_UNAME (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
+#define MPTAR_PAX_OVERHEAD_GNAME (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
 
 #define MPTAR_USTAR_SIZE_LINKNAME 100
 #define MPTAR_USTAR_SIZE_NAME 100
 #define MPTAR_USTAR_SIZE_PREFIX 155
-#define MPTAR_USTAR_MAX_LEN_NAME (MPTAR_USTAR_SIZE_NAME - 1)
-#define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1)
-#define MPTAR_USTAR_MAX_LEN_PREFIX (MPTAR_USTAR_SIZE_PREFIX - 1)
-
+#define MPTAR_USTAR_SIZE_UNAME 32
+#define MPTAR_USTAR_SIZE_GNAME 32
+#define MPTAR_USTAR_MAX_LEN_NAME (MPTAR_USTAR_SIZE_NAME - 1) // 99
+#define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1) // 99
+#define MPTAR_USTAR_MAX_LEN_PREFIX (MPTAR_USTAR_SIZE_PREFIX - 1) // 154
+#define MPTAR_USTAR_MAX_LEN_UNAME (MPTAR_USTAR_SIZE_UNAME - 1) // 31
+#define MPTAR_USTAR_MAX_LEN_GNAME (MPTAR_USTAR_SIZE_GNAME - 1) // 31
 
 #define MPTAR_USTAR_MAX_OCTAL_12B 8589934591ULL
 #define MPTAR_USTAR_MAX_OCTAL_8B  2097151ULL
-#define MPTAR_BINARY_MAX_8B       MPTAR_INT64_MAX
+#define MPTAR_BINARY_MAX_8B MPTAR_INT64_MAX
 
 #define MPTAR_PAX_HAS_PATH        (1 << 0)
 #define MPTAR_PAX_HAS_LINK        (1 << 1)
@@ -144,12 +156,14 @@ typedef struct {
 typedef struct {
     const char* path;
     const char* link_target;
+    const char* uname;
+    const char* gname;
     mptar_uint64 size;
     mptar_uint32 mode;
-    mptar_uint32 uid;
-    mptar_uint32 gid;
+    mptar_uint64 uid;
+    mptar_uint64 gid;
+    
     mptar_opt_time mtime;
-
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
     mptar_opt_time atime; // Access time
     mptar_opt_time ctime; // Change time
