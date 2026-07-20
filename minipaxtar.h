@@ -65,21 +65,22 @@
     #define MPTAR_UINT64_MAX UINT64_MAX
 #endif
 
-#define MPTAR_OK                       0   /* Operation completed successfully */
-#define MPTAR_EOF                      1   /* End of Archive reached (two consecutive null blocks) */
-#define MPTAR_NEEDS_PAX                2   /* Item cannot fit in standard USTAR and requires a PAX extended header. */
+#define MPTAR_OK                        0   /* Operation completed successfully */
+#define MPTAR_EOF                       1   /* End of Archive reached (two consecutive null blocks) */
+#define MPTAR_NEEDS_PAX                 2   /* Item cannot fit in standard USTAR and requires a PAX extended header. */
 
-#define MPTAR_ERR_INVALID_ARG         -1   /* NULL context pointers or zero-length arguments passed */
-#define MPTAR_ERR_ALLOC               -2   /* Memory allocation failed or returned an invalid pointer */
-#define MPTAR_ERR_IO_READ             -3   /* Read callback failed to return the requested number of bytes */
-#define MPTAR_ERR_IO_WRITE            -4   /* Write callback failed to write the complete chunk to storage */
-#define MPTAR_ERR_CHECKSUM            -5   /* Header checksum verification failed; record is corrupted */
-#define MPTAR_ERR_UNSUPPORTED_TYPE    -6   /* Encountered an explicit special file type (FIFO, Block, Char) not supported */
-#define MPTAR_ERR_WRITE_OVERFLOW      -7   /* Requested write size exceeds remaining available bytes_left for current file payload */
-#define MPTAR_ERR_INCOMPLETE_PAYLOAD  -8   /* mptar_write_finalize called while bytes_left is still greater than 0 */
-#define MPTAR_ERR_MALFORMED           -9   /* Archive format anomaly or structural corruption was detected. */
-#define MPTAR_ERR_OVERFLOW            -10  /* An arithmetic wrap-around or internal buffer write boundary violation detected */
-#define MPTAR_ERR_PATH_TOO_LONG       -11  /* File path exceeds the native physical limits of a standard USTAR block. */
+#define MPTAR_ERR_INVALID_ARG          -1   /* NULL context pointers or zero-length arguments passed */
+#define MPTAR_ERR_ALLOC                -2   /* Memory allocation failed or returned an invalid pointer */
+#define MPTAR_ERR_IO_READ              -3   /* Read callback failed to return the requested number of bytes */
+#define MPTAR_ERR_IO_WRITE             -4   /* Write callback failed to write the complete chunk to storage */
+#define MPTAR_ERR_CHECKSUM             -5   /* Header checksum verification failed; record is corrupted */
+#define MPTAR_ERR_UNSUPPORTED_TYPE     -6   /* Encountered an explicit special file type (FIFO, Block, Char) not supported */
+#define MPTAR_ERR_WRITE_OVERFLOW       -7   /* Requested write size exceeds remaining available bytes_left for current file payload */
+#define MPTAR_ERR_INCOMPLETE_PAYLOAD   -8   /* mptar_write_finalize called while bytes_left is still greater than 0 */
+#define MPTAR_ERR_MALFORMED            -9   /* Archive format anomaly or structural corruption was detected. */
+#define MPTAR_ERR_OVERFLOW             -10  /* An arithmetic wrap-around or internal buffer write boundary violation detected */
+#define MPTAR_ERR_PATH_TOO_LONG        -11  /* File path exceeds the native physical limits of a standard USTAR block. */
+#define MPTAR_ERR_NS_CONVERSION_FAILED -12  /* Conversion of nanoseconds to string failed. One way for this to occur is if the value is above 999,999,999. */
 
 #define MPTAR_PAX_KEY_LEN_PATH   4
 #define MPTAR_PAX_KEY_LEN_SIZE   4

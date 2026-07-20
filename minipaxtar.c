@@ -247,11 +247,12 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
     }
 
     mptar_size_t int_size = mptar_strlen(str);
-    char nsec_buf[11]; // Space for 9 digits + \0
-    
+
+    char nsec_buf[10] = {0}; // Space for 9 digits + \0
     int nsec_err = MPTAR_OK;
     mptar_u64toa(nsec, nsec_buf, sizeof(nsec_buf), &nsec_err);
     if (nsec_err != MPTAR_OK) {
+        if(out_err) *out_err = MPTAR_ERR_NS_CONVERSION_FAILED;
         return str; 
     }
 
