@@ -1273,11 +1273,10 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
     if (!reader || !meta || !pax_flags) return MPTAR_ERR_INVALID_ARG;
     if (total_pax_size == 0) return MPTAR_OK;
 
-    if (total_pax_size > (mptar_uint32)((mptar_size_t)-1)) {
+    mptar_size_t size_t_pax = (mptar_size_t)total_pax_size;
+    if (size_t_pax != total_pax_size) {
         return MPTAR_ERR_OVERFLOW;
     }
-
-    mptar_size_t size_t_pax = (mptar_size_t)total_pax_size;
 
     char* buffer = (char*)reader->memory.alloc(reader->memory.alloc_user_data, size_t_pax);
     if (!buffer) return MPTAR_ERR_ALLOC;
