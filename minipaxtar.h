@@ -32,12 +32,13 @@
     #endif
 
     #define MPTAR_NULL ((void*)0)
-    #define MPTAR_INT64_MAX (9223372036854775807LL)
-    #define MPTAR_INT64_MIN (-MPTAR_INT64_MAX - 1LL)
+
+    #define MPTAR_INT64_MAX  (9223372036854775807LL)
+    #define MPTAR_INT64_MIN  (-MPTAR_INT64_MAX - 1LL)
     #define MPTAR_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
 #ifndef bool
     typedef _Bool bool;
-    #define true 1
+    #define true  1
     #define false 0
 #endif
 
@@ -49,7 +50,7 @@
     typedef int64_t mptar_int64;
     typedef int32_t mptar_int32;
     typedef int16_t mptar_int16;
-    typedef int8_t mptar_int8;
+    typedef int8_t  mptar_int8;
 
     typedef uint64_t mptar_uint64;
     typedef uint32_t mptar_uint32;
@@ -57,9 +58,10 @@
     typedef uint8_t  mptar_uint8;
     typedef size_t   mptar_size_t;
     
-    #define MPTAR_NULL NULL
-    #define MPTAR_INT64_MIN INT64_MIN
-    #define MPTAR_INT64_MAX INT64_MAX
+    #define MPTAR_NULL       NULL
+
+    #define MPTAR_INT64_MIN  INT64_MIN
+    #define MPTAR_INT64_MAX  INT64_MAX
     #define MPTAR_UINT64_MAX UINT64_MAX
 #endif
 
@@ -88,42 +90,42 @@
 #define MPTAR_PAX_KEY_LEN_UNAME  5 
 #define MPTAR_PAX_KEY_LEN_GNAME  5 
 
-#define MPTAR_PAX_STATIC_CHARS 3 /* Space (' '), Equals ('='), and Newline ('\n') */
+#define MPTAR_PAX_STATIC_CHARS   3 // Space (' '), Equals ('='), and Newline ('\n')
 
-#define MPTAR_PAX_OVERHEAD_PATH  (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS) // 7
-#define MPTAR_PAX_OVERHEAD_SIZE  (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS) // 7
-#define MPTAR_PAX_OVERHEAD_LINK  (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS) // 11
-#define MPTAR_PAX_OVERHEAD_TIME  (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS) // 8
-#define MPTAR_PAX_OVERHEAD_UID   (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
-#define MPTAR_PAX_OVERHEAD_GID   (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
-#define MPTAR_PAX_OVERHEAD_UNAME (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
-#define MPTAR_PAX_OVERHEAD_GNAME (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
+#define MPTAR_PAX_OVERHEAD_PATH  (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS)  // 7
+#define MPTAR_PAX_OVERHEAD_SIZE  (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS)  // 7
+#define MPTAR_PAX_OVERHEAD_LINK  (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS)  // 11
+#define MPTAR_PAX_OVERHEAD_TIME  (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS)  // 8
+#define MPTAR_PAX_OVERHEAD_UID   (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS) // 6
+#define MPTAR_PAX_OVERHEAD_GID   (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS) // 6
+#define MPTAR_PAX_OVERHEAD_UNAME (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS) // 8
+#define MPTAR_PAX_OVERHEAD_GNAME (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS) // 8
 
 #define MPTAR_USTAR_SIZE_LINKNAME 100
 #define MPTAR_USTAR_SIZE_NAME 100
 #define MPTAR_USTAR_SIZE_PREFIX 155
 #define MPTAR_USTAR_SIZE_UNAME 32
 #define MPTAR_USTAR_SIZE_GNAME 32
-#define MPTAR_USTAR_MAX_LEN_NAME (MPTAR_USTAR_SIZE_NAME - 1) // 99
+#define MPTAR_USTAR_MAX_LEN_NAME     (MPTAR_USTAR_SIZE_NAME - 1)     // 99
 #define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1) // 99
-#define MPTAR_USTAR_MAX_LEN_PREFIX (MPTAR_USTAR_SIZE_PREFIX - 1) // 154
-#define MPTAR_USTAR_MAX_LEN_UNAME (MPTAR_USTAR_SIZE_UNAME - 1) // 31
-#define MPTAR_USTAR_MAX_LEN_GNAME (MPTAR_USTAR_SIZE_GNAME - 1) // 31
+#define MPTAR_USTAR_MAX_LEN_PREFIX   (MPTAR_USTAR_SIZE_PREFIX - 1)   // 154
+#define MPTAR_USTAR_MAX_LEN_UNAME    (MPTAR_USTAR_SIZE_UNAME - 1)    // 31
+#define MPTAR_USTAR_MAX_LEN_GNAME    (MPTAR_USTAR_SIZE_GNAME - 1)    // 31
 
 #define MPTAR_USTAR_MAX_OCTAL_12B 8589934591ULL
 #define MPTAR_USTAR_MAX_OCTAL_8B  2097151ULL
-#define MPTAR_BINARY_MAX_8B MPTAR_INT64_MAX
+#define MPTAR_BINARY_MAX_8B       MPTAR_INT64_MAX
 
-#define MPTAR_PAX_HAS_PATH        (1 << 0)
-#define MPTAR_PAX_HAS_LINK        (1 << 1)
-#define MPTAR_PAX_HAS_SIZE        (1 << 2)
-#define MPTAR_PAX_HAS_MTIME       (1 << 3)
-#define MPTAR_PAX_HAS_UID         (1 << 4)
-#define MPTAR_PAX_HAS_GID         (1 << 5)
-#define MPTAR_PAX_HAS_ATIME       (1 << 6)
-#define MPTAR_PAX_HAS_CTIME       (1 << 7)
-#define MPTAR_PAX_HAS_UNAME       (1 << 8)
-#define MPTAR_PAX_HAS_GNAME       (1 << 9)
+#define MPTAR_PAX_HAS_PATH  (1 << 0)
+#define MPTAR_PAX_HAS_LINK  (1 << 1)
+#define MPTAR_PAX_HAS_SIZE  (1 << 2)
+#define MPTAR_PAX_HAS_MTIME (1 << 3)
+#define MPTAR_PAX_HAS_UID   (1 << 4)
+#define MPTAR_PAX_HAS_GID   (1 << 5)
+#define MPTAR_PAX_HAS_ATIME (1 << 6)
+#define MPTAR_PAX_HAS_CTIME (1 << 7)
+#define MPTAR_PAX_HAS_UNAME (1 << 8)
+#define MPTAR_PAX_HAS_GNAME (1 << 9)
 
 typedef struct {
     char name[100];
@@ -146,7 +148,7 @@ typedef struct {
 } mptar_header;
 
 typedef struct {
-    mptar_int64 sec; // Standard Unix timestamp (seconds)
+    mptar_int64 sec;   // Standard Unix timestamp (seconds)
     mptar_uint32 nsec; // Nanoseconds (0 to 999,999,999) for subsecond precision
 } mptar_timespec;
 
