@@ -302,31 +302,39 @@ static int mptar_pax_stream_record(mptar_writer* ctx, mptar_uint32 record_size, 
 
 static void mptar_write_octal_field(char* dst, mptar_uint64 value, mptar_size_t size)
 {
-    if(dst == MPTAR_NULL || size < 2) return;
+    if(dst == MPTAR_NULL || size == 0) return;
+
+    mptar_size_t octal_digits = size - 1; 
+    mptar_uint64 max_octal_val = 0;
+    
+    if (octal_digits >= 22) {
+        max_octal_val = MPTAR_UINT64_MAX;
+    } else {
+        max_octal_val = ((mptar_uint64)1 << (octal_digits * 3)) - 1;
+    }
+
+    if (value > max_octal_val) {
+        mptar_size_t i = size;
+
+        while(i > 0){
+            dst[--i] = (char)(value & 0xFF);
+            value >>= 8;
+        }
+
+        dst[0] |= 0x80;
+        return;
+    }
 
     mptar_memset(dst, '0', size);
     dst[size - 1] = '\0';
 
-    mptar_size_t digits = size - 1; 
-    
-    mptar_uint64 max_val;
-    if (digits >= 21) { // 21 * 3 = 63 bits max safely
-        max_val = 0xFFFFFFFFFFFFFFFFULL;
-    } else {
-        max_val = ((mptar_uint64)1 << (digits * 3)) - 1;
-    }
-
-    if (value > max_val) {
-        value = max_val;
-    }
-
-    mptar_size_t i = digits;
+    mptar_size_t i = octal_digits;
     while (i > 0) {
         dst[--i] = '0' + (value & 7);
         value >>= 3;
     }
 
-    dst[digits] = '\0';
+    dst[octal_digits] = '\0';
 }
 
 static mptar_uint32 mptar_calculate_header_checksum(char* header_block){
@@ -895,6 +903,25 @@ static mptar_uint64 mptar_parse_octal_field(const char* str, mptar_size_t str_si
     }
 
     const unsigned char* bytes = (const unsigned char*)str;
+
+    if((bytes[0] & 0x80) != 0){
+        mptar_uint64 result = 0;
+        result = bytes[0] & 0x7F;
+
+        for (mptar_size_t i = 1; i < str_size; i++)
+        {
+            if (result > (MPTAR_UINT64_MAX >> 8)) {
+                if (err) *err = MPTAR_ERR_OVERFLOW;
+                return MPTAR_UINT64_MAX;
+            }
+            
+            result = (result << 8) | bytes[i];
+        }
+
+        if (err) *err = MPTAR_OK;
+        return result;
+    }
+
     mptar_uint64 result = 0;
     mptar_size_t i = 0;
 
