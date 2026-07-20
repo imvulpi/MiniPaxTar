@@ -258,15 +258,3 @@ int mptar_close_archive(mptar_writer *ctx);
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
 #endif
-
-#if defined(__clang__)
-    #define MPTAR_START_INTERNAL_PARSING \
-        _Pragma("clang diagnostic push") \
-        _Pragma("clang diagnostic ignored \"-Wunsafe-buffer-usage\"") \
-        _Pragma("clang diagnostic ignored \"-Wvla\"")
-    #define MPTAR_END_INTERNAL_PARSING \
-        _Pragma("clang diagnostic pop")
-#else
-    #define MPTAR_START_INTERNAL_PARSING
-    #define MPTAR_END_INTERNAL_PARSING
-#endif
