@@ -1269,7 +1269,7 @@ static void mptar_apply_pax_kv(mptar_reader* reader, const char* key, mptar_size
 #endif
 }
 
-static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint32 total_pax_size, mptar_metadata* meta, mptar_uint32* pax_flags) {
+static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_size, mptar_metadata* meta, mptar_uint32* pax_flags) {
     if (!reader || !meta || !pax_flags) return MPTAR_ERR_INVALID_ARG;
     if (total_pax_size == 0) return MPTAR_OK;
 
