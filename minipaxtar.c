@@ -1462,6 +1462,32 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
             continue;
         }
 
+        if (header->typeflag != '\0' && (header->typeflag < '0' || header->typeflag > '7')) {
+            int error = MPTAR_OK;
+            mptar_uint64 ext_size = mptar_parse_octal_field(header->size, 12, &error);
+            
+            if (error != MPTAR_OK) {
+                // We assume the extension we are trying to skip has no payload (size = 0)
+                // We can skip it because we already loaded the 512B of the extension
+                // The specification states if size is unsed the extension has no payload.
+                ext_size = 0;
+                continue;
+            }
+
+            mptar_size_t remainder = (mptar_size_t)(ext_size % 512);
+            mptar_size_t total_skip = (mptar_size_t)ext_size + ((remainder > 0) ? (512 - remainder) : 0);                        
+            if (total_skip > 0) {
+                mptar_size_t skipped = mptar_consume_stream(reader, total_skip);        
+                if (skipped != total_skip) {
+                    if (out_meta->path) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
+                    if (out_meta->link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
+                    return MPTAR_ERR_IO_READ;
+                }
+            }
+
+            continue;
+        }
+
         mptar_metadata pax_staged = *out_meta;
         int base_res = mptar_parse_ustar_header(header, out_meta);
         if (base_res != MPTAR_OK) {
