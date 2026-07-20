@@ -119,7 +119,8 @@ static char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, 
 
     if (value > 0) {
         if (out_err) *out_err = MPTAR_ERR_OVERFLOW;
-        return MPTAR_NULL;
+        str[str_size - 1] = '\0';
+        return str;
     }
 
     str[i] = '\0';
