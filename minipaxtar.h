@@ -122,6 +122,8 @@
 #define MPTAR_PAX_HAS_GID         (1 << 5)
 #define MPTAR_PAX_HAS_ATIME       (1 << 6)
 #define MPTAR_PAX_HAS_CTIME       (1 << 7)
+#define MPTAR_PAX_HAS_UNAME       (1 << 8)
+#define MPTAR_PAX_HAS_GNAME       (1 << 9)
 
 typedef struct {
     char name[100];

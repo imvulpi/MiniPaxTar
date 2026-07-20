@@ -1248,6 +1248,12 @@ static void mptar_apply_pax_kv(mptar_reader* reader, const char* key, mptar_size
     else if (key_len == 8 && mptar_memcmp(key, "linkpath", 8) == 0) {
         mptar_apply_pax_string(&reader->memory, val, val_len, &meta->link_target, pax_flags, MPTAR_PAX_HAS_LINK);
     }
+    else if (key_len == 5 && mptar_memcmp(key, "uname", 5) == 0) {
+        mptar_apply_pax_string(&reader->memory, val, val_len, &meta->uname, pax_flags, MPTAR_PAX_HAS_UNAME);
+    }
+    else if (key_len == 5 && mptar_memcmp(key, "gname", 5) == 0) {
+        mptar_apply_pax_string(&reader->memory, val, val_len, &meta->gname, pax_flags, MPTAR_PAX_HAS_GNAME);
+    }
     else if (key_len == 4 && mptar_memcmp(key, "size", 4) == 0) {
         mptar_apply_pax_u64(val, val_len, &meta->size, pax_flags, MPTAR_PAX_HAS_SIZE);
     } 
@@ -1423,50 +1429,47 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
 
     out_meta->path = MPTAR_NULL;
     out_meta->link_target = MPTAR_NULL;
+    out_meta->uname = MPTAR_NULL;
+    out_meta->gname = MPTAR_NULL;
+    
     mptar_uint32 pax_flags = 0;
     char header_bytes[512];
+    int res = MPTAR_OK;
     
     while (1) {
         if (reader->read(reader->read_user_data, header_bytes, 512) != 512) {
-            if (out_meta->path) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
-            if (out_meta->link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
-            return MPTAR_ERR_IO_READ;
+            res = MPTAR_ERR_IO_READ;
+            goto error_cleanup;
         }
 
         reader->offset += 512;
 
         mptar_header* header = (mptar_header*)header_bytes;
-        int res = mptar_verify_header_checksum(header);
+        res = mptar_verify_header_checksum(header);
         if (res != MPTAR_OK) {
-            if (out_meta->path) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
-            if (out_meta->link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
-            return res;
+            goto error_cleanup;
         }
 
         if (header->typeflag == 'x') {
-            int error = MPTAR_OK;
-            mptar_uint64 pax_size = mptar_parse_octal_field(header->size, 12, &error);
-            if (error != MPTAR_OK) {
-                if (out_meta->path) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
-                if (out_meta->link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
-                return error;
+            res = MPTAR_OK;
+            mptar_uint64 pax_size = mptar_parse_octal_field(header->size, 12, &res);
+            if (res != MPTAR_OK) {
+                goto error_cleanup;
             }
 
-            int pax_res = mptar_parse_pax_block(reader, pax_size, out_meta, &pax_flags);
-            if (pax_res != MPTAR_OK) {
-                if (out_meta->path) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
-                if (out_meta->link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
-                return pax_res;
+            res = mptar_parse_pax_block(reader, pax_size, out_meta, &pax_flags);
+            if (res != MPTAR_OK) {
+                goto error_cleanup;
             }
 
             continue;
         }
 
         if (header->typeflag != '\0' && (header->typeflag < '0' || header->typeflag > '7')) {
-            int error = MPTAR_OK;
-            mptar_uint64 ext_size = mptar_parse_octal_field(header->size, 12, &error);
+            res = MPTAR_OK;
+            mptar_uint64 ext_size = mptar_parse_octal_field(header->size, 12, &res);
             
-            if (error != MPTAR_OK) {
+            if (res != MPTAR_OK) {
                 // We assume the extension we are trying to skip has no payload (size = 0)
                 // We can skip it because we already loaded the 512B of the extension
                 // The specification states if size is unsed the extension has no payload.
@@ -1479,9 +1482,8 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
             if (total_skip > 0) {
                 mptar_size_t skipped = mptar_consume_stream(reader, total_skip);        
                 if (skipped != total_skip) {
-                    if (out_meta->path) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
-                    if (out_meta->link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
-                    return MPTAR_ERR_IO_READ;
+                    res = MPTAR_ERR_IO_READ;
+                    goto error_cleanup;
                 }
             }
 
@@ -1489,11 +1491,9 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
         }
 
         mptar_metadata pax_staged = *out_meta;
-        int base_res = mptar_parse_ustar_header(header, out_meta);
-        if (base_res != MPTAR_OK) {
-            if (pax_staged.path) reader->memory.free(reader->memory.alloc_user_data, (void*)pax_staged.path);
-            if (pax_staged.link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)pax_staged.link_target);
-            return base_res;
+        res = mptar_parse_ustar_header(header, out_meta);
+        if (res != MPTAR_OK) {
+            goto error_cleanup;
         }
 
         if (pax_flags & MPTAR_PAX_HAS_SIZE)  { out_meta->size = pax_staged.size; }
@@ -1511,11 +1511,9 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
         if (pax_flags & MPTAR_PAX_HAS_PATH) {
             out_meta->path = pax_staged.path;
         } else {
-            int path_res = mptar_reconstruct_ustar_path(reader, header, out_meta);
-            if (path_res != MPTAR_OK) {
-                if (pax_staged.path) reader->memory.free(reader->memory.alloc_user_data, (void*)pax_staged.path);
-                if (pax_staged.link_target) reader->memory.free(reader->memory.alloc_user_data, (void*)pax_staged.link_target);
-                return path_res;
+            res = mptar_reconstruct_ustar_path(reader, header, out_meta);
+            if (res != MPTAR_OK) {
+                goto error_cleanup;
             }
         }
 
@@ -1526,12 +1524,50 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
             if (link_len > 0) {
                 char* allocated_link = (char*)reader->memory.alloc(reader->memory.alloc_user_data, link_len + 1);
                 if (!allocated_link) {
-                    if (out_meta->path) reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
-                    return MPTAR_ERR_ALLOC;
+                    res = MPTAR_ERR_ALLOC;
+                    goto error_cleanup;
                 }
                 mptar_memcpy(allocated_link, header->linkname, link_len);
                 allocated_link[link_len] = '\0';
                 out_meta->link_target = allocated_link;
+            }else{
+                out_meta->uname = MPTAR_NULL;
+            }            
+        }
+
+        if (pax_flags & MPTAR_PAX_HAS_UNAME) {
+            out_meta->uname = pax_staged.uname;
+        } else {
+            mptar_size_t uname_len = mptar_strnlen(header->uname, 32);
+            if (uname_len > 0) {
+                char* allocated_uname = (char*)reader->memory.alloc(reader->memory.alloc_user_data, uname_len + 1);
+                if (!allocated_uname) {
+                    res = MPTAR_ERR_ALLOC;
+                    goto error_cleanup;
+                }
+                mptar_memcpy(allocated_uname, header->uname, uname_len);
+                allocated_uname[uname_len] = '\0';
+                out_meta->uname = allocated_uname;
+            } else {
+                out_meta->uname = MPTAR_NULL;
+            }
+        }
+
+        if (pax_flags & MPTAR_PAX_HAS_GNAME) {
+            out_meta->gname = pax_staged.gname;
+        } else {
+            mptar_size_t gname_len = mptar_strnlen(header->gname, 32);
+            if (gname_len > 0) {
+                char* allocated_gname = (char*)reader->memory.alloc(reader->memory.alloc_user_data, gname_len + 1);
+                if (!allocated_gname) {
+                    res = MPTAR_ERR_ALLOC;
+                    goto error_cleanup;
+                }
+                mptar_memcpy(allocated_gname, header->gname, gname_len);
+                allocated_gname[gname_len] = '\0';
+                out_meta->gname = allocated_gname;
+            } else {
+                out_meta->gname = MPTAR_NULL;
             }
         }
 
@@ -1540,6 +1576,29 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
     }
 
     return MPTAR_OK;
+
+error_cleanup:
+    if (out_meta->path) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->path);
+        out_meta->path = MPTAR_NULL;
+    }
+
+    if (out_meta->link_target) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->link_target);
+        out_meta->link_target = MPTAR_NULL;
+    }
+    
+    if (out_meta->uname) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->uname);
+        out_meta->uname = MPTAR_NULL;
+    }
+    
+    if (out_meta->gname) {
+        reader->memory.free(reader->memory.alloc_user_data, (void*)out_meta->gname);
+        out_meta->gname = MPTAR_NULL;
+    }
+
+    return res;
 }
 
 mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err) {
