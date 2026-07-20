@@ -1,5 +1,3 @@
-#define MPTAR_SUPPORT_EXTRA_TIMES
-
 #ifdef MPTAR_NO_STD
     typedef unsigned char mptar_uint8;
     typedef signed char mptar_int8;
@@ -91,27 +89,27 @@
 #define MPTAR_PAX_KEY_LEN_UNAME  5 
 #define MPTAR_PAX_KEY_LEN_GNAME  5 
 
-#define MPTAR_PAX_STATIC_CHARS   3 // Space (' '), Equals ('='), and Newline ('\n')
+#define MPTAR_PAX_STATIC_CHARS   3 /* Space (' '), Equals ('='), and Newline ('\n') */
 
-#define MPTAR_PAX_OVERHEAD_PATH  (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS)  // 7
-#define MPTAR_PAX_OVERHEAD_SIZE  (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS)  // 7
-#define MPTAR_PAX_OVERHEAD_LINK  (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS)  // 11
-#define MPTAR_PAX_OVERHEAD_TIME  (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS)  // 8
-#define MPTAR_PAX_OVERHEAD_UID   (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS) // 6
-#define MPTAR_PAX_OVERHEAD_GID   (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS) // 6
-#define MPTAR_PAX_OVERHEAD_UNAME (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS) // 8
-#define MPTAR_PAX_OVERHEAD_GNAME (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS) // 8
+#define MPTAR_PAX_OVERHEAD_PATH  (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS)  /* 7 */
+#define MPTAR_PAX_OVERHEAD_SIZE  (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS)  /* 7 */
+#define MPTAR_PAX_OVERHEAD_LINK  (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS)  /* 11 */
+#define MPTAR_PAX_OVERHEAD_TIME  (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS)  /* 8 */
+#define MPTAR_PAX_OVERHEAD_UID   (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
+#define MPTAR_PAX_OVERHEAD_GID   (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
+#define MPTAR_PAX_OVERHEAD_UNAME (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
+#define MPTAR_PAX_OVERHEAD_GNAME (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
 
 #define MPTAR_USTAR_SIZE_LINKNAME 100
 #define MPTAR_USTAR_SIZE_NAME 100
 #define MPTAR_USTAR_SIZE_PREFIX 155
 #define MPTAR_USTAR_SIZE_UNAME 32
 #define MPTAR_USTAR_SIZE_GNAME 32
-#define MPTAR_USTAR_MAX_LEN_NAME     (MPTAR_USTAR_SIZE_NAME - 1)     // 99
-#define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1) // 99
-#define MPTAR_USTAR_MAX_LEN_PREFIX   (MPTAR_USTAR_SIZE_PREFIX - 1)   // 154
-#define MPTAR_USTAR_MAX_LEN_UNAME    (MPTAR_USTAR_SIZE_UNAME - 1)    // 31
-#define MPTAR_USTAR_MAX_LEN_GNAME    (MPTAR_USTAR_SIZE_GNAME - 1)    // 31
+#define MPTAR_USTAR_MAX_LEN_NAME     (MPTAR_USTAR_SIZE_NAME - 1)     /* 99 */
+#define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1) /* 99 */
+#define MPTAR_USTAR_MAX_LEN_PREFIX   (MPTAR_USTAR_SIZE_PREFIX - 1)   /* 154 */
+#define MPTAR_USTAR_MAX_LEN_UNAME    (MPTAR_USTAR_SIZE_UNAME - 1)    /* 31 */
+#define MPTAR_USTAR_MAX_LEN_GNAME    (MPTAR_USTAR_SIZE_GNAME - 1)    /* 31 */
 
 #define MPTAR_USTAR_MAX_OCTAL_12B 8589934591ULL
 #define MPTAR_USTAR_MAX_OCTAL_8B  2097151ULL
@@ -128,8 +126,11 @@
 #define MPTAR_PAX_HAS_UNAME (1 << 8)
 #define MPTAR_PAX_HAS_GNAME (1 << 9)
 
-// --- Writer Flags ---
+/* --- Writer Flags --- */
 #define MPTAR_CTX_ALLOW_PAX_FOR_OCTAL   (1U << 0)  /* 0x01 */
+
+#define MPTAR_MODE_DIR  493 /* Equivalent to octal 0755: rwxr-xr-x */
+#define MPTAR_MODE_REG  420 /* Equivalent to octal 0644: rw-r--r-- */
 
 typedef struct {
     char name[100];
@@ -152,8 +153,8 @@ typedef struct {
 } mptar_header;
 
 typedef struct {
-    mptar_int64 sec;   // Standard Unix timestamp (seconds)
-    mptar_uint32 nsec; // Nanoseconds (0 to 999,999,999) for subsecond precision
+    mptar_int64 sec;   /* Standard Unix timestamp (seconds) */
+    mptar_uint32 nsec; /* Nanoseconds (0 to 999,999,999) for subsecond precision */
 } mptar_timespec;
 
 typedef struct {
@@ -164,8 +165,8 @@ typedef struct {
 typedef struct {
     mptar_opt_time mtime;
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
-    mptar_opt_time atime; // Access time
-    mptar_opt_time ctime; // Change time
+    mptar_opt_time atime; /* Access time */
+    mptar_opt_time ctime; /* Change time */
 #endif
 
     mptar_uint64 size;
@@ -234,7 +235,7 @@ int mptar_close_archive(mptar_writer *ctx);
 
 #endif /* MPTAR_WITHOUT_WRITE */
 
-// Compile time pragmas: 
+/* Compile time pragmas: */ 
 #if defined(__clang__)
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
         _Pragma("clang diagnostic push") \

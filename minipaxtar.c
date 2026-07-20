@@ -58,7 +58,8 @@ static void mptar_memcpy(void* dest, const void* src, mptar_size_t n) {
     char* d = (char*)dest;
     const char* s = (const char*)src;
     
-    for (mptar_size_t i = 0; i < n; i++) {
+    mptar_size_t i = 0;
+    for ( ; i < n; i++) {
         d[i] = s[i];
     }
 }
@@ -67,7 +68,8 @@ static void mptar_memset(void* data, char value, mptar_size_t amount) {
     if (!data || amount == 0) return;
     
     char* bytes = (char*)data;
-    for (mptar_size_t i = 0; i < amount; i++) {
+    mptar_size_t i = 0;
+    for ( ; i < amount; i++) {
         bytes[i] = value;
     }
 }
@@ -78,7 +80,8 @@ static int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
     const unsigned char* p1 = (const unsigned char*)s1;
     const unsigned char* p2 = (const unsigned char*)s2;
 
-    for (mptar_size_t i = 0; i < size; i++) {
+    mptar_size_t i = 0; 
+    for (; i < size; i++) {
         if (p1[i] != p2[i]) {
             return (p1[i] < p2[i]) ? -1 : 1;
         }
@@ -200,7 +203,7 @@ static int mptar_stream_write_zeroes(mptar_writer* ctx, mptar_size_t padding_nee
 }
 
 static mptar_uint32 mptar_pax_calculate_record_len(mptar_uint32 data_len) {
-    if (data_len > 4294967285U) return 0; // ERR: Would overflow
+    if (data_len > 4294967285U) return 0; /* Would overflow */
 
     mptar_uint32 digits = 1;
     if (data_len >= 1000000000U) digits = 10;
@@ -249,7 +252,7 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
 
     mptar_size_t int_size = mptar_strlen(str);
 
-    char nsec_buf[10] = {0}; // Space for 9 digits + \0
+    char nsec_buf[10] = {0}; /* Space for 9 digits + \0 */
     int nsec_err = MPTAR_OK;
     mptar_u64toa(nsec, nsec_buf, sizeof(nsec_buf), &nsec_err);
     if (nsec_err != MPTAR_OK) {
@@ -279,7 +282,7 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
 
     mptar_size_t final_nsec_len = mptar_strlen(formatted_nsec);
 
-    if (int_size + 1 + final_nsec_len + 1 > size) { // int string + . + ns str + \0
+    if (int_size + 1 + final_nsec_len + 1 > size) { /* int string + . + ns str + \0 */
         return str;
     }
 
@@ -296,7 +299,7 @@ static int mptar_pax_stream_record(mptar_writer* ctx, mptar_uint32 record_size, 
     mptar_size_t size_len = mptar_strlen(size_str);
     mptar_size_t kw_len = mptar_strlen(keyword);
 
-    // [size] [space] [keyword] [=] [value] [\n]
+    /* [size] [space] [keyword] [=] [value] [\n] */
     if (ctx->write(ctx->write_user_data, size_str, size_len) != size_len) return MPTAR_ERR_IO_WRITE;
     if (ctx->write(ctx->write_user_data, " ", 1) != 1) return MPTAR_ERR_IO_WRITE;
     if (ctx->write(ctx->write_user_data, keyword, kw_len) != kw_len) return MPTAR_ERR_IO_WRITE;
@@ -350,14 +353,15 @@ static mptar_uint32 mptar_calculate_header_checksum(char* header_block){
     const unsigned char* block = (const unsigned char*)header_block;
     mptar_uint32 sum = 0;    
 
-    for (int i = 0; i < 148; i++) {
+    int i = 0;
+    for ( ; i < 148; i++) {
         sum += block[i];
     }
 
-    // Hardcoded constant value for the 8 space characters (8 * 32)
+    /* Hardcoded constant value for the 8 space characters (8 * 32) */
     sum += 256; 
 
-    for (int i = 156; i < 512; i++) {
+    for (i = 156; i < 512; i++) {
         sum += block[i];
     }
     
@@ -380,7 +384,8 @@ static bool mptar_can_path_fit_ustar(const char* path, mptar_size_t len) {
         return false; 
     }
 
-    for (mptar_size_t i = len - 1; i > 0; i--) {
+    mptar_size_t i = len - 1;
+    for ( ; i > 0; i--) {
         mptar_size_t name_len = len - i - 1;
         
         if (name_len > MPTAR_USTAR_SIZE_NAME) {
@@ -401,7 +406,7 @@ static bool mptar_can_path_fit_ustar(const char* path, mptar_size_t len) {
 
 static int mptar_write_ustar_path(char* header_name, char* header_prefix, const char* full_path)
 {
-    if(header_name == MPTAR_NULL || full_path == MPTAR_NULL) return MPTAR_ERR_INVALID_ARG; // header_prefix can be null.
+    if(header_name == MPTAR_NULL || full_path == MPTAR_NULL) return MPTAR_ERR_INVALID_ARG; /* header_prefix can be null. */
 
     mptar_size_t path_len = mptar_strlen(full_path);
     if (path_len <= MPTAR_USTAR_SIZE_NAME) {
@@ -426,7 +431,8 @@ static int mptar_write_ustar_path(char* header_name, char* header_prefix, const 
     }
 
     int split_index = -1;
-    for (mptar_size_t i = 0; i < path_len; i++) {
+    mptar_size_t i = 0;
+    for ( ; i < path_len; i++) {
         if (full_path[i] == '/') {
             mptar_size_t prefix_part_len = i;
             mptar_size_t name_part_len = path_len - i - 1;
@@ -541,7 +547,7 @@ static int mptar_write_pax_header(mptar_writer* ctx, mptar_uint64 size, const mp
     mptar_metadata temp_meta = {0};
 
     temp_meta.path = "PaxHeader/dump";
-    temp_meta.size = size; // Size of pax payload
+    temp_meta.size = size; /* Size of pax payload */
     temp_meta.mode = meta->mode;
     temp_meta.uid = meta->uid;
     temp_meta.gid = meta->gid;
@@ -859,7 +865,8 @@ static mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err) {
     mptar_uint64 val = 0;
     mptar_size_t digits_parsed = 0;
 
-    for (mptar_size_t i = 0; i < len; i++) {
+    mptar_size_t i = 0;
+    for ( ; i < len; i++) {
         unsigned char c = bytes[i];
         if (c < '0' || c > '9') break;
 
@@ -995,7 +1002,8 @@ static mptar_uint64 mptar_parse_octal_field(const char* str, mptar_size_t str_si
         mptar_uint64 result = 0;
         result = bytes[0] & 0x7F;
 
-        for (mptar_size_t i = 1; i < str_size; i++)
+        mptar_size_t i = 1;
+        for ( ; i < str_size; i++)
         {
             if (result > (MPTAR_UINT64_MAX >> 8)) {
                 if (err) *err = MPTAR_ERR_OVERFLOW;
@@ -1066,16 +1074,17 @@ static int mptar_verify_header_checksum(const mptar_header* header) {
     mptar_uint32 unsigned_sum = 0;
     mptar_int32 signed_sum = 0;
 
-    for (int i = 0; i < 148; i++) {
+    int i = 0;
+    for ( ; i < 148; i++) {
         unsigned_sum += bytes[i];
         signed_sum += (signed char)bytes[i];
     }
 
-    // Hardcoded constant value for the 8 space characters (8 * 32)
+    /* Hardcoded constant value for the 8 space characters (8 * 32) */
     unsigned_sum += 256; 
     signed_sum += 256;
 
-    for (int i = 156; i < 512; i++) {
+    for (i = 156; i < 512; i++) {
         unsigned_sum += bytes[i];
         signed_sum += (signed char)bytes[i];
     }
@@ -1287,7 +1296,7 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
     }
     reader->offset += size_t_pax;
 
-    // Reads remaining block padding
+    /* Reads remaining block padding */
     mptar_uint32 remainder = total_pax_size % 512;
     if (remainder > 0) {
         char dummy[512];
@@ -1321,7 +1330,7 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
             goto error_cleanup;
         }
 
-        i++; // Advances past ' '
+        i++; /* Advances past ' ' */
 
         mptar_size_t key_start = i;
         while (i < size_t_pax && buffer[i] != '=') {
@@ -1334,7 +1343,7 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
         }
         
         mptar_size_t key_len = i - key_start;
-        i++; // Advances past '='
+        i++; /* Advances past '=' */
 
         mptar_size_t val_start = i;
         mptar_size_t target_next_record = len_start + (mptar_size_t)record_len;
@@ -1375,7 +1384,7 @@ static int mptar_parse_ustar_header(const mptar_header* header, mptar_metadata* 
     error = MPTAR_OK;
     out_meta->mode = (mptar_uint32)mptar_parse_octal_field(header->mode, 8, &error);
     if (error != MPTAR_OK) {
-        out_meta->mode = (header->typeflag == '5') ? 0755 : 0644;
+        out_meta->mode = (header->typeflag == '5') ? MPTAR_MODE_DIR : MPTAR_MODE_REG;
     }
 
     error = MPTAR_OK;
@@ -1467,9 +1476,9 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
             mptar_uint64 ext_size = mptar_parse_octal_field(header->size, 12, &res);
             
             if (res != MPTAR_OK) {
-                // We assume the extension we are trying to skip has no payload (size = 0)
-                // We can skip it because we already loaded the 512B of the extension
-                // The specification states if size is unsed the extension has no payload.
+                /* We assume the extension we are trying to skip has no payload (size = 0)
+                   We can skip it because we already loaded the 512B of the extension
+                   The specification states if size is unsed the extension has no payload. */
                 ext_size = 0;
                 continue;
             }
@@ -1643,7 +1652,7 @@ void mptar_reader_free_metadata(mptar_reader *reader, mptar_metadata *meta)
 {
     if (!reader || !meta || !meta->internal_alloc) return;
 
-MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN // Reason: metadata strings in reading api are allocated dynamically.
+MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN /* Reason: metadata strings in reading api are allocated dynamically. */
     if (meta->path) {
         reader->memory.free(reader->memory.alloc_user_data, (void*)meta->path);
         meta->path = MPTAR_NULL;
