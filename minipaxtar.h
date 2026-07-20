@@ -158,21 +158,22 @@ typedef struct {
 } mptar_opt_time;
 
 typedef struct {
-    const char* path;
-    const char* link_target;
-    const char* uname;
-    const char* gname;
-    mptar_uint64 size;
-    mptar_uint32 mode;
-    mptar_uint64 uid;
-    mptar_uint64 gid;
-    
     mptar_opt_time mtime;
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
     mptar_opt_time atime; // Access time
     mptar_opt_time ctime; // Change time
 #endif
 
+    mptar_uint64 size;
+    mptar_uint64 uid;
+    mptar_uint64 gid;
+
+    const char* path;
+    const char* link_target;
+    const char* uname;
+    const char* gname;
+
+    mptar_uint32 mode;
 #ifdef MPTAR_SUPPORT_SPECIAL
     mptar_uint32 dev_minor;
     mptar_uint32 dev_major;
@@ -195,11 +196,11 @@ typedef struct {
 typedef mptar_size_t (*mptar_read_fn)(void* user_data, void* buffer, mptar_size_t size);
 
 typedef struct {
+    mptar_uint64 bytes_left;
+    mptar_uint64 offset;
     mptar_memory_cfg memory;
     mptar_read_fn read;
     void* read_user_data;
-    mptar_uint64 bytes_left;
-    mptar_uint64 offset;
 } mptar_reader;
 
 int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
@@ -213,11 +214,11 @@ int mptar_skip_data(mptar_reader* reader);
 typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
 
 typedef struct {
-    bool allow_pax_for_octal;
+    mptar_uint64 bytes_left;
     mptar_memory_cfg memory;
     mptar_write_fn write;
     void* write_user_data;
-    mptar_uint64 bytes_left;
+    bool allow_pax_for_octal;
 } mptar_writer;
 
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);
