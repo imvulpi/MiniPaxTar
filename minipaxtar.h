@@ -211,6 +211,7 @@ typedef struct {
 
 int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
 mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err);
+int mptar_discard_data(mptar_reader* reader);
 int mptar_skip_data(mptar_reader* reader);
 void mptar_reader_free_metadata(mptar_reader* reader, mptar_metadata* meta);
 

@@ -975,7 +975,7 @@ static mptar_size_t mptar_consume_stream(mptar_reader* reader, mptar_size_t coun
     return total_consumed;
 }
 
-static int mptar_align_stream(mptar_reader* reader) {
+static int mptar_align_stream_by_discard(mptar_reader* reader) {
     if (reader->bytes_left != 0) return MPTAR_OK;
 
     mptar_size_t remainder = reader->offset % 512;
@@ -986,6 +986,17 @@ static int mptar_align_stream(mptar_reader* reader) {
         if (skipped < padding_needed) {
             return MPTAR_ERR_IO_READ;
         }
+    }
+    return MPTAR_OK;
+}
+
+static int mptar_align_stream_by_skip(mptar_reader* reader) {
+    if (reader->bytes_left != 0) return MPTAR_OK;
+
+    mptar_size_t remainder = reader->offset % 512;
+    if (remainder > 0) {
+        mptar_size_t padding_needed = 512 - remainder;
+        reader->offset += padding_needed;
     }
     return MPTAR_OK;
 }
@@ -1596,7 +1607,7 @@ mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_siz
         return 0;
     }
 
-    int align_err = mptar_align_stream(reader);
+    int align_err = mptar_align_stream_by_discard(reader);
     if (align_err != MPTAR_OK) {
         if (out_err) *out_err = align_err;
         return 0;
@@ -1618,7 +1629,7 @@ mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_siz
     reader->bytes_left -= bytes_read;
     reader->offset += bytes_read;
 
-    align_err = mptar_align_stream(reader);
+    align_err = mptar_align_stream_by_discard(reader);
     if (align_err != MPTAR_OK && out_err) {
         *out_err = align_err;
     }
@@ -1626,7 +1637,7 @@ mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_siz
     return bytes_read;
 }
 
-int mptar_skip_data(mptar_reader* reader) {
+int mptar_discard_data(mptar_reader* reader) {
     if (!reader) {
         return MPTAR_ERR_INVALID_ARG;
     }
@@ -1640,10 +1651,26 @@ int mptar_skip_data(mptar_reader* reader) {
         }
     }
 
-    int align_err = mptar_align_stream(reader);
+    int align_err = mptar_align_stream_by_discard(reader);
     if (align_err != MPTAR_OK) {
         return align_err;
     }
+
+    return MPTAR_OK;
+}
+
+int mptar_skip_data(mptar_reader* reader) {
+    if (!reader) {
+        return MPTAR_ERR_INVALID_ARG;
+    }
+
+    if (reader->bytes_left > 0) {
+        mptar_uint64 bytes_to_skip = reader->bytes_left;
+        reader->offset += bytes_to_skip;
+        reader->bytes_left = 0;   
+    }
+
+    mptar_align_stream_by_skip(reader);
 
     return MPTAR_OK;
 }
