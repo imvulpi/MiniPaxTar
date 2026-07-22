@@ -1,0 +1,3 @@
+#!/bin/sh
+# Works on macOS, Linux, and Windows (Git Bash / VS Code / GitHub Desktop)
+python3 scripts/pre_commit.py || python scripts/pre_commit.py
