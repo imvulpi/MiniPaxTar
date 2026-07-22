@@ -65,6 +65,10 @@
     #define MPTAR_UINT32_MAX UINT32_MAX
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MPTAR_OK                        0   /* Operation completed successfully */
 #define MPTAR_EOF                       1   /* End of Archive reached (two consecutive null blocks) */
 #define MPTAR_NEEDS_PAX                 2   /* Item cannot fit in standard USTAR and requires a PAX extended header. */
@@ -281,4 +285,8 @@ int mptar_close_archive(mptar_writer *ctx);
 #else
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
+#endif
+
+#ifdef __cplusplus
+}
 #endif
