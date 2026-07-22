@@ -567,6 +567,8 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         return MPTAR_ERR_INVALID_ARG;
     }
 
+    if(ctx->bytes_left > 0) return MPTAR_ERR_INCOMPLETE_PAYLOAD;
+
 #ifndef MPTAR_SUPPORT_SPECIAL
     if (meta->typeflag == '3' || meta->typeflag == '4') {
         return MPTAR_ERR_UNSUPPORTED_TYPE;
