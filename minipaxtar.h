@@ -34,6 +34,7 @@
     #define MPTAR_INT64_MAX  (9223372036854775807LL)
     #define MPTAR_INT64_MIN  (-MPTAR_INT64_MAX - 1LL)
     #define MPTAR_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
+    #define MPTAR_UINT32_MAX (4294967295U)
 #ifndef bool
     typedef _Bool bool;
     #define true  1
@@ -61,6 +62,7 @@
     #define MPTAR_INT64_MIN  INT64_MIN
     #define MPTAR_INT64_MAX  INT64_MAX
     #define MPTAR_UINT64_MAX UINT64_MAX
+    #define MPTAR_UINT32_MAX UINT32_MAX
 #endif
 
 #define MPTAR_OK                        0   /* Operation completed successfully */
@@ -79,6 +81,7 @@
 #define MPTAR_ERR_OVERFLOW             -10  /* An arithmetic wrap-around or internal buffer write boundary violation detected */
 #define MPTAR_ERR_PATH_TOO_LONG        -11  /* File path exceeds the native physical limits of a standard USTAR block. */
 #define MPTAR_ERR_NS_CONVERSION_FAILED -12  /* Conversion of nanoseconds to string failed. One way for this to occur is if the value is above 999,999,999. */
+#define MPTAR_ERR_BUFFER_TOO_SMALL     -13  /* Buffer was too small. */
 
 #define MPTAR_PAX_KEY_LEN_PATH   4
 #define MPTAR_PAX_KEY_LEN_SIZE   4
@@ -99,6 +102,7 @@
 #define MPTAR_PAX_OVERHEAD_GID   (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
 #define MPTAR_PAX_OVERHEAD_UNAME (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
 #define MPTAR_PAX_OVERHEAD_GNAME (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
+#define MPTAR_PAX_NSEC_OVERHEAD  2U  /* '.' delimiter + '\0' terminator */
 
 #define MPTAR_USTAR_SIZE_LINKNAME 100
 #define MPTAR_USTAR_SIZE_NAME 100
@@ -110,6 +114,25 @@
 #define MPTAR_USTAR_MAX_LEN_PREFIX   (MPTAR_USTAR_SIZE_PREFIX - 1)   /* 154 */
 #define MPTAR_USTAR_MAX_LEN_UNAME    (MPTAR_USTAR_SIZE_UNAME - 1)    /* 31 */
 #define MPTAR_USTAR_MAX_LEN_GNAME    (MPTAR_USTAR_SIZE_GNAME - 1)    /* 31 */
+
+#define MPTAR_OCTAL_BINARY_FLAG 0x80U
+#define MPTAR_USTAR_HEADER_SIZE 512
+#define MPTAR_BLOCK_SIZE 512
+#define MPTAR_PAX_MAX_UINT32_STR_LEN   10U  /* strlen("4294967295") */
+#define MPTAR_PAX_MAX_DATA_LEN (MPTAR_UINT32_MAX - MPTAR_PAX_MAX_UINT32_STR_LEN) /* UINT32_MAX - 10 */
+#define MPTAR_SPACE_CHECKSUM_VAL 256
+#define MPTAR_CHECKSUM_OFFSET 148U
+#define MPTAR_CHECKSUM_LEN 8U
+#define MPTAR_CHECKSUM_END_OFFSET (MPTAR_CHECKSUM_OFFSET + MPTAR_CHECKSUM_LEN) /* 156 */
+#define MPTAR_PAX_NSEC_MAX_DIGITS 9U /* Nanoseconds precision (10^-9) */
+#define MPTAR_PAX_NSEC_INITIAL_MULTIPLIER 100000000U  /* 10^8 multiplier for 1st decimal digit */
+#define MPTAR_UINT64_STR_BUF_SIZE 24U /* Maximum string buffer size required to format a 64-bit unsigned integer (20 digits + sign/NUL) */
+#define MPTAR_TIMESPEC_STR_BUF_SIZE 32U /* Safe string buffer size to format a full PAX timestamp (sec.nsec, e.g., "-9223372036854775808.999999999") */
+#define MPTAR_MAX_OCTAL_DIGITS_64 22U
+
+/* Standard POSIX TAR End-of-Archive (EOA) marker length */
+#define MPTAR_EOA_BLOCK_COUNT 2U
+#define MPTAR_EOA_MARKER_SIZE (MPTAR_EOA_BLOCK_COUNT * MPTAR_BLOCK_SIZE) /* 1024 bytes */
 
 #define MPTAR_USTAR_MAX_OCTAL_12B 8589934591ULL
 #define MPTAR_USTAR_MAX_OCTAL_8B  2097151ULL
