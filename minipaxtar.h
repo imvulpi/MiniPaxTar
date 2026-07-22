@@ -1,3 +1,6 @@
+#ifndef MINIPAXTAR_H
+#define MINIPAXTAR_H
+
 #ifdef MPTAR_NO_STD
     typedef unsigned char mptar_uint8;
     typedef signed char mptar_int8;
@@ -290,3 +293,5 @@ int mptar_close_archive(mptar_writer *ctx);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MINIPAXTAR_H */
