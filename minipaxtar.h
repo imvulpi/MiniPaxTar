@@ -82,11 +82,11 @@ extern "C" {
 #define MPTAR_ERR_IO_WRITE             -4   /* Write callback failed to write the complete chunk to storage */
 #define MPTAR_ERR_CHECKSUM             -5   /* Header checksum verification failed; record is corrupted */
 #define MPTAR_ERR_UNSUPPORTED_TYPE     -6   /* Encountered an explicit special file type (FIFO, Block, Char) not supported */
-#define MPTAR_ERR_WRITE_OVERFLOW       -7   /* Requested write size exceeds remaining available bytes_left for current file payload */
+#define MPTAR_ERR_RESERVED_LEGACY_1    -7   /* Reserved / Legacy. Formerly used for write overflow prior to automatic payload clamping. */
 #define MPTAR_ERR_INCOMPLETE_PAYLOAD   -8   /* mptar_write_finalize called while bytes_left is still greater than 0 */
 #define MPTAR_ERR_MALFORMED            -9   /* Archive format anomaly or structural corruption was detected. */
 #define MPTAR_ERR_OVERFLOW             -10  /* An arithmetic wrap-around or internal buffer write boundary violation detected */
-#define MPTAR_ERR_PATH_TOO_LONG        -11  /* File path exceeds the native physical limits of a standard USTAR block. */
+#define MPTAR_ERR_RESERVED_LEGACY_2    -11  /* Reserved / Legacy. Formerly used to signal PAX need, but now checks are done without an error signaling that. */
 #define MPTAR_ERR_NS_CONVERSION_FAILED -12  /* Conversion of nanoseconds to string failed. One way for this to occur is if the value is above 999,999,999. */
 #define MPTAR_ERR_BUFFER_TOO_SMALL     -13  /* Buffer was too small. */
 
