@@ -1,8 +1,8 @@
-site_name: minipaxtar
+site_name: MiniPaxTar
 site_description: "Lightweight, single-header C TAR library"
-site_url: "https://imvulpi.github.io/minipaxtar/"
-repo_url: "https://github.com/imvulpi/minipaxtar"
-repo_name: "minipaxtar"
+site_url: "https://imvulpi.github.io/MiniPaxTar/"
+repo_url: "https://github.com/imvulpi/MiniPaxTar"
+repo_name: "MiniPaxTar"
 use_directory_urls: true
 
 theme:
