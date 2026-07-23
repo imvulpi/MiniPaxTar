@@ -573,7 +573,7 @@ static mptar_uint32 mptar_calculate_header_checksum(char* header_block){
     const unsigned char* block = (const unsigned char*)header_block;
     mptar_uint32 sum = 0;    
 
-    int i = 0;
+    mptar_uint16 i = 0;
     for ( ; i < MPTAR_CHECKSUM_OFFSET; i++) {
         sum += block[i];
     }
@@ -1491,7 +1491,7 @@ static int mptar_verify_header_checksum(const mptar_header* header) {
     mptar_uint32 unsigned_sum = 0;
     mptar_int32 signed_sum = 0;
 
-    int i = 0;
+    mptar_uint16 i = 0;
     for ( ; i < MPTAR_CHECKSUM_OFFSET; i++) {
         unsigned_sum += bytes[i];
         signed_sum += (signed char)bytes[i];
