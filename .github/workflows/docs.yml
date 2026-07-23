@@ -36,7 +36,7 @@ jobs:
           doxybook2 --version
 
       - name: Run Doxygen
-        run: doxygen Doxyfile
+        run: doxygen DoxyFile
 
       - name: Run Doxybook2
         run: |
