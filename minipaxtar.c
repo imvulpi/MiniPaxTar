@@ -2,7 +2,9 @@
 
 /**
  * \file minipaxtar.c
- * Internal implementation.
+ * \copyright Copyright (c) 2026 Vulpi
+ * \author Vulpi <78976654+imvulpi@users.noreply.github.com>
+ * SPDX-License-Identifier: MIT
  */
 
 #ifndef MPTAR_NO_STD
