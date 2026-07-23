@@ -38,6 +38,11 @@ jobs:
       - name: Run Doxygen
         run: doxygen DoxyFile
 
+      - name: Clean or Create API Docs Directory
+        run: |
+          rm -rf docs/api/*
+          mkdir -p docs/api
+      
       - name: Run Doxybook2
         run: |
           doxybook2 -i docs/xml -o docs/api -c doxybook2.json

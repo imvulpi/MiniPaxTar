@@ -1,1 +1,0 @@
-# Doxybook2 Requires this folder to be created.
