@@ -1,0 +1,49 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # Required for gh-pages deployment
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Doxygen and MkDocs dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+          pip install mkdocs mkdocs-terminal pymdown-extensions
+
+      - name: Install Doxybook2 (v1.5.0)
+        run: |
+          wget https://github.com/matusnovak/doxybook2/releases/download/v1.5.0/doxybook2-linux-amd64-v1.5.0.zip -O doxybook2.zip
+          unzip doxybook2.zip -d doxybook2_bin
+          sudo mv doxybook2_bin/bin/doxybook2 /usr/local/bin/
+          rm -rf doxybook2.zip doxybook2_bin
+          doxybook2 --version
+
+      - name: Run Doxygen
+        run: doxygen Doxyfile
+
+      - name: Run Doxybook2
+        run: |
+          doxybook2 -i docs/xml -o docs/api -c doxybook2.json
+
+      - name: Run Python Link Adjuster
+        run: python scripts/adjust_doc_links.py
+
+      - name: Deploy MkDocs to GitHub Pages
+        run: mkdocs gh-deploy --config-file mkdocs.yml --force

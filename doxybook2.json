@@ -1,0 +1,16 @@
+{
+  "baseUrl": "/minipaxtar/api/",
+  "linkLower": false,
+  "indexInFolders": false,
+  "summaryAbbrevLength": 100,
+  "files": {
+    "summary": "SUMMARY.md",
+    "members": false,
+    "globals": false,
+    "files": false
+  },
+  "folders": {
+    "groups": "Modules",
+    "classes": "Classes"
+  }
+}
