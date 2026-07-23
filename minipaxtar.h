@@ -179,6 +179,16 @@ extern "C" {
 #define MPTAR_UINT64_STR_BUF_SIZE         24U               /**< Buffer capacity used to safely format a 64-bit uint string (including terminator). */
 #define MPTAR_TIMESPEC_STR_BUF_SIZE       32U               /**< Buffer capacity used to safely format full PAX timestamp string ("sec.nsec", including null terminator). */
 
+#ifndef MPTAR_MAX_PAX_SIZE
+/**
+ * \brief Maximum permitted byte size for a single PAX extended header payload.
+ * \details Protects against Denial of Service (DoS) attacks or dynamic allocation panics 
+ *          caused by corrupted or untrusted TAR archives with unnaturally large PAX size headers.
+ *          Defaults to 8 MiB (8,388,608 bytes). Can be overridden at compile-time.
+ */
+#define MPTAR_MAX_PAX_SIZE (8 * 1024 * 1024)
+#endif
+
 /** @} */
 
 /**

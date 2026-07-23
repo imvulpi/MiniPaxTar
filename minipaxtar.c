@@ -1881,7 +1881,7 @@ static int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_si
     if (total_pax_size == 0) return MPTAR_OK;
 
     mptar_size_t size_t_pax = (mptar_size_t)total_pax_size;
-    if (size_t_pax != total_pax_size) {
+    if (size_t_pax != total_pax_size || size_t_pax > MPTAR_MAX_PAX_SIZE) {
         return MPTAR_ERR_OVERFLOW;
     }
 
