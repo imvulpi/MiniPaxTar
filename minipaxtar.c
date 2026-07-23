@@ -1,19 +1,46 @@
 #include "minipaxtar.h"
 
+/**
+ * @file minipaxtar.c
+ * Internal implementation.
+ */
+
 #ifndef MPTAR_NO_STD
 
 #include <string.h>
 #include <stdlib.h>
 
+/** \brief String length utility 
+ *  size_t strlen(const char *_Str) */
 #define mptar_strlen  strlen
-#define mptar_strnlen strnlen
-#define mptar_strncpy strncpy
-#define mptar_memcpy  memcpy
-#define mptar_memset  memset
-#define mptar_memcmp  memcmp
 
+/** \brief Bounded string length utility 
+ * size_t strnlen(const char *_Str, size_t _MaxCount) */
+#define mptar_strnlen strnlen
+
+/** \brief Bounded string copy utility 
+ * char *strncpy(char *__restrict__ _Dest, const char *__restrict__ _Source, size_t _Count) */
+#define mptar_strncpy strncpy
+
+/** \brief Memory copy utility 
+ * void *memcpy(void *__restrict__ _Dst, const void *__restrict__ _Src, size_t _Size) */
+#define mptar_memcpy  memcpy
+
+/** \brief Memory set utility 
+ * void *memset(void *_Dst, int _Val, size_t _Size) */
+#define mptar_memset  memset
+
+/** \brief Memory comparison utility 
+ * int memcmp(const void *_Buf1, const void *_Buf2, size_t _Size) */
+#define mptar_memcmp  memcmp
 #else
 
+#ifndef MPTAR_CUSTOM_STRLEN
+/**
+ * \brief Compute the length of a null-terminated string safely.
+ * \param str Pointer to the null-terminated string.
+ * \return The number of characters preceding the terminating null byte, or 0 if \p str is \c MPTAR_NULL.
+ */
 static mptar_size_t mptar_strlen(const char* str) {
     if (!str) return 0;
     mptar_size_t len = 0;
@@ -22,7 +49,18 @@ static mptar_size_t mptar_strlen(const char* str) {
     }
     return len;
 }
+#else
+extern mptar_size_t mptar_strlen(const char* str);
+#endif
 
+#ifndef MPTAR_CUSTOM_STRNLEN
+/**
+ * \brief Compute the length of a string up to a maximum limit safely.
+ * \param str Pointer to the string.
+ * \param max_limit Maximum number of bytes to inspect.
+ * \return The number of characters preceding the terminating null byte or \p max_limit, 
+ *         whichever comes first, or 0 if \p str is \c MPTAR_NULL.
+ */
 static mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit) {
     if (!str) return 0;
     mptar_size_t count = 0;
@@ -31,7 +69,18 @@ static mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit) {
     }
     return count;
 }
+#else
+extern mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit);
+#endif
 
+#ifndef MPTAR_CUSTOM_STRNCPY
+/**
+ * \brief Copy a string with a fixed maximum buffer size, padding remaining space with null bytes.
+ * \param dst Destination buffer.
+ * \param src Source null-terminated string.
+ * \param n Maximum number of bytes to copy into \p dst.
+ * \return Pointer to the destination buffer \p dst.
+ */
 static char* mptar_strncpy(char* dst, const char* src, mptar_size_t n) {
     if (dst == MPTAR_NULL || n == 0) return dst;
     
@@ -51,7 +100,17 @@ static char* mptar_strncpy(char* dst, const char* src, mptar_size_t n) {
     
     return dst;
 }
+#else
+extern char* mptar_strncpy(char* dst, const char* src, mptar_size_t n);
+#endif
 
+#ifndef MPTAR_CUSTOM_MEMCPY
+/**
+ * \brief Copy a block of memory from source to destination.
+ * \param dest Pointer to the destination buffer.
+ * \param src Pointer to the source buffer.
+ * \param n Number of bytes to copy.
+ */
 static void mptar_memcpy(void* dest, const void* src, mptar_size_t n) {
     if (!dest || !src || n == 0) return;
     
@@ -63,7 +122,17 @@ static void mptar_memcpy(void* dest, const void* src, mptar_size_t n) {
         d[i] = s[i];
     }
 }
+#else
+extern void mptar_memcpy(void* dest, const void* src, mptar_size_t n);
+#endif
 
+#ifndef MPTAR_CUSTOM_MEMSET
+/**
+ * \brief Fill a block of memory with a specific byte value.
+ * \param data Pointer to the memory block to fill.
+ * \param value Byte value to set.
+ * \param amount Number of bytes to set.
+ */
 static void mptar_memset(void* data, char value, mptar_size_t amount) {
     if (!data || amount == 0) return;
     
@@ -73,7 +142,18 @@ static void mptar_memset(void* data, char value, mptar_size_t amount) {
         bytes[i] = value;
     }
 }
+#else
+extern void mptar_memset(void* data, char value, mptar_size_t amount);
+#endif
 
+#ifndef MPTAR_CUSTOM_MEMCMP
+/**
+ * \brief Compare two blocks of memory.
+ * \param s1 Pointer to the first memory block.
+ * \param s2 Pointer to the second memory block.
+ * \param size Number of bytes to compare.
+ * \return 0 if the blocks match, a negative value if \p s1 is less than \p s2, or a positive value if \p s1 is greater than \p s2.
+ */
 static int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
     if (!s1 || !s2 || size == 0) return 0;
     
@@ -89,6 +169,9 @@ static int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
 
     return 0;
 }
+#else
+extern int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
+#endif
 
 #endif /* MPTAR_NO_STD */
 
