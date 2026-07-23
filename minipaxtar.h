@@ -2,8 +2,8 @@
 #define MINIPAXTAR_H
 
 /**
- * @file minipaxtar.h
- * @brief Header for MiniPaxTar library.
+ * \file minipaxtar.h
+ * \brief Header for MiniPaxTar library.
  */
  
 #ifdef MPTAR_NO_STD
@@ -81,6 +81,59 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+/**
+ * \brief Documentation for compile-time configuration macros.
+ * \details The \c DOXYGEN_DOCS macro is used exclusively by documentation generators 
+ *          like Doxygen. Because minipaxtar enables reading and writing by default, 
+ *          these option macros (such as \c MPTAR_NO_READ) are not normally defined in the 
+ *          source code. Wrapping them in \c "#ifdef DOXYGEN_DOCS" allows Doxygen to index 
+ *          and document them without altering actual build configurations.
+ */
+#ifdef DOXYGEN_DOCS 
+/**
+ * \defgroup mptar_stable_config Stable Compile-Time Options
+ * \brief Stable configuration macros and custom conversion/string hooks.
+ * \details These options, features, and custom conversion hooks are guaranteed stable 
+ *          and will follow standard deprecation cycles if ever slated for modification or removal.
+ * \{
+ */
+
+#define MPTAR_NO_STD                /**< Disable standard library dependencies (-DMPTAR_NO_STD) for freestanding/bare-metal environments. */
+#define MPTAR_NO_READ               /**< Disable read support (-DMPTAR_NO_READ) to strip archive reading functionality and reduce binary size. */
+#define MPTAR_NO_WRITE              /**< Disable write support (-DMPTAR_NO_WRITE) to strip archive writing functionality and reduce binary size. */
+#define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
+#define MPTAR_SUPPORT_EXTRA_TIMES   /**< Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. */
+
+#define MPTAR_CUSTOM_U64TOA         /**< Custom implementation override for unsigned 64-bit integer to string. */
+#define MPTAR_CUSTOM_I64TOA         /**< Custom implementation override for signed 64-bit integer to string. */
+#define MPTAR_CUSTOM_ATOU64         /**< Custom implementation override for string to unsigned 64-bit integer. */
+#define MPTAR_CUSTOM_ATOI64         /**< Custom implementation override for string to signed 64-bit integer. */
+#define MPTAR_CUSTOM_STRLEN         /**< Custom implementation override for string length calculation. */
+#define MPTAR_CUSTOM_STRNLEN        /**< Custom implementation override for bounded string length calculation. */
+#define MPTAR_CUSTOM_STRNCPY        /**< Custom implementation override for bounded string copying. */
+#define MPTAR_CUSTOM_MEMCPY         /**< Custom implementation override for memory block copying. */
+#define MPTAR_CUSTOM_MEMSET         /**< Custom implementation override for memory block setting. */
+#define MPTAR_CUSTOM_MEMCMP         /**< Custom implementation override for memory block comparison. */
+
+/** \} */
+
+/**
+ * \defgroup mptar_experimental_config Experimental & Internal Overrides
+ * \warning **Volatile API / No Stability Guarantees:** These internal macros and low-level hooks 
+ *          are subject to change or complete removal without notice in future versions. 
+ *          Use them at your own risk.
+ * \brief Unstable low-level hooks and internal customization switches.
+ * \details All \c MPTAR_CUSTOM_* hooks are related to internal functions inside \c minipaxtar.c. 
+ *          Unless explicitly listed under \ref mptar_stable_config, these custom functions 
+ *          are considered internal and carry no stability guarantees.
+ * \{
+ */
+
+#define MPTAR_CUSTOM_INTERNAL_HOOK_EXAMPLE /**< General catch-all representation for internal or undocumented custom hooks. */
+
+/** \} */
 #endif
 
 /**
