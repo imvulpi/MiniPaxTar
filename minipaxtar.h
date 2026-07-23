@@ -106,7 +106,7 @@ extern "C" {
 /**
  * \brief Encountered a special file type flag (FIFO, Block, Char device).
  * \note Returning this error code usually indicates that special file support 
- *       was disabled at compile time via \ref MPTAR_SUPPORT_SPECIAL.
+ *       was disabled at compile time via \c MPTAR_SUPPORT_SPECIAL.
  */
 #define MPTAR_ERR_UNSUPPORTED_TYPE     -6
 #define MPTAR_ERR_RESERVED_LEGACY_1    -7   /**< Reserved / Legacy. Formerly used for write overflow prior to automatic payload clamping. */

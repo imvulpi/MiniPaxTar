@@ -18,35 +18,35 @@
 
 /**
  * \brief Bounded string length utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c size_t \c strnlen(const \c char* str, size_t maxlen).
  */
 #define mptar_strnlen strnlen
 
 /**
  * \brief Bounded string copy utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c char* \c strncpy(char* restrict dest, const \c char* restrict src, size_t count).
  */
 #define mptar_strncpy strncpy
 
 /**
  * \brief Memory copy utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c void* \c memcpy(void* restrict dest, const \c void* restrict src, size_t size).
  */
 #define mptar_memcpy  memcpy
 
 /**
  * \brief Memory set utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c void* \c memset(void* dest, int val, size_t size).
  */
 #define mptar_memset  memset
 
 /**
  * \brief Memory comparison utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c int \c memcmp(const \c void* buf1, const \c void* buf2, size_t size).
  */
 #define mptar_memcmp  memcmp

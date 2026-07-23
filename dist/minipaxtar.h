@@ -111,7 +111,7 @@ extern "C" {
 /**
  * \brief Encountered a special file type flag (FIFO, Block, Char device).
  * \note Returning this error code usually indicates that special file support 
- *       was disabled at compile time via \ref MPTAR_SUPPORT_SPECIAL.
+ *       was disabled at compile time via \c MPTAR_SUPPORT_SPECIAL.
  */
 #define MPTAR_ERR_UNSUPPORTED_TYPE     -6
 #define MPTAR_ERR_RESERVED_LEGACY_1    -7   /**< Reserved / Legacy. Formerly used for write overflow prior to automatic payload clamping. */
@@ -664,35 +664,35 @@ int mptar_close_archive(mptar_writer *ctx);
 
 /**
  * \brief Bounded string length utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c size_t \c strnlen(const \c char* str, size_t maxlen).
  */
 #define mptar_strnlen strnlen
 
 /**
  * \brief Bounded string copy utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c char* \c strncpy(char* restrict dest, const \c char* restrict src, size_t count).
  */
 #define mptar_strncpy strncpy
 
 /**
  * \brief Memory copy utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c void* \c memcpy(void* restrict dest, const \c void* restrict src, size_t size).
  */
 #define mptar_memcpy  memcpy
 
 /**
  * \brief Memory set utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c void* \c memset(void* dest, int val, size_t size).
  */
 #define mptar_memset  memset
 
 /**
  * \brief Memory comparison utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
+ * \details Maps to standard library function when \c MPTAR_NO_STD is undefined: 
  * \c int \c memcmp(const \c void* buf1, const \c void* buf2, size_t size).
  */
 #define mptar_memcmp  memcmp

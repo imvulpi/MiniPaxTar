@@ -1,3 +1,6 @@
+# Doxygen
+doxygen_warnings.log
+
 # Python
 __pycache__/
 

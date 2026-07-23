@@ -4,8 +4,6 @@ OPTIMIZE_OUTPUT_FOR_C  = YES
 
 # Force extract all symbols into XML
 EXTRACT_ALL            = YES
-EXTRACT_TYPEDEFS       = YES
-EXTRACT_MACROS         = YES
 EXTRACT_STATIC         = YES
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
@@ -19,3 +17,10 @@ GENERATE_XML           = YES
 XML_OUTPUT             = docs/xml
 GENERATE_HTML          = NO
 GENERATE_LATEX         = NO
+
+# Warnings
+WARNINGS = YES
+WARN_IF_DOC_ERROR = YES
+WARN_IF_UNDOCUMENTED = YES
+WARN_NO_PARAMDOC = YES
+WARN_LOGFILE = doxygen_warnings.log
