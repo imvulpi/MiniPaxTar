@@ -813,10 +813,11 @@ extern int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
  * \brief Convert an unsigned 64-bit integer into an octal string representation.
  * \details Formats the numeric value as an octal string and guarantees a null-terminated 
  *          output within the specified buffer size.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_U64TOA.
  * \param value The 64-bit unsigned integer to convert.
  * \param str Output buffer to store the resulting null-terminated octal string.
  * \param str_size Maximum capacity of the output buffer in bytes.
- * \param[out] out_err Output status pointer receiving an error code on failure (e.g., if the buffer is too small).
+ * \param[out] out_err Output status pointer receiving an error code on failure (e.g., overflow if the buffer was too small).
  * \return Pointer to the resulting string buffer \p str on success, or \c MPTAR_NULL on failure.
  */
 static char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, int *out_err){
@@ -866,7 +867,17 @@ extern char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, 
 #endif
 
 #ifndef MPTAR_CUSTOM_I64TOA
-
+/**
+ * \brief Convert a signed 64-bit integer into a string representation.
+ * \details Formats the numeric value as a decimal (or signed) string, including a negative sign 
+ *          when applicable, and guarantees a null-terminated output within the specified buffer size.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_I64TOA.
+ * \param value The 64-bit signed integer to convert.
+ * \param buf Output buffer to store the resulting null-terminated string.
+ * \param buf_size Maximum capacity of the output buffer in bytes.
+ * \param[out] out_err Output status pointer receiving an error code on failure (e.g., \ref MPTAR_ERR_INVALID_ARG).
+ * \return Pointer to the resulting string buffer \p buf on success, or \c MPTAR_NULL on failure.
+ */
 static char* mptar_i64toa(mptar_int64 value, char* buf, mptar_size_t buf_size, int *out_err) {
     if (out_err) *out_err = MPTAR_OK;
     
@@ -1568,7 +1579,16 @@ int mptar_close_archive(mptar_writer *ctx)
 #endif
 
 #ifndef MPTAR_CUSTOM_ATOU64
-
+/**
+ * \brief Parse a string slice into an unsigned 64-bit integer with explicit length and overflow protection.
+ * \details Safely converts a bounded ASCII string representation of a number into an unsigned 64-bit integer, 
+ *          handling arithmetic overflows and checking for malformed input.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_ATOU64.
+ * \param str Pointer to the character string buffer to parse.
+ * \param len Number of characters to inspect in the string.
+ * \param[out] err Output status pointer receiving an error code on failure (e.g., \ref MPTAR_ERR_OVERFLOW, \ref MPTAR_ERR_MALFORMED, or \ref MPTAR_ERR_INVALID_ARG).
+ * \return The parsed 64-bit unsigned integer value, or a boundary fallback on error.
+ */
 static mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err) {
     if(err) *err = MPTAR_OK;
     if(str == MPTAR_NULL || len == 0){
@@ -1617,7 +1637,16 @@ extern mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err);
 #endif
 
 #ifndef MPTAR_CUSTOM_ATOI64
-
+/**
+ * \brief Parse a string slice into a signed 64-bit integer with sign detection, length bounds, and overflow protection.
+ * \details Safely converts a bounded ASCII string representation (optionally prefixed with '+' or '-') into a signed 64-bit integer, 
+ *          handling arithmetic overflows and checking for malformed input.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_ATOI64.
+ * \param str Pointer to the character string buffer to parse.
+ * \param len Number of characters to inspect in the string.
+ * \param[out] err Output status pointer receiving an error code on failure (e.g., \ref MPTAR_ERR_OVERFLOW, \ref MPTAR_ERR_MALFORMED, or \ref MPTAR_ERR_INVALID_ARG).
+ * \return The parsed 64-bit signed integer value, or a boundary fallback on error.
+ */
 static mptar_int64 mptar_atoi64(const char* str, mptar_size_t len, int* err) {
     if (err) *err = MPTAR_OK;
     if (str == MPTAR_NULL || len == 0) {
