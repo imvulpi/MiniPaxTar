@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structmptar__opt__time" kind="struct" language="C++" prot="public">
+    <compoundname>mptar_opt_time</compoundname>
+    <includes refid="minipaxtar_8h" local="no">minipaxtar.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmptar__opt__time_1a3317b1f3e5215c8f6bbf066221fb4730" prot="public" static="no" mutable="no">
+        <type><ref refid="structmptar__timespec" kindref="compound">mptar_timespec</ref></type>
+        <definition>mptar_timespec mptar_opt_time::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>mptar_opt_time::value</qualifiedname>
+        <briefdescription>
+<para>High-resolution timestamp value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="421" column="20" bodyfile="minipaxtar.h" bodystart="421" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__opt__time_1a809217fa795386f2294240b81b978d0d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool mptar_opt_time::has_value</definition>
+        <argsstring></argsstring>
+        <name>has_value</name>
+        <qualifiedname>mptar_opt_time::has_value</qualifiedname>
+        <briefdescription>
+<para>True if the timestamp is present and valid. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="422" column="10" bodyfile="minipaxtar.h" bodystart="422" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Optional timestamp container. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>mptar_opt_time</label>
+        <link refid="structmptar__opt__time"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mptar_timespec</label>
+        <link refid="structmptar__timespec"/>
+      </node>
+    </collaborationgraph>
+    <location file="minipaxtar.h" line="420" column="1" bodyfile="minipaxtar.h" bodystart="420" bodyend="423"/>
+    <listofallmembers>
+      <member refid="structmptar__opt__time_1a809217fa795386f2294240b81b978d0d" prot="public" virt="non-virtual"><scope>mptar_opt_time</scope><name>has_value</name></member>
+      <member refid="structmptar__opt__time_1a3317b1f3e5215c8f6bbf066221fb4730" prot="public" virt="non-virtual"><scope>mptar_opt_time</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

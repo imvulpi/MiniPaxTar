@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__pax__flags" kind="group">
+    <compoundname>mptar_pax_flags</compoundname>
+    <title>PAX Record Tracking Flags</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__pax__flags_1ga1e3442fc409da019a0d175600609d66f" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_PATH</name>
+        <initializer>(1 &lt;&lt; 0)</initializer>
+        <briefdescription>
+<para>Bit set if a path keyword existed in the pax entry and parsing the path was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="293" column="9" bodyfile="minipaxtar.h" bodystart="293" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1gab395b400612d049d79be5477ea4460c1" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_LINK</name>
+        <initializer>(1 &lt;&lt; 1)</initializer>
+        <briefdescription>
+<para>Bit set if a linkpath keyword existed in the pax entry and parsing the linkpath was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="294" column="9" bodyfile="minipaxtar.h" bodystart="294" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1ga0c678100a4c83587a92652750b13f939" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_SIZE</name>
+        <initializer>(1 &lt;&lt; 2)</initializer>
+        <briefdescription>
+<para>Bit set if a size keyword existed in the pax entry and parsing the size was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="295" column="9" bodyfile="minipaxtar.h" bodystart="295" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1ga66fbc319d99f3be51e01118ef32fae57" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_MTIME</name>
+        <initializer>(1 &lt;&lt; 3)</initializer>
+        <briefdescription>
+<para>Bit set if an mtime keyword existed in the pax entry and parsing the mtime was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="296" column="9" bodyfile="minipaxtar.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1gae6082885963284fba25855a975536b5a" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_UID</name>
+        <initializer>(1 &lt;&lt; 4)</initializer>
+        <briefdescription>
+<para>Bit set if a uid keyword existed in the pax entry and parsing the uid was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="297" column="9" bodyfile="minipaxtar.h" bodystart="297" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1gac32a66d024f71734f8b2557ce5a9a919" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_GID</name>
+        <initializer>(1 &lt;&lt; 5)</initializer>
+        <briefdescription>
+<para>Bit set if a gid keyword existed in the pax entry and parsing the gid was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="298" column="9" bodyfile="minipaxtar.h" bodystart="298" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1ga0d22bf999e95a91140668c570587d703" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_ATIME</name>
+        <initializer>(1 &lt;&lt; 6)</initializer>
+        <briefdescription>
+<para>Bit set if an atime keyword existed in the pax entry and parsing the atime was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="299" column="9" bodyfile="minipaxtar.h" bodystart="299" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1ga7ddbed00eeb9251e75349d097c0c6807" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_CTIME</name>
+        <initializer>(1 &lt;&lt; 7)</initializer>
+        <briefdescription>
+<para>Bit set if a ctime keyword existed in the pax entry and parsing the ctime was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="300" column="9" bodyfile="minipaxtar.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1gaef694b9faaad173f786f7c469a4dc3a1" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_UNAME</name>
+        <initializer>(1 &lt;&lt; 8)</initializer>
+        <briefdescription>
+<para>Bit set if a uname keyword existed in the pax entry and parsing the uname was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="301" column="9" bodyfile="minipaxtar.h" bodystart="301" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__flags_1gaa545bfa97d0174326516d7fa61745c20" prot="public" static="no">
+        <name>MPTAR_PAX_HAS_GNAME</name>
+        <initializer>(1 &lt;&lt; 9)</initializer>
+        <briefdescription>
+<para>Bit set if a gname keyword existed in the pax entry and parsing the gname was successful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="302" column="9" bodyfile="minipaxtar.h" bodystart="302" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Bit flags tracking successfully parsed fields from a PAX extended header. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>These flags indicate that a PAX keyword was both present in the block and successfully parsed into <ref refid="structmptar__metadata" kindref="compound">mptar_metadata</ref>. If keyword parsing fails, the respective bit is explicitly left unset. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

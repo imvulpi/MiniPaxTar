@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__format__limits" kind="group">
+    <compoundname>mptar_format_limits</compoundname>
+    <title>USTAR &amp; PAX Field Capacities, Bounds, and Buffer Limits</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__format__limits_1gad07c354a5ba5ec7e03964b91370115e9" prot="public" static="no">
+        <name>MPTAR_USTAR_SIZE_LINKNAME</name>
+        <initializer>100</initializer>
+        <briefdescription>
+<para>Raw size of the header linkname field in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="229" column="9" bodyfile="minipaxtar.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1gac4af76218c6b930613d27989c3ee7a46" prot="public" static="no">
+        <name>MPTAR_USTAR_SIZE_NAME</name>
+        <initializer>100</initializer>
+        <briefdescription>
+<para>Raw size of the header filename field in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="230" column="9" bodyfile="minipaxtar.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga8443c1748f7a0c03117fcb61b6d9c2c5" prot="public" static="no">
+        <name>MPTAR_USTAR_SIZE_PREFIX</name>
+        <initializer>155</initializer>
+        <briefdescription>
+<para>Raw size of the header prefix field in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="231" column="9" bodyfile="minipaxtar.h" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1gad9873914d5c5e391cdb48a7314e3111b" prot="public" static="no">
+        <name>MPTAR_USTAR_SIZE_UNAME</name>
+        <initializer>32</initializer>
+        <briefdescription>
+<para>Raw size of the header owner user name field in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="232" column="9" bodyfile="minipaxtar.h" bodystart="232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga199ff4cc90dded40d97bc3e55005b22a" prot="public" static="no">
+        <name>MPTAR_USTAR_SIZE_GNAME</name>
+        <initializer>32</initializer>
+        <briefdescription>
+<para>Raw size of the header owner group name field in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="233" column="9" bodyfile="minipaxtar.h" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga31c70785896ea38e78129833a115a385" prot="public" static="no">
+        <name>MPTAR_USTAR_MAX_LEN_NAME</name>
+        <initializer>(<ref refid="group__mptar__format__limits_1gac4af76218c6b930613d27989c3ee7a46" kindref="member">MPTAR_USTAR_SIZE_NAME</ref> - 1)</initializer>
+        <briefdescription>
+<para>Maximum string length for filename (99 chars). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="236" column="9" bodyfile="minipaxtar.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga6a1110c87371b69a369b552ebe0fba8d" prot="public" static="no">
+        <name>MPTAR_USTAR_MAX_LEN_LINKNAME</name>
+        <initializer>(<ref refid="group__mptar__format__limits_1gad07c354a5ba5ec7e03964b91370115e9" kindref="member">MPTAR_USTAR_SIZE_LINKNAME</ref> - 1)</initializer>
+        <briefdescription>
+<para>Maximum string length for linkname (99 chars). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="237" column="9" bodyfile="minipaxtar.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga05ae48606653e5d5e64aeb31a047fb61" prot="public" static="no">
+        <name>MPTAR_USTAR_MAX_LEN_PREFIX</name>
+        <initializer>(<ref refid="group__mptar__format__limits_1ga8443c1748f7a0c03117fcb61b6d9c2c5" kindref="member">MPTAR_USTAR_SIZE_PREFIX</ref> - 1)</initializer>
+        <briefdescription>
+<para>Maximum string length for prefix (154 chars). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="238" column="9" bodyfile="minipaxtar.h" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1gaf73f436ecd8d14a1dce7e965208166ea" prot="public" static="no">
+        <name>MPTAR_USTAR_MAX_LEN_UNAME</name>
+        <initializer>(<ref refid="group__mptar__format__limits_1gad9873914d5c5e391cdb48a7314e3111b" kindref="member">MPTAR_USTAR_SIZE_UNAME</ref> - 1)</initializer>
+        <briefdescription>
+<para>Maximum string length for uname (31 chars). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="239" column="9" bodyfile="minipaxtar.h" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga4e892f5ca1782ae5f13e0abdbe33b635" prot="public" static="no">
+        <name>MPTAR_USTAR_MAX_LEN_GNAME</name>
+        <initializer>(<ref refid="group__mptar__format__limits_1ga199ff4cc90dded40d97bc3e55005b22a" kindref="member">MPTAR_USTAR_SIZE_GNAME</ref> - 1)</initializer>
+        <briefdescription>
+<para>Maximum string length for gname (31 chars). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="240" column="9" bodyfile="minipaxtar.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga4ed876184c2077c8c061e7d82dbc9c40" prot="public" static="no">
+        <name>MPTAR_USTAR_MAX_OCTAL_12B</name>
+        <initializer>8589934591ULL</initializer>
+        <briefdescription>
+<para>Maximum value encodeable in a 12-byte USTAR octal field (77777777777 octal). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="243" column="9" bodyfile="minipaxtar.h" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga1d9b06c7b6450bfc51607ce5b96606d2" prot="public" static="no">
+        <name>MPTAR_USTAR_MAX_OCTAL_8B</name>
+        <initializer>2097151ULL</initializer>
+        <briefdescription>
+<para>Maximum value encodeable in an 8-byte USTAR octal field (7777777 octal). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="244" column="9" bodyfile="minipaxtar.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga911d2dbf68d19ab054c78222fc38ee5d" prot="public" static="no">
+        <name>MPTAR_MAX_OCTAL_DIGITS_64</name>
+        <initializer>22U</initializer>
+        <briefdescription>
+<para>Max octal digits required to represent a 64-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="245" column="9" bodyfile="minipaxtar.h" bodystart="245" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1gafcb4748b40117d09963c8f91cffb54a2" prot="public" static="no">
+        <name>MPTAR_BINARY_MAX_8B</name>
+        <initializer><ref refid="group__mptar__primitives_1ga4373629e1254f025907379318ad764fe" kindref="member">MPTAR_INT64_MAX</ref></initializer>
+        <briefdescription>
+<para>Max boundary for 8-byte base-256 binary encoded values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="246" column="9" bodyfile="minipaxtar.h" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga568bd1032bdd12c403dad8bf213d4ec2" prot="public" static="no">
+        <name>MPTAR_PAX_MAX_UINT32_STR_LEN</name>
+        <initializer>10U</initializer>
+        <briefdescription>
+<para>String length required to represent a uint32 value when its value exceeds 999999999 (10 digits, up to 4294967295). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="247" column="9" bodyfile="minipaxtar.h" bodystart="247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga8ca551e04d141c1ec329faa78be4c0c0" prot="public" static="no">
+        <name>MPTAR_PAX_NSEC_MAX_DIGITS</name>
+        <initializer>9U</initializer>
+        <briefdescription>
+<para>Maximum digits needed for writing nanoseconds precision (10^-9). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="248" column="9" bodyfile="minipaxtar.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1gad4c0426f53763eac6b85b1f1401212d2" prot="public" static="no">
+        <name>MPTAR_PAX_NSEC_INITIAL_MULTIPLIER</name>
+        <initializer>100000000U</initializer>
+        <briefdescription>
+<para>Scale factor (10^8) for extracting top nanosecond digit. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="249" column="9" bodyfile="minipaxtar.h" bodystart="249" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga83f4d121a40ad7decd197a1fda067ecd" prot="public" static="no">
+        <name>MPTAR_PAX_MAX_DATA_LEN</name>
+        <initializer>(<ref refid="group__mptar__primitives_1ga977ac6b635dc60a711a6d620e6a61d08" kindref="member">MPTAR_UINT32_MAX</ref> - <ref refid="group__mptar__format__limits_1ga568bd1032bdd12c403dad8bf213d4ec2" kindref="member">MPTAR_PAX_MAX_UINT32_STR_LEN</ref>)</initializer>
+        <briefdescription>
+<para>Maximum payload byte capacity inside a single PAX record. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="250" column="9" bodyfile="minipaxtar.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1ga031b16a5c9c5a7e76d82230ef9240381" prot="public" static="no">
+        <name>MPTAR_UINT64_STR_BUF_SIZE</name>
+        <initializer>24U</initializer>
+        <briefdescription>
+<para>Buffer capacity used to safely format a 64-bit uint string (including terminator). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="253" column="9" bodyfile="minipaxtar.h" bodystart="253" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1gad2860fbfdc5b5c1132a0e39b96bb687b" prot="public" static="no">
+        <name>MPTAR_TIMESPEC_STR_BUF_SIZE</name>
+        <initializer>32U</initializer>
+        <briefdescription>
+<para>Buffer capacity used to safely format full PAX timestamp string (&quot;sec.nsec&quot;, including null terminator). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="254" column="9" bodyfile="minipaxtar.h" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__limits_1gabf0f7a1dcad31947b6c92e8526049fbe" prot="public" static="no">
+        <name>MPTAR_MAX_PAX_SIZE</name>
+        <initializer>(8 * 1024 * 1024)</initializer>
+        <briefdescription>
+<para>Maximum permitted byte size for a single PAX extended header payload. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Protects against Denial of Service (DoS) attacks or dynamic allocation panics caused by corrupted or untrusted TAR archives with unnaturally large PAX size headers. Defaults to 8 MiB (8,388,608 bytes). Can be overridden at compile-time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="263" column="9" bodyfile="minipaxtar.h" bodystart="263" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Fixed array sizes, maximum string lengths, encoding numeric limits, and formatting buffer sizes. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

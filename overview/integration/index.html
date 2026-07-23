@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/overview/integration/"><link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>Integrating it - MiniPaxTar</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../..",
+    shortcuts = "{}";
+</script>
+<script src="../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Overview</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">Integrating it</span>
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../guides/pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../guides/config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../guides/status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../guides/error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#integration-manual-and-cmake">Integration (Manual and CMake)</a></li>
+        <li><a href="#1-manual-integration-non-cmake">1. Manual Integration (Non-CMake)</a></li><li><a href="#option-a-classical-minipaxtarc-minipaxtarh">Option A: Classical (minipaxtar.c + minipaxtar.h)</a></li><li><a href="#option-b-stb-style-single-header">Option B: STB-Style Single-Header</a></li><li><a href="#2-cmake-integration">2. CMake Integration</a></li><li><a href="#option-a-fetchcontent-recommended-for-cmake">Option A: FetchContent (Recommended for CMake)</a></li><li><a href="#option-b-git-submodule-or-subdirectory">Option B: Git Submodule or Subdirectory</a></li><li><a href="#option-c-system-package-find_package">Option C: System Package (find_package)</a></li><li><a href="#configuration-options">Configuration Options</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="integration-manual-and-cmake">Integration (Manual and CMake)</h1>
+<p>This guide details how to integrate <code>minipaxtar</code> into your project - whether you use <strong>CMake</strong> (<code>FetchContent</code>, submodules, packages) or prefer <strong>Manual Integration</strong> (stb-style header-only or classic <code>.c</code> + <code>.h</code> copying).</p>
+<hr />
+<h2 id="1-manual-integration-non-cmake">1. Manual Integration (Non-CMake)</h2>
+<p>If you don't use CMake, <code>minipaxtar</code> is designed to be trivial to vendor directly into your source.</p>
+<h2 id="option-a-classical-minipaxtarc-minipaxtarh">Option A: Classical (<code>minipaxtar.c</code> + <code>minipaxtar.h</code>)</h2>
+<ol>
+<li>Copy <code>minipaxtar.h</code> and <code>minipaxtar.c</code> into your project's include/source directory (or add as a Git submodule).</li>
+<li>Add <code>minipaxtar.c</code> to your build system's source list (Makefile, MSBuild, Premake, Ninja, etc.).</li>
+<li><code>#include "minipaxtar.h"</code> wherever you need to interact with TAR archives.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># Example directory structure</span>
+my_project/
+├──<span class="w"> </span>include/
+│<span class="w">   </span>└──<span class="w"> </span>minipaxtar.h
+├──<span class="w"> </span>src/
+│<span class="w">   </span>├──<span class="w"> </span>minipaxtar.c
+│<span class="w">   </span>└──<span class="w"> </span>main.c
+└──<span class="w"> </span>Makefile
+</code></pre></div>
+<h2 id="option-b-stb-style-single-header">Option B: STB-Style Single-Header</h2>
+<p>If you prefer a single-header workflow without compiling separate <code>.c</code> translation units:</p>
+<ol>
+<li>Copy <code>minipaxtar.h</code> into your project.</li>
+<li>In <strong>exactly one</strong> <code>.c</code> or <code>.cpp</code> file in your project, define <code>MINIPAXTAR_IMPLEMENTATION</code> before including the header to instantiate the code:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="cm">/* main.c (or tar_implementation.c) */</span>
+<span class="cp">#define MINIPAXTAR_IMPLEMENTATION</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;minipaxtar.h&quot;</span>
+</code></pre></div>
+<ol>
+<li>In all other source files where you need the API, simply include the header normally without the <code>#define</code>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="cm">/* reader.c */</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;minipaxtar.h&quot;</span>
+</code></pre></div>
+<h2 id="2-cmake-integration">2. CMake Integration</h2>
+<p>If your project uses CMake, <code>minipaxtar</code> provides clean target integration via <code>minipaxtar::minipaxtar</code>.</p>
+<h2 id="option-a-fetchcontent-recommended-for-cmake">Option A: FetchContent (Recommended for CMake)</h2>
+<p>Automatically downloads and builds <code>minipaxtar</code> at configure time without managing git submodules manually:</p>
+<p>Add the following to your <code>CMakeLists.txt</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
+
+<span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<span class="w">    </span><span class="s">minipaxtar</span>
+<span class="w">    </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/imvulpi/minipaxtar.git</span>
+<span class="w">    </span><span class="s">GIT_TAG</span><span class="w"> </span><span class="s">v1.0.0</span><span class="w"> </span><span class="c"># Or target a specific git commit / tag</span>
+<span class="p">)</span>
+
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">minipaxtar</span><span class="p">)</span>
+
+<span class="c"># Link minipaxtar to your executable or library</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">my_app</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">minipaxtar::minipaxtar</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="option-b-git-submodule-or-subdirectory">Option B: Git Submodule or Subdirectory</h2>
+<p>If you keep <code>minipaxtar</code> inside your repository tree (e.g., under <code>third_party/minipaxtar</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Add minipaxtar target</span>
+<span class="nb">add_subdirectory</span><span class="p">(</span><span class="s">third_party/minipaxtar</span><span class="p">)</span>
+
+<span class="c"># Link to your target</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">my_app</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">minipaxtar::minipaxtar</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="option-c-system-package-find_package">Option C: System Package (<code>find_package</code>)</h2>
+<p>If <code>minipaxtar</code> is installed globally on the host system or inside a toolchain sysroot:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">find_package</span><span class="p">(</span><span class="s">minipaxtar</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">my_app</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">minipaxtar::minipaxtar</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="configuration-options">Configuration Options</h2>
+<p><code>minipaxtar</code> provides compile-time feature flags to shrink binary footprint or support extended POSIX features (such as PAX extended <code>atime</code>/<code>ctime</code> timestamps and special device nodes).</p>
+<p>For manual builds, pass definitions via compiler flags (e.g., <code>-DMPTAR_SUPPORT_SPECIAL</code>).</p>
+<p>For CMake users, these can be toggled using standard CMake options:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Example: Disable special device nodes via CMake CLI</span>
+cmake<span class="w"> </span>-B<span class="w"> </span>build<span class="w"> </span>-DMPTAR_SUPPORT_SPECIAL<span class="o">=</span>OFF
+</code></pre></div>
+<p>or in cmake:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">set</span><span class="p">(</span><span class="s">MPTAR_SUPPORT_SPECIAL</span><span class="w"> </span><span class="s">OFF</span><span class="w"> </span><span class="s">CACHE</span><span class="w"> </span><span class="s">BOOL</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="s">FORCE</span><span class="p">)</span>
+<span class="nb">add_subdirectory</span><span class="p">(</span><span class="s">third_party/minipaxtar</span><span class="p">)</span>
+</code></pre></div>
+<blockquote>
+<p>📖 <strong>Full Reference:</strong> For a complete list of feature flags and default values , see the <a href="/minipaxtar/guides/config-defines">Configuration Flags Guide</a>.</p>
+</blockquote>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/guides/config-defines/"><link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>Configuration Flags - MiniPaxTar</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../..",
+    shortcuts = "{}";
+</script>
+<script src="../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">Configuration Flags</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#configuration-compile-time-flags">Configuration &amp; Compile-Time Flags</a></li>
+        <li><a href="#high-level-feature-switches">High-Level Feature Switches</a></li><li><a href="#detailed-switch-usage">Detailed Switch Usage</a></li><li><a href="#custom-number-conversion-hooks">Custom Number Conversion Hooks</a></li><li><a href="#enable-custom-unsigned-64-bit-conversion-hook-define-mptar_custom_atou64-include-minipaxtarh-supply-the-external-function-matching-the-exact-name-and-signature-uint64_t-mptar_atou64const-char-str-mptar_size_t-len-int-err-custom-optimized-conversion-logic-uint64_t-result-0-if-err-err-mptar_ok-or-0-return-result">/* Enable custom unsigned 64-bit conversion hook */ #define MPTAR_CUSTOM_ATOU64 #include &quot;minipaxtar.h&quot; /* Supply the external function matching the exact name and signature */ uint64_t mptar_atou64(const char* str, mptar_size_t len, int* err) { /* Custom optimized conversion logic */ uint64_t result = 0; /* ... */ if (err) *err = MPTAR_OK; /* or 0 */ return result; }</a></li><li><a href="#cmake-integration-example">CMake Integration Example</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="configuration-compile-time-flags">Configuration &amp; Compile-Time Flags</h1>
+<p><code>minipaxtar</code> is designed to be lean and adaptable for embedded environments, bare-metal kernels, and resource-constrained platforms. You can tailor its feature set, binary footprint, and dependencies using preprocessor definitions.</p>
+<hr />
+<h2 id="high-level-feature-switches">High-Level Feature Switches</h2>
+<p>These macros control major API subsets and platform capability dependencies.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Preprocessor Flag</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_NO_READ</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em></td>
+<td style="text-align: left;">Disables the reading and parsing API (<code>mptar_reader</code>, <code>mptar_read_header</code>, <code>mptar_read_data_chunk</code>, etc.). Reduces binary footprint when only writing archives.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_NO_WRITE</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em></td>
+<td style="text-align: left;">Disables the archive creation API (<code>mptar_writer</code>, <code>mptar_write_header</code>, <code>mptar_write_data_chunk</code>, etc.). Reduces binary footprint when only extracting archives.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_SUPPORT_SPECIAL</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em> / ON in CMake</td>
+<td style="text-align: left;">Include support for special node metadata (<code>devmajor</code> and <code>devminor</code> device numbers).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_SUPPORT_EXTRA_TIMES</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em> / ON in CMake</td>
+<td style="text-align: left;">Include support for extended PAX timestamp attributes (<code>atime</code> access time and <code>ctime</code> change time).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="detailed-switch-usage">Detailed Switch Usage</h2>
+<h3 id="1-stripping-read-or-write-api">1. Stripping Read or Write API</h3>
+<p>If your application only needs to unpack archives or only needs to create them, you can strip the unused logic entirely:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define MPTAR_NO_READ</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;minipaxtar.h&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>gcc<span class="w"> </span>-DMPTAR_NO_WRITE<span class="w"> </span>-c<span class="w"> </span>minipaxtar.c<span class="w"> </span>-o<span class="w"> </span>minipaxtar.o
+</code></pre></div>
+<hr />
+<h3 id="2-extended-metadata-features">2. Extended Metadata Features</h3>
+<p>By default, <code>minipaxtar</code> doesn't define any compilation options, however it enables support on cmake for special device nodes and extended PAX timestamps. If your system does not require these metadata fields, you can omit them to simplify <code>mptar_metadata</code> structs and handling logic.</p>
+<ul>
+<li><strong><code>MPTAR_SUPPORT_SPECIAL</code></strong>: Includes device node fields (<code>meta.devmajor</code> and <code>meta.devminor</code>).</li>
+<li><strong><code>MPTAR_SUPPORT_EXTRA_TIMES</code></strong>: Includes extended access time (<code>meta.atime</code>) and change time (<code>meta.ctime</code>).</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="cp">#ifdef MPTAR_SUPPORT_SPECIAL</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Device major: %u, minor: %u</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">devmajor</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">devminor</span><span class="p">);</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifdef MPTAR_SUPPORT_EXTRA_TIMES</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Access time: %llu, Change time: %llu</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">atime</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">ctime</span><span class="p">);</span>
+<span class="cp">#endif</span>
+</code></pre></div>
+<hr />
+<h2 id="custom-number-conversion-hooks">Custom Number Conversion Hooks</h2>
+<p>To prevent dependencies on Standard C library functions like <code>snprintf</code> or <code>strtoull</code>, <code>minipaxtar</code> ships with internal fallback functions for integer-to-string and string-to-integer conversions.</p>
+<p>If your environment provides optimized, custom, or assembly-accelerated equivalents, define these macros to <strong>omit built-in implementations</strong> and delegate to external routines of the same name:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Omitted <br> Built-in</th>
+<th>Required <code>extern</code> Function Signature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>MPTAR_CUSTOM_U64TOA</code></strong></td>
+<td><code>mptar_u64toa</code></td>
+<td><code>char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, int *out_err);</code></td>
+</tr>
+<tr>
+<td><strong><code>MPTAR_CUSTOM_I64TOA</code></strong></td>
+<td><code>mptar_i64toa</code></td>
+<td><code>char* mptar_i64toa(mptar_int64 value, char* buf, mptar_size_t buf_size, int *out_err);</code></td>
+</tr>
+<tr>
+<td><strong><code>MPTAR_CUSTOM_ATOU64</code></strong></td>
+<td><code>mptar_atou64</code></td>
+<td><code>mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err);</code></td>
+</tr>
+<tr>
+<td><strong><code>MPTAR_CUSTOM_ATOI64</code></strong></td>
+<td><code>mptar_atoi64</code></td>
+<td><code>mptar_int64 mptar_atoi64(const char* str, mptar_size_t len, int* err);</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="example-supplying-custom-conversion-hooks">Example: Supplying Custom Conversion Hooks</h3>
+<p>When defining any of the custom conversion flags, ensure your custom implementations are declared or linked in your binary:</p>
+<h2 id="enable-custom-unsigned-64-bit-conversion-hook-define-mptar_custom_atou64-include-minipaxtarh-supply-the-external-function-matching-the-exact-name-and-signature-uint64_t-mptar_atou64const-char-str-mptar_size_t-len-int-err-custom-optimized-conversion-logic-uint64_t-result-0-if-err-err-mptar_ok-or-0-return-result"><div class="highlight"><pre><span></span><code><span class="cm">/* Enable custom unsigned 64-bit conversion hook */</span>
+<span class="cp">#define MPTAR_CUSTOM_ATOU64</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;minipaxtar.h&quot;</span>
+
+<span class="cm">/* Supply the external function matching the exact name and signature */</span>
+<span class="kt">uint64_t</span><span class="w"> </span><span class="nf">mptar_atou64</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Custom optimized conversion logic */</span>
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="cm">/* ... */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MPTAR_OK</span><span class="p">;</span><span class="w"> </span><span class="cm">/* or 0 */</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></h2>
+<h2 id="cmake-integration-example">CMake Integration Example</h2>
+<p>If building via CMake, you can toggle these definitions cleanly using <code>target_compile_definitions()</code> or CMake <code>option()</code>s:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Disable write support and use custom 64-bit parser</span>
+<span class="nb">target_compile_definitions</span><span class="p">(</span><span class="s">my_app</span><span class="w"> </span><span class="s">PRIVATE</span>
+<span class="w">    </span><span class="s">MPTAR_NO_WRITE</span>
+<span class="w">    </span><span class="s">MPTAR_CUSTOM_ATOU64</span>
+<span class="p">)</span>
+</code></pre></div>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/guides/status-codes/"><link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>Status/Error Codes - MiniPaxTar</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../..",
+    shortcuts = "{}";
+</script>
+<script src="../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">Status/Error Codes</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#status-error-codes-reference">Status &amp; Error Codes Reference</a></li>
+        <li><a href="#status-error-reference">Status &amp; Error Reference</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="status-error-codes-reference">Status &amp; Error Codes Reference</h1>
+<p><code>minipaxtar</code> uses integer return codes to signal operation success, archive boundaries, or specific structural and I/O failures. </p>
+<p>Functions return <code>0</code> or positive status codes for expected operational states, and negative values for error conditions.</p>
+<hr />
+<h2 id="status-error-reference">Status &amp; Error Reference</h2>
+<h3 id="success-informational-codes-0">Success &amp; Informational Codes (<code>&gt;= 0</code>)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Code</th>
+<th style="text-align: left;">Macro</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>0</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_OK</code></strong></td>
+<td style="text-align: left;">Operation completed successfully.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>1</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_EOF</code></strong></td>
+<td style="text-align: left;">End of archive reached (encountered the standard sequence of two consecutive zero-filled 512-byte blocks).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_NEEDS_PAX</code></strong></td>
+<td style="text-align: left;">Item metadata cannot fit within standard legacy USTAR constraints and requires a PAX extended header.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="failure-error-codes-0">Failure &amp; Error Codes (<code>&lt; 0</code>)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Code</th>
+<th style="text-align: left;">Macro</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>-1</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_INVALID_ARG</code></strong></td>
+<td style="text-align: left;"><code>NULL</code> context pointers, invalid parameters, or zero-length arguments passed to an API function.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-2</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_ALLOC</code></strong></td>
+<td style="text-align: left;">Memory allocation callback returned <code>NULL</code> or an invalid pointer when attempting to allocate dynamic buffers.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-3</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_IO_READ</code></strong></td>
+<td style="text-align: left;">User <code>.read</code> callback failed or returned fewer bytes than requested (unexpected end of stream).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-4</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_IO_WRITE</code></strong></td>
+<td style="text-align: left;">User <code>.write</code> callback failed to write the requested chunk to underlying storage or wrote too little.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-5</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_CHECKSUM</code></strong></td>
+<td style="text-align: left;">Header block checksum verification failed; the TAR record is corrupted or misaligned.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-6</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_UNSUPPORTED_TYPE</code></strong></td>
+<td style="text-align: left;">Encountered a special file node type (e.g., FIFO, Block, Char) which handling of was disabled.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-7</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_RESERVED_LEGACY_1</code></strong></td>
+<td style="text-align: left;">Reserved / Legacy. Formerly used for write overflow prior to automatic payload clamping.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-8</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_INCOMPLETE_PAYLOAD</code></strong></td>
+<td style="text-align: left;">Called <code>mptar_write_finalize()</code> or attempted to start a new header while <code>bytes_left &gt; 0</code> on the current file payload.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-9</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_MALFORMED</code></strong></td>
+<td style="text-align: left;">Archive structural corruption or malformed header formatting detected (e.g., invalid octal fields, mangled PAX key-value pairs).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-10</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_OVERFLOW</code></strong></td>
+<td style="text-align: left;">An arithmetic calculation wrapped around or an internal buffer write boundary violation occurred.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-11</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_RESERVED_LEGACY_2</code></strong></td>
+<td style="text-align: left;">Reserved / Legacy. Formerly used to signal PAX need due to an exceedingly long path, but now checks are done without an error signaling that.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-12</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_NS_CONVERSION_FAILED</code></strong></td>
+<td style="text-align: left;">Conversion of sub-second nanoseconds to string failed (nanosecond value exceeded <code>999,999,999</code>).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-13</code></td>
+<td style="text-align: left;"><strong><code>MPTAR_ERR_BUFFER_TOO_SMALL</code></strong></td>
+<td style="text-align: left;">Output or destination buffer lacked sufficient capacity to hold the formatted data.</td>
+</tr>
+</tbody>
+</table>
+<p>You can check how to handle the errors in a <a href="../error-handling/">Error Handling section</a></p>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

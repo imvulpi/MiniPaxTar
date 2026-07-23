@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__primitives" kind="group">
+    <compoundname>mptar_primitives</compoundname>
+    <title>Primitive Types and Limits</title>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__mptar__primitives_1ga7122689cd9d43a22b2b955e20a896bcc" prot="public" static="no">
+        <type>int64_t</type>
+        <definition>typedef int64_t mptar_int64</definition>
+        <argsstring></argsstring>
+        <name>mptar_int64</name>
+        <briefdescription>
+<para>Signed 64-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="83" column="22" bodyfile="minipaxtar.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1ga05add11e2968d17e5c483f681d7aabc2" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>typedef int32_t mptar_int32</definition>
+        <argsstring></argsstring>
+        <name>mptar_int32</name>
+        <briefdescription>
+<para>Signed 32-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="84" column="22" bodyfile="minipaxtar.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1ga0beba0e1b2530f0c30ceeb1b728c5733" prot="public" static="no">
+        <type>int16_t</type>
+        <definition>typedef int16_t mptar_int16</definition>
+        <argsstring></argsstring>
+        <name>mptar_int16</name>
+        <briefdescription>
+<para>Signed 16-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="85" column="22" bodyfile="minipaxtar.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1ga1a8aa2f7a01b2ee7cfaacb766a63c8b3" prot="public" static="no">
+        <type>int8_t</type>
+        <definition>typedef int8_t mptar_int8</definition>
+        <argsstring></argsstring>
+        <name>mptar_int8</name>
+        <briefdescription>
+<para>Signed 8-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="86" column="22" bodyfile="minipaxtar.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1gaf3e1898cffefab38ec05860059082fc4" prot="public" static="no">
+        <type>uint64_t</type>
+        <definition>typedef uint64_t mptar_uint64</definition>
+        <argsstring></argsstring>
+        <name>mptar_uint64</name>
+        <briefdescription>
+<para>Unsigned 64-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="90" column="22" bodyfile="minipaxtar.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1gaa853c551a1d0d9f5dea366b9395e5a31" prot="public" static="no">
+        <type>uint32_t</type>
+        <definition>typedef uint32_t mptar_uint32</definition>
+        <argsstring></argsstring>
+        <name>mptar_uint32</name>
+        <briefdescription>
+<para>Unsigned 32-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="91" column="22" bodyfile="minipaxtar.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1gaeb864660d4c1715deb03c52af305d1a2" prot="public" static="no">
+        <type>uint16_t</type>
+        <definition>typedef uint16_t mptar_uint16</definition>
+        <argsstring></argsstring>
+        <name>mptar_uint16</name>
+        <briefdescription>
+<para>Unsigned 16-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="92" column="22" bodyfile="minipaxtar.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1ga4b3b3eb9dfd9884b72e7019874e0af07" prot="public" static="no">
+        <type>uint8_t</type>
+        <definition>typedef uint8_t mptar_uint8</definition>
+        <argsstring></argsstring>
+        <name>mptar_uint8</name>
+        <briefdescription>
+<para>Unsigned 8-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="93" column="22" bodyfile="minipaxtar.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__primitives_1ga120e36d7f9684cbb87a1ffb052e4105c" prot="public" static="no">
+        <type>size_t</type>
+        <definition>typedef size_t mptar_size_t</definition>
+        <argsstring></argsstring>
+        <name>mptar_size_t</name>
+        <briefdescription>
+<para>Unsigned size type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="94" column="22" bodyfile="minipaxtar.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__primitives_1ga5cc8a68f51c172a9ac137c964c4f6fdb" prot="public" static="no">
+        <name>MPTAR_NULL</name>
+        <initializer>NULL</initializer>
+        <briefdescription>
+<para>Null pointer constant. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="88" column="13" bodyfile="minipaxtar.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__primitives_1ga4793f4c00b76939f52ccb05808085e5b" prot="public" static="no">
+        <name>MPTAR_INT64_MIN</name>
+        <initializer>INT64_MIN</initializer>
+        <briefdescription>
+<para>Minimum value for <ref refid="group__mptar__primitives_1ga7122689cd9d43a22b2b955e20a896bcc" kindref="member">mptar_int64</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="96" column="13" bodyfile="minipaxtar.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__primitives_1ga4373629e1254f025907379318ad764fe" prot="public" static="no">
+        <name>MPTAR_INT64_MAX</name>
+        <initializer>INT64_MAX</initializer>
+        <briefdescription>
+<para>Maximum value for <ref refid="group__mptar__primitives_1ga7122689cd9d43a22b2b955e20a896bcc" kindref="member">mptar_int64</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="97" column="13" bodyfile="minipaxtar.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__primitives_1ga60c55225bd003f89f9967868652a43b7" prot="public" static="no">
+        <name>MPTAR_UINT64_MAX</name>
+        <initializer>UINT64_MAX</initializer>
+        <briefdescription>
+<para>Maximum value for <ref refid="group__mptar__primitives_1gaf3e1898cffefab38ec05860059082fc4" kindref="member">mptar_uint64</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="98" column="13" bodyfile="minipaxtar.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__primitives_1ga977ac6b635dc60a711a6d620e6a61d08" prot="public" static="no">
+        <name>MPTAR_UINT32_MAX</name>
+        <initializer>UINT32_MAX</initializer>
+        <briefdescription>
+<para>Maximum value for <ref refid="group__mptar__primitives_1gaa853c551a1d0d9f5dea366b9395e5a31" kindref="member">mptar_uint32</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="99" column="13" bodyfile="minipaxtar.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Fundamental integer, size, floating-point types, and their scalar limits. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

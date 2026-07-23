@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__format__misc" kind="group">
+    <compoundname>mptar_format_misc</compoundname>
+    <title>Archive Format Misc &amp; Block Layout Constants</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__format__misc_1gaf718c76019cd89b0117a47219010c9c9" prot="public" static="no">
+        <name>MPTAR_OCTAL_BINARY_FLAG</name>
+        <initializer>0x80U</initializer>
+        <briefdescription>
+<para>High bit flag set in octal fields to indicate base-256 binary encoding. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="273" column="9" bodyfile="minipaxtar.h" bodystart="273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1ga62a971329858679f56e016cb5f7bc524" prot="public" static="no">
+        <name>MPTAR_USTAR_HEADER_SIZE</name>
+        <initializer>512</initializer>
+        <briefdescription>
+<para>Byte size of a standard USTAR header block. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="274" column="9" bodyfile="minipaxtar.h" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1ga62a9cb87ab6a9462e249bfb85b765803" prot="public" static="no">
+        <name>MPTAR_BLOCK_SIZE</name>
+        <initializer>512</initializer>
+        <briefdescription>
+<para>Standard block layout size for tar archives. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="275" column="9" bodyfile="minipaxtar.h" bodystart="275" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1ga60f86e7d8a71634c58c2ac3442c6ad14" prot="public" static="no">
+        <name>MPTAR_SPACE_CHECKSUM_VAL</name>
+        <initializer>256</initializer>
+        <briefdescription>
+<para>Pre-calculated checksum baseline for an empty checksum field (8 ASCII spaces). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="276" column="9" bodyfile="minipaxtar.h" bodystart="276" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1ga85322db9fc20c866cbe51829de4f7720" prot="public" static="no">
+        <name>MPTAR_CHECKSUM_OFFSET</name>
+        <initializer>148U</initializer>
+        <briefdescription>
+<para>Byte offset of the checksum field within the standard 512-byte header. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="277" column="9" bodyfile="minipaxtar.h" bodystart="277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1ga620d098c81070eecb0a10eca10367403" prot="public" static="no">
+        <name>MPTAR_CHECKSUM_LEN</name>
+        <initializer>8U</initializer>
+        <briefdescription>
+<para>Byte length of the checksum field inside the header. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="278" column="9" bodyfile="minipaxtar.h" bodystart="278" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1ga08b7b398e0bc61242668ccb940d563f1" prot="public" static="no">
+        <name>MPTAR_CHECKSUM_END_OFFSET</name>
+        <initializer>(<ref refid="group__mptar__format__misc_1ga85322db9fc20c866cbe51829de4f7720" kindref="member">MPTAR_CHECKSUM_OFFSET</ref> + <ref refid="group__mptar__format__misc_1ga620d098c81070eecb0a10eca10367403" kindref="member">MPTAR_CHECKSUM_LEN</ref>)</initializer>
+        <briefdescription>
+<para>End offset of the checksum field (156). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="279" column="9" bodyfile="minipaxtar.h" bodystart="279" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1ga2cd99ac58b8fc488b3ac1ada947175a6" prot="public" static="no">
+        <name>MPTAR_EOA_BLOCK_COUNT</name>
+        <initializer>2U</initializer>
+        <briefdescription>
+<para>Number of trailing zero-filled blocks designating End-of-Archive (EOA). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="281" column="9" bodyfile="minipaxtar.h" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__format__misc_1gac464b5e4f28ff93785d9629aa53a996d" prot="public" static="no">
+        <name>MPTAR_EOA_MARKER_SIZE</name>
+        <initializer>(<ref refid="group__mptar__format__misc_1ga2cd99ac58b8fc488b3ac1ada947175a6" kindref="member">MPTAR_EOA_BLOCK_COUNT</ref> * <ref refid="group__mptar__format__misc_1ga62a9cb87ab6a9462e249bfb85b765803" kindref="member">MPTAR_BLOCK_SIZE</ref>)</initializer>
+        <briefdescription>
+<para>Total marker size for archive termination (1024 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="282" column="9" bodyfile="minipaxtar.h" bodystart="282" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Fundamental block sizes, binary encoding flags, checksum field offsets, and scaling factors. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/api/Files/minipaxtar_8h/"><link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>minipaxtar.h - MiniPaxTar</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../../..",
+    shortcuts = "{}";
+</script>
+<script src="../../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#minipaxtarh">minipaxtar.h</a></li>
+        <li><a href="#classes">Classes</a></li><li><a href="#detailed-description">Detailed Description</a></li><li><a href="#source-code">Source code</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+    
+    
+    
+    
+    
+
+<section id="mkdocs-terminal-content">
+    <h1 id="minipaxtarh">minipaxtar.h</h1>
+<p>Minimal PAX and USTAR TAR archive library.  <a href="#detailed-description">More...</a></p>
+<h2 id="classes">Classes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>struct</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header">mptar_header</a></strong> <br>Raw 512-byte POSIX USTAR header layout matching the exact on-disk binary format.</td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__timespec">mptar_timespec</a></strong> <br>High-resolution timestamp holding Unix epoch seconds and sub-second nanoseconds.</td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__opt__time">mptar_opt_time</a></strong> <br>Optional timestamp container.</td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__metadata">mptar_metadata</a></strong> <br>Universal, high-level archive entry metadata.</td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__memory__cfg">mptar_memory_cfg</a></strong> <br>Custom allocator configuration structure.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<p>Minimal PAX and USTAR TAR archive library. </p>
+<p><strong>Author</strong>: Vulpi <a href="mailto:78976654+imvulpi@users.noreply.github.com">78976654+imvulpi@users.noreply.github.com</a></p>
+<p><strong>Copyright</strong>: Copyright (c) 2026 Vulpi</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. </p>
+<h2 id="source-code">Source code</h2>
+<div class="highlight"><pre><span></span><code><span class="cp">#ifndef MINIPAXTAR_H</span>
+<span class="cp">#define MINIPAXTAR_H</span>
+
+<span class="cp">#ifdef MPTAR_NO_STD</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">mptar_uint8</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">signed</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">mptar_int8</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cp">#if defined(__INT_MAX__) &amp;&amp; (__INT_MAX__ == 32767)</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mptar_uint16</span><span class="p">;</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">signed</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mptar_int16</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#else</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="n">mptar_uint16</span><span class="p">;</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">signed</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="n">mptar_int16</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#endif</span>
+
+<span class="w">    </span><span class="cp">#if defined(__INT_MAX__) &amp;&amp; (__INT_MAX__ == 2147483647)</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mptar_uint32</span><span class="p">;</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">signed</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mptar_int32</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#else</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">mptar_uint32</span><span class="p">;</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">signed</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">mptar_int32</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#endif</span>
+
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">mptar_uint64</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">signed</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">mptar_int64</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cp">#if defined(__SIZEOF_POINTER__) &amp;&amp; (__SIZEOF_POINTER__ == 8) || defined(_WIN64)</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#elif defined(__SIZEOF_POINTER__) &amp;&amp; (__SIZEOF_POINTER__ == 2) </span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#else</span>
+<span class="w">        </span><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#endif</span>
+
+<span class="w">    </span><span class="cp">#define MPTAR_NULL ((void*)0)</span>
+
+<span class="w">    </span><span class="cp">#define MPTAR_INT64_MAX  (9223372036854775807LL)</span>
+<span class="w">    </span><span class="cp">#define MPTAR_INT64_MIN  (-MPTAR_INT64_MAX - 1LL)</span>
+<span class="w">    </span><span class="cp">#define MPTAR_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)</span>
+<span class="w">    </span><span class="cp">#define MPTAR_UINT32_MAX (4294967295U)</span>
+<span class="cp">#ifndef bool</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">_Bool</span><span class="w"> </span><span class="kt">bool</span><span class="p">;</span>
+<span class="w">    </span><span class="cp">#define true  1</span>
+<span class="w">    </span><span class="cp">#define false 0</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#else</span>
+<span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+<span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stddef.h&gt;</span>
+<span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdbool.h&gt;</span>
+
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">int64_t</span><span class="w">  </span><span class="n">mptar_int64</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">int32_t</span><span class="w">  </span><span class="n">mptar_int32</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">int16_t</span><span class="w">  </span><span class="n">mptar_int16</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">int8_t</span><span class="w">   </span><span class="n">mptar_int8</span><span class="p">;</span><span class="w">   </span>
+<span class="w">    </span><span class="cp">#define MPTAR_NULL       NULL       </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">mptar_uint64</span><span class="p">;</span><span class="w"> </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">mptar_uint32</span><span class="p">;</span><span class="w"> </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">mptar_uint16</span><span class="p">;</span><span class="w"> </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w">  </span><span class="n">mptar_uint8</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="kt">size_t</span><span class="w">   </span><span class="n">mptar_size_t</span><span class="p">;</span><span class="w"> </span>
+<span class="w">    </span><span class="cp">#define MPTAR_INT64_MIN  INT64_MIN  </span>
+<span class="w">    </span><span class="cp">#define MPTAR_INT64_MAX  INT64_MAX  </span>
+<span class="w">    </span><span class="cp">#define MPTAR_UINT64_MAX UINT64_MAX </span>
+<span class="w">    </span><span class="cp">#define MPTAR_UINT32_MAX UINT32_MAX </span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifdef __cplusplus</span>
+<span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifdef DOXYGEN_DOCS </span>
+<span class="cp">#define MPTAR_NO_STD                </span>
+<span class="cp">#define MPTAR_NO_READ               </span>
+<span class="cp">#define MPTAR_NO_WRITE              </span>
+<span class="cp">#define MPTAR_SUPPORT_SPECIAL       </span>
+<span class="cp">#define MPTAR_SUPPORT_EXTRA_TIMES   </span>
+<span class="cp">#define MPTAR_CUSTOM_U64TOA         </span>
+<span class="cp">#define MPTAR_CUSTOM_I64TOA         </span>
+<span class="cp">#define MPTAR_CUSTOM_ATOU64         </span>
+<span class="cp">#define MPTAR_CUSTOM_ATOI64         </span>
+<span class="cp">#define MPTAR_CUSTOM_STRLEN         </span>
+<span class="cp">#define MPTAR_CUSTOM_STRNLEN        </span>
+<span class="cp">#define MPTAR_CUSTOM_STRNCPY        </span>
+<span class="cp">#define MPTAR_CUSTOM_MEMCPY         </span>
+<span class="cp">#define MPTAR_CUSTOM_MEMSET         </span>
+<span class="cp">#define MPTAR_CUSTOM_MEMCMP         </span>
+<span class="cp">#define MPTAR_CUSTOM_INTERNAL_HOOK_EXAMPLE </span>
+<span class="cp">#endif</span>
+
+<span class="cp">#define MPTAR_OK                        0   </span>
+<span class="cp">#define MPTAR_EOF                       1   </span>
+<span class="cp">#define MPTAR_NEEDS_PAX                 2   </span>
+<span class="cp">#define MPTAR_ERR_INVALID_ARG          -1   </span>
+<span class="cp">#define MPTAR_ERR_ALLOC                -2   </span>
+<span class="cp">#define MPTAR_ERR_IO_READ              -3   </span>
+<span class="cp">#define MPTAR_ERR_IO_WRITE             -4   </span>
+<span class="cp">#define MPTAR_ERR_CHECKSUM             -5   </span>
+<span class="cp">#define MPTAR_ERR_UNSUPPORTED_TYPE     -6</span>
+<span class="cp">#define MPTAR_ERR_RESERVED_LEGACY_1    -7   </span>
+<span class="cp">#define MPTAR_ERR_INCOMPLETE_PAYLOAD   -8   </span>
+<span class="cp">#define MPTAR_ERR_MALFORMED            -9   </span>
+<span class="cp">#define MPTAR_ERR_OVERFLOW             -10  </span>
+<span class="cp">#define MPTAR_ERR_RESERVED_LEGACY_2    -11  </span>
+<span class="cp">#define MPTAR_ERR_NS_CONVERSION_FAILED -12  </span>
+<span class="cp">#define MPTAR_ERR_BUFFER_TOO_SMALL     -13  </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_PATH            4    </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_SIZE            4    </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_LINK            8    </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_TIME            5    </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_UID             3    </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_GID             3    </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_UNAME           5    </span>
+<span class="cp">#define MPTAR_PAX_KEY_LEN_GNAME           5    </span>
+<span class="cp">#define MPTAR_PAX_STATIC_CHARS            3    </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_PATH           (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS)   </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_SIZE           (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS)   </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_LINK           (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS)   </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_TIME           (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS)   </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_UID            (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS)  </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_GID            (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS)  </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_UNAME          (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS)  </span>
+<span class="cp">#define MPTAR_PAX_OVERHEAD_GNAME          (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS)  </span>
+<span class="cp">#define MPTAR_PAX_NSEC_OVERHEAD           2U   </span>
+<span class="cm">/* Raw Header Field Capacities */</span>
+<span class="cp">#define MPTAR_USTAR_SIZE_LINKNAME         100  </span>
+<span class="cp">#define MPTAR_USTAR_SIZE_NAME             100  </span>
+<span class="cp">#define MPTAR_USTAR_SIZE_PREFIX           155  </span>
+<span class="cp">#define MPTAR_USTAR_SIZE_UNAME            32   </span>
+<span class="cp">#define MPTAR_USTAR_SIZE_GNAME            32   </span>
+<span class="cm">/* Maximum String Lengths (excluding null terminators) */</span>
+<span class="cp">#define MPTAR_USTAR_MAX_LEN_NAME          (MPTAR_USTAR_SIZE_NAME - 1)     </span>
+<span class="cp">#define MPTAR_USTAR_MAX_LEN_LINKNAME      (MPTAR_USTAR_SIZE_LINKNAME - 1) </span>
+<span class="cp">#define MPTAR_USTAR_MAX_LEN_PREFIX        (MPTAR_USTAR_SIZE_PREFIX - 1)   </span>
+<span class="cp">#define MPTAR_USTAR_MAX_LEN_UNAME         (MPTAR_USTAR_SIZE_UNAME - 1)    </span>
+<span class="cp">#define MPTAR_USTAR_MAX_LEN_GNAME         (MPTAR_USTAR_SIZE_GNAME - 1)    </span>
+<span class="cm">/* Encoding Numeric Bounds &amp; Formatting Limits */</span>
+<span class="cp">#define MPTAR_USTAR_MAX_OCTAL_12B         8589934591ULL     </span>
+<span class="cp">#define MPTAR_USTAR_MAX_OCTAL_8B          2097151ULL        </span>
+<span class="cp">#define MPTAR_MAX_OCTAL_DIGITS_64         22U               </span>
+<span class="cp">#define MPTAR_BINARY_MAX_8B               MPTAR_INT64_MAX   </span>
+<span class="cp">#define MPTAR_PAX_MAX_UINT32_STR_LEN      10U               </span>
+<span class="cp">#define MPTAR_PAX_NSEC_MAX_DIGITS         9U                </span>
+<span class="cp">#define MPTAR_PAX_NSEC_INITIAL_MULTIPLIER 100000000U        </span>
+<span class="cp">#define MPTAR_PAX_MAX_DATA_LEN            (MPTAR_UINT32_MAX - MPTAR_PAX_MAX_UINT32_STR_LEN) </span>
+<span class="cm">/* Formatting Buffer Sizes */</span>
+<span class="cp">#define MPTAR_UINT64_STR_BUF_SIZE         24U               </span>
+<span class="cp">#define MPTAR_TIMESPEC_STR_BUF_SIZE       32U               </span>
+<span class="cp">#ifndef MPTAR_MAX_PAX_SIZE</span>
+<span class="cp">#define MPTAR_MAX_PAX_SIZE (8 * 1024 * 1024)</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#define MPTAR_OCTAL_BINARY_FLAG           0x80U     </span>
+<span class="cp">#define MPTAR_USTAR_HEADER_SIZE           512       </span>
+<span class="cp">#define MPTAR_BLOCK_SIZE                  512       </span>
+<span class="cp">#define MPTAR_SPACE_CHECKSUM_VAL          256       </span>
+<span class="cp">#define MPTAR_CHECKSUM_OFFSET             148U      </span>
+<span class="cp">#define MPTAR_CHECKSUM_LEN                8U        </span>
+<span class="cp">#define MPTAR_CHECKSUM_END_OFFSET         (MPTAR_CHECKSUM_OFFSET + MPTAR_CHECKSUM_LEN) </span>
+<span class="cp">#define MPTAR_EOA_BLOCK_COUNT             2U        </span>
+<span class="cp">#define MPTAR_EOA_MARKER_SIZE             (MPTAR_EOA_BLOCK_COUNT * MPTAR_BLOCK_SIZE) </span>
+<span class="cp">#define MPTAR_PAX_HAS_PATH                (1 &lt;&lt; 0) </span>
+<span class="cp">#define MPTAR_PAX_HAS_LINK                (1 &lt;&lt; 1) </span>
+<span class="cp">#define MPTAR_PAX_HAS_SIZE                (1 &lt;&lt; 2) </span>
+<span class="cp">#define MPTAR_PAX_HAS_MTIME               (1 &lt;&lt; 3) </span>
+<span class="cp">#define MPTAR_PAX_HAS_UID                 (1 &lt;&lt; 4) </span>
+<span class="cp">#define MPTAR_PAX_HAS_GID                 (1 &lt;&lt; 5) </span>
+<span class="cp">#define MPTAR_PAX_HAS_ATIME               (1 &lt;&lt; 6) </span>
+<span class="cp">#define MPTAR_PAX_HAS_CTIME               (1 &lt;&lt; 7) </span>
+<span class="cp">#define MPTAR_PAX_HAS_UNAME               (1 &lt;&lt; 8) </span>
+<span class="cp">#define MPTAR_PAX_HAS_GNAME               (1 &lt;&lt; 9) </span>
+<span class="cp">#define MPTAR_CTX_ALLOW_PAX_FOR_OCTAL     (1U &lt;&lt; 0)</span>
+<span class="cp">#define MPTAR_MODE_DIR                    493  </span>
+<span class="cp">#define MPTAR_MODE_REG                    420  </span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span><span class="w">     </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">mode</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w">       </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">uid</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w">        </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">gid</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w">        </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">size</span><span class="p">[</span><span class="mi">12</span><span class="p">];</span><span class="w">      </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">mtime</span><span class="p">[</span><span class="mi">12</span><span class="p">];</span><span class="w">     </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">checksum</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w">   </span>
+
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">typeflag</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">linkname</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span><span class="w"> </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">magic</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w">      </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">version</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">    </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">uname</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span><span class="w">     </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">gname</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span><span class="w">     </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">devmajor</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">devminor</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">prefix</span><span class="p">[</span><span class="mi">155</span><span class="p">];</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">padding</span><span class="p">[</span><span class="mi">12</span><span class="p">];</span><span class="w">   </span>
+<span class="p">}</span><span class="w"> </span><span class="n">mptar_header</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mptar_int64</span><span class="w"> </span><span class="n">sec</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">mptar_uint32</span><span class="w"> </span><span class="n">nsec</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">mptar_timespec</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mptar_timespec</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">has_value</span><span class="p">;</span><span class="w">       </span>
+<span class="p">}</span><span class="w"> </span><span class="n">mptar_opt_time</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mptar_opt_time</span><span class="w"> </span><span class="n">mtime</span><span class="p">;</span><span class="w">     </span>
+<span class="cp">#ifdef MPTAR_SUPPORT_EXTRA_TIMES</span>
+<span class="w">    </span><span class="n">mptar_opt_time</span><span class="w"> </span><span class="n">atime</span><span class="p">;</span><span class="w">     </span>
+<span class="w">    </span><span class="n">mptar_opt_time</span><span class="w"> </span><span class="n">ctime</span><span class="p">;</span><span class="w">     </span>
+<span class="cp">#endif</span>
+
+<span class="w">    </span><span class="n">mptar_uint64</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w">        </span>
+<span class="w">    </span><span class="n">mptar_uint64</span><span class="w"> </span><span class="n">uid</span><span class="p">;</span><span class="w">         </span>
+<span class="w">    </span><span class="n">mptar_uint64</span><span class="w"> </span><span class="n">gid</span><span class="p">;</span><span class="w">         </span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">path</span><span class="p">;</span><span class="w">         </span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">link_target</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">uname</span><span class="p">;</span><span class="w">        </span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">gname</span><span class="p">;</span><span class="w">        </span>
+<span class="w">    </span><span class="n">mptar_uint32</span><span class="w"> </span><span class="n">mode</span><span class="p">;</span><span class="w">        </span>
+<span class="cp">#ifdef MPTAR_SUPPORT_SPECIAL</span>
+<span class="w">    </span><span class="n">mptar_uint32</span><span class="w"> </span><span class="n">devminor</span><span class="p">;</span><span class="w">    </span>
+<span class="w">    </span><span class="n">mptar_uint32</span><span class="w"> </span><span class="n">devmajor</span><span class="p">;</span><span class="w">    </span>
+<span class="cp">#endif</span>
+
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">typeflag</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">internal_alloc</span><span class="p">;</span><span class="w">      </span>
+<span class="p">}</span><span class="w"> </span><span class="n">mptar_metadata</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">mptar_alloc_fn</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">user_data</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">mptar_free_fn</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">user_data</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">);</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mptar_alloc_fn</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span><span class="w">    </span>
+<span class="w">    </span><span class="n">mptar_free_fn</span><span class="w"> </span><span class="n">free</span><span class="p">;</span><span class="w">      </span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">alloc_user_data</span><span class="p">;</span><span class="w">   </span>
+<span class="p">}</span><span class="w"> </span><span class="n">mptar_memory_cfg</span><span class="p">;</span>
+
+<span class="cp">#ifndef MPTAR_NO_READ</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">mptar_read_fn</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">user_data</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mptar_uint64</span><span class="w"> </span><span class="n">bytes_left</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="n">mptar_uint64</span><span class="w"> </span><span class="n">offset</span><span class="p">;</span><span class="w">      </span>
+<span class="w">    </span><span class="n">mptar_memory_cfg</span><span class="w"> </span><span class="n">memory</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="n">mptar_read_fn</span><span class="w"> </span><span class="n">read</span><span class="p">;</span><span class="w">       </span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">read_user_data</span><span class="p">;</span><span class="w">     </span>
+<span class="p">}</span><span class="w"> </span><span class="n">mptar_reader</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">mptar_read_header</span><span class="p">(</span><span class="n">mptar_reader</span><span class="o">*</span><span class="w"> </span><span class="n">reader</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_metadata</span><span class="o">*</span><span class="w"> </span><span class="n">out_meta</span><span class="p">);</span>
+
+<span class="n">mptar_size_t</span><span class="w"> </span><span class="nf">mptar_read_data_chunk</span><span class="p">(</span><span class="n">mptar_reader</span><span class="o">*</span><span class="w"> </span><span class="n">reader</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">out_err</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">mptar_discard_data</span><span class="p">(</span><span class="n">mptar_reader</span><span class="o">*</span><span class="w"> </span><span class="n">reader</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">mptar_skip_data</span><span class="p">(</span><span class="n">mptar_reader</span><span class="o">*</span><span class="w"> </span><span class="n">reader</span><span class="p">);</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">mptar_reader_free_metadata</span><span class="p">(</span><span class="n">mptar_reader</span><span class="o">*</span><span class="w"> </span><span class="n">reader</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_metadata</span><span class="o">*</span><span class="w"> </span><span class="n">meta</span><span class="p">);</span>
+
+<span class="cp">#endif </span><span class="cm">/* MPTAR_NO_READ */</span>
+
+<span class="cp">#ifndef MPTAR_NO_WRITE</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">mptar_write_fn</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">user_data</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mptar_uint64</span><span class="w"> </span><span class="n">bytes_left</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="n">mptar_memory_cfg</span><span class="w"> </span><span class="n">memory</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="n">mptar_write_fn</span><span class="w"> </span><span class="n">write</span><span class="p">;</span><span class="w">     </span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">write_user_data</span><span class="p">;</span><span class="w">    </span>
+<span class="w">    </span><span class="n">mptar_uint32</span><span class="w"> </span><span class="n">flags</span><span class="p">;</span><span class="w">       </span>
+<span class="p">}</span><span class="w"> </span><span class="n">mptar_writer</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">mptar_write_header</span><span class="p">(</span><span class="n">mptar_writer</span><span class="o">*</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">mptar_metadata</span><span class="o">*</span><span class="w"> </span><span class="n">meta</span><span class="p">);</span>
+
+<span class="n">mptar_size_t</span><span class="w"> </span><span class="nf">mptar_write_data_chunk</span><span class="p">(</span><span class="n">mptar_writer</span><span class="o">*</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">mptar_size_t</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">out_err</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">mptar_write_finalize</span><span class="p">(</span><span class="n">mptar_writer</span><span class="o">*</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">mptar_metadata</span><span class="o">*</span><span class="w"> </span><span class="n">meta</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">mptar_close_archive</span><span class="p">(</span><span class="n">mptar_writer</span><span class="w"> </span><span class="o">*</span><span class="n">ctx</span><span class="p">);</span>
+
+<span class="cp">#endif </span><span class="cm">/* MPTAR_NO_WRITE */</span>
+
+<span class="cp">#if defined(__clang__)</span>
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \</span>
+<span class="cp">        _Pragma(&quot;clang diagnostic push&quot;) \</span>
+<span class="cp">        _Pragma(&quot;clang diagnostic ignored \&quot;-Wcast-qual\&quot;&quot;)</span>
+
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \</span>
+<span class="cp">        _Pragma(&quot;clang diagnostic pop&quot;)</span>
+
+<span class="cp">#elif defined(__GNUC__) || defined(__GNUG__)</span>
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \</span>
+<span class="cp">        _Pragma(&quot;GCC diagnostic push&quot;) \</span>
+<span class="cp">        _Pragma(&quot;GCC diagnostic ignored \&quot;-Wcast-qual\&quot;&quot;)</span>
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \</span>
+<span class="cp">        _Pragma(&quot;GCC diagnostic pop&quot;)</span>
+<span class="cp">#elif defined(_MSC_VER)</span>
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \</span>
+<span class="cp">        __pragma(warning(push)) \</span>
+<span class="cp">        __pragma(warning(disable: 4197))</span>
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \</span>
+<span class="cp">        __pragma(warning(pop))</span>
+<span class="cp">#else</span>
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN</span>
+<span class="w">    </span><span class="cp">#define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END</span>
+<span class="cp">#endif</span>
+<span class="cp">#endif </span><span class="cm">/* MINIPAXTAR_H */</span>
+</code></pre></div>
+<hr />
+<p>Updated on 2026-07-23 at 20:07:34 +0000</p>
+</section>
+
+<section id="mkdocs-terminal-after-content">
+    
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

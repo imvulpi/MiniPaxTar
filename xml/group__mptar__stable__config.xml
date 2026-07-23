@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__stable__config" kind="group">
+    <compoundname>mptar_stable_config</compoundname>
+    <title>Stable Compile-Time Options</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__stable__config_1ga4c45a5dd495ad2a7ebd5f51c2e7effe5" prot="public" static="no">
+        <name>MPTAR_NO_STD</name>
+        <briefdescription>
+<para>Disable standard library dependencies (-DMPTAR_NO_STD) for freestanding/bare-metal environments. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="124" column="9" bodyfile="minipaxtar.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gac16c82dbd512401c9f34972f46f78729" prot="public" static="no">
+        <name>MPTAR_NO_READ</name>
+        <briefdescription>
+<para>Disable read support (-DMPTAR_NO_READ) to strip archive reading functionality and reduce binary size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="125" column="9" bodyfile="minipaxtar.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga0f3ae96bea44c94cc38c3402e670e23c" prot="public" static="no">
+        <name>MPTAR_NO_WRITE</name>
+        <briefdescription>
+<para>Disable write support (-DMPTAR_NO_WRITE) to strip archive writing functionality and reduce binary size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="126" column="9" bodyfile="minipaxtar.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga57544922222b318859ba6d915af0fb2c" prot="public" static="no">
+        <name>MPTAR_SUPPORT_SPECIAL</name>
+        <briefdescription>
+<para>Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="127" column="9" bodyfile="minipaxtar.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga38d2df6b3004bf41b651dedc0e8ef70e" prot="public" static="no">
+        <name>MPTAR_SUPPORT_EXTRA_TIMES</name>
+        <briefdescription>
+<para>Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="128" column="9" bodyfile="minipaxtar.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gaad35354fe9aa548eceec5b1f60821046" prot="public" static="no">
+        <name>MPTAR_CUSTOM_U64TOA</name>
+        <briefdescription>
+<para>Custom implementation override for unsigned 64-bit integer to string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="130" column="9" bodyfile="minipaxtar.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga05f3ead8b3c38b1fbcfa5be07a68fa39" prot="public" static="no">
+        <name>MPTAR_CUSTOM_I64TOA</name>
+        <briefdescription>
+<para>Custom implementation override for signed 64-bit integer to string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="131" column="9" bodyfile="minipaxtar.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gac0b213bb335a36b21a7d475692c80299" prot="public" static="no">
+        <name>MPTAR_CUSTOM_ATOU64</name>
+        <briefdescription>
+<para>Custom implementation override for string to unsigned 64-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="132" column="9" bodyfile="minipaxtar.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga78d95248a7158a331d9f28feef23a9f9" prot="public" static="no">
+        <name>MPTAR_CUSTOM_ATOI64</name>
+        <briefdescription>
+<para>Custom implementation override for string to signed 64-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="133" column="9" bodyfile="minipaxtar.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga8f59b4a2c5cfd6fcc0d5436c0f94d2ae" prot="public" static="no">
+        <name>MPTAR_CUSTOM_STRLEN</name>
+        <briefdescription>
+<para>Custom implementation override for string length calculation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="134" column="9" bodyfile="minipaxtar.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga59059ed9cbea07d80e7e7ea7cfa50f31" prot="public" static="no">
+        <name>MPTAR_CUSTOM_STRNLEN</name>
+        <briefdescription>
+<para>Custom implementation override for bounded string length calculation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="135" column="9" bodyfile="minipaxtar.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga50df22694661b0ed6e4a943d544a5ef5" prot="public" static="no">
+        <name>MPTAR_CUSTOM_STRNCPY</name>
+        <briefdescription>
+<para>Custom implementation override for bounded string copying. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="136" column="9" bodyfile="minipaxtar.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga98254e7f270b3697e5746580f2410dff" prot="public" static="no">
+        <name>MPTAR_CUSTOM_MEMCPY</name>
+        <briefdescription>
+<para>Custom implementation override for memory block copying. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="137" column="9" bodyfile="minipaxtar.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga8a346a5278e136ae3a70c1b1edf809b7" prot="public" static="no">
+        <name>MPTAR_CUSTOM_MEMSET</name>
+        <briefdescription>
+<para>Custom implementation override for memory block setting. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="138" column="9" bodyfile="minipaxtar.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga2365b90c433513a9bd76ac8d3d2bbbbe" prot="public" static="no">
+        <name>MPTAR_CUSTOM_MEMCMP</name>
+        <briefdescription>
+<para>Custom implementation override for memory block comparison. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="139" column="9" bodyfile="minipaxtar.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Documentation for compile-time configuration macros. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The <computeroutput>DOXYGEN_DOCS</computeroutput> macro is used exclusively by documentation generators like Doxygen. Because minipaxtar enables reading and writing by default, these option macros (such as <computeroutput>MPTAR_NO_READ</computeroutput>) are not normally defined in the source code. Wrapping them in <computeroutput>&quot;#ifdef DOXYGEN_DOCS&quot;</computeroutput> allows Doxygen to index and document them without altering actual build configurations.</para>
+<para>Stable configuration macros and custom conversion/string hooks.</para>
+<para>These options, features, and custom conversion hooks are guaranteed stable and will follow standard deprecation cycles if ever slated for modification or removal. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

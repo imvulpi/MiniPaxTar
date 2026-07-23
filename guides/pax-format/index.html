@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/guides/pax-format/"><link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>PAX vs USTAR Format - MiniPaxTar</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../..",
+    shortcuts = "{}";
+</script>
+<script src="../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">PAX vs USTAR Format</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#pax-extended-format-vs-legacy-ustar">PAX Extended Format vs. Legacy USTAR</a></li>
+        <li><a href="#comparison-at-a-glance">Comparison at a Glance</a></li><li><a href="#how-minipaxtar-operates">How minipaxtar Operates</a></li><li><a href="#pax-key-value-pair-format">PAX Key-Value Pair Format</a></li><li><a href="#preprocessor-options-size-impact">Preprocessor Options &amp; Size Impact</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="pax-extended-format-vs-legacy-ustar">PAX Extended Format vs. Legacy USTAR</h1>
+<p><code>minipaxtar</code> provides full support for both standard <strong>USTAR (IEEE Std 1003.1-1988)</strong> and <strong>PAX Extended Header (POSIX.1-2001 / IEEE Std 1003.1-2001)</strong> formats.</p>
+<p>This guide explains how <code>minipaxtar</code> transparently negotiates these standards, handles field physical limits, and performs automatic PAX promotion.</p>
+<hr />
+<h2 id="comparison-at-a-glance">Comparison at a Glance</h2>
+<p>Traditional USTAR uses fixed-width null-terminated string fields in a single 512-byte header block. PAX removes these physical constraints by prepending key-value attribute blocks formatted in UTF-8 before the file's primary header.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Legacy USTAR</th>
+<th style="text-align: left;">PAX Extended (<code>minipaxtar</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Path Length</strong></td>
+<td style="text-align: left;">Max 100 chars (or 256 via <code>prefix</code>)</td>
+<td style="text-align: left;">Unlimited (UTF-8 string)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Link Target Length</strong></td>
+<td style="text-align: left;">Max 100 chars</td>
+<td style="text-align: left;">Unlimited (UTF-8 string)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Maximum File Size</strong></td>
+<td style="text-align: left;">8 GiB (<code>8,589,934,591</code> bytes)</td>
+<td style="text-align: left;">Unlimited (up to $2^{64}-1$ in 64-bit systems)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sub-second Timestamps</strong></td>
+<td style="text-align: left;">Not supported (1-second resolution)</td>
+<td style="text-align: left;">Nanosecond precision (<code>atime</code>, <code>mtime</code>, <code>ctime</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>UID / GID Limits</strong></td>
+<td style="text-align: left;">7 octal digits ($2,097,151$)</td>
+<td style="text-align: left;">Unlimited numeric values</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vendor Extensions</strong></td>
+<td style="text-align: left;">Vendor-specific raw fields</td>
+<td style="text-align: left;">Custom key-value pairs (<code>KEY=VALUE\n</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="how-minipaxtar-operates">How <code>minipaxtar</code> Operates</h2>
+<h3 id="1-automatic-pax-promotion-writing">1. Automatic PAX Promotion (Writing)</h3>
+<p>When writing an entry via <code>mptar_write_header()</code>, <code>minipaxtar</code> inspects the populated <code>mptar_metadata</code> structure to determine whether standard USTAR can accommodate the record:</p>
+<ol>
+<li><strong>Fits in USTAR:</strong> The writer formats a standard 512-byte USTAR header block (type flag <code>'0'</code>, <code>'5'</code>, etc.).</li>
+<li><strong>Exceeds USTAR Limits:</strong> The writer automatically creates a <strong>PAX Extended Header block</strong> (type flag <code>'x'</code>) containing the extended key-value attributes immediately preceding the main USTAR header.</li>
+</ol>
+<blockquote>
+<p><strong>Note:</strong> When PAX promotion occurs, <code>minipaxtar</code> automatically writes fallback/truncated values into the USTAR header for backward compatibility with legacy TAR extractors that do not support PAX.</p>
+</blockquote>
+<h4 id="conditions-triggering-pax-extended-headers">Conditions Triggering PAX Extended Headers</h4>
+<ul>
+<li><code>path</code> exceeds 100 characters and cannot be split across <code>prefix</code>/<code>name</code>.</li>
+<li><code>linkpath</code> exceeds 100 characters.</li>
+<li><code>size</code> exceeds 8,589,934,591 bytes (8 GiB) [1].</li>
+<li><code>uid</code> or <code>gid</code> exceeds 2,097,151 [1].</li>
+<li><code>uname</code> or <code>gname</code> string length exceeds 32 bytes.</li>
+<li><code>mtime</code> timestamp exceeds 8,589,934,591 seconds [1].</li>
+<li>Negative timestamps are present (dates prior to January 1, 1970).</li>
+<li>Sub-second timestamp resolution or extended timestamps (<code>atime</code>, <code>ctime</code>) are present (when <code>MPTAR_SUPPORT_EXTRA_TIMES</code> is enabled).</li>
+</ul>
+<blockquote>
+<p><strong>[1] Binary Octal Encoding Exception:</strong>
+Standard USTAR octal fields can also store numbers using binary encoding, expanding their capacity to full signed 64-bit integers. By default, if a value fits inside a binary-encoded field, <code>minipaxtar</code> skips generating a PAX header. However, if the writer flag <code>MPTAR_CTX_ALLOW_PAX_FOR_OCTAL</code> is set, <code>minipaxtar</code> will emit both the PAX extended header and the binary-encoded USTAR field.</p>
+</blockquote>
+<hr />
+<h3 id="2-transparent-header-parsing-reading">2. Transparent Header Parsing (Reading)</h3>
+<p>When reading archives with <code>mptar_read_header()</code>, <code>minipaxtar</code> handles format differences transparently:</p>
+<div class="highlight"><pre><span></span><code>[PAX Header &#39;x&#39;]  ---&gt; Updates internal reader state with extended attributes
+│
+▼
+[USTAR Header &#39;0&#39;] ---&gt; Overlays baseline metadata; returns unified mptar_metadata
+</code></pre></div>
+<ol>
+<li>If a PAX header (<code>typeflag == 'x'</code>) is encountered, <code>minipaxtar</code> parses its key-value pairs (<code>path</code>, <code>size</code>, <code>mtime</code>, <code>atime</code>, etc.).</li>
+<li>When the following file header arrives, the baseline USTAR fields are read, and any present PAX attributes override the standard USTAR values.</li>
+<li>The resulting populated <code>mptar_metadata</code> struct presented to your application contains the complete, high-precision metadata regardless of which format variant created it.</li>
+</ol>
+<hr />
+<h2 id="pax-key-value-pair-format">PAX Key-Value Pair Format</h2>
+<p>PAX extended headers store records in UTF-8 text lines structured as:</p>
+<blockquote>
+<p>[size][' ' (space)][keyword][=][value][\n]</p>
+</blockquote>
+<p>For example, a file with a 250-character path (that couldn't be split between <code>prefix</code> and <code>name</code>) generates a PAX block structured like this:</p>
+<div class="highlight"><pre><span></span><code>260 path=very/......./big/path
+22 mtime=1700000000.5
+</code></pre></div>
+<p><code>minipaxtar</code> handles the length calculation, formatting, and boundary parsing internally without requiring manual string manipulation or memory allocation from the caller.</p>
+<hr />
+<h2 id="preprocessor-options-size-impact">Preprocessor Options &amp; Size Impact</h2>
+<p>If your platform has strict memory or binary size constraints and does not require extended metadata attributes, you can strip specific PAX features:</p>
+<ul>
+<li><strong><code>MPTAR_SUPPORT_EXTRA_TIMES</code></strong>: Disables <code>atime</code> and <code>ctime</code> PAX parsing/formatting.</li>
+<li><strong><code>MPTAR_SUPPORT_SPECIAL</code></strong>: Disables PAX device number (<code>devmajor</code>/<code>devminor</code>) extended handling.</li>
+</ul>
+<p><em>(See <a href="../config-defines/">Configuration &amp; Compile-Time Flags</a> for full definition details.)</em></p>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

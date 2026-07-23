@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/api/Classes/structmptar__header/"><link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>mptar_header - MiniPaxTar</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../../..",
+    shortcuts = "{}";
+</script>
+<script src="../../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#mptar_header">mptar_header</a></li>
+        <li><a href="#public-attributes">Public Attributes</a></li><li><a href="#detailed-description">Detailed Description</a></li><li><a href="#public-attributes-documentation">Public Attributes Documentation</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+    
+    
+    
+    
+    
+
+<section id="mkdocs-terminal-content">
+    <h1 id="mptar_header">mptar_header</h1>
+<p><strong>Module:</strong> <strong><a href="/MiniPaxTar/api/Modules/group__mptar__data__structure">Archive Data Structures</a></strong></p>
+<p>Raw 512-byte POSIX USTAR header layout matching the exact on-disk binary format.  <a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;minipaxtar.h&gt;</code></p>
+<h2 id="public-attributes">Public Attributes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>char[100]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-name">name</a></strong> <br>File path or filename (null-terminated if under 100 bytes).</td>
+</tr>
+<tr>
+<td>char[8]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-mode">mode</a></strong> <br>File permissions in octal ASCII or base-256 binary.</td>
+</tr>
+<tr>
+<td>char[8]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-uid">uid</a></strong> <br>Owner user ID in octal ASCII or base-256 binary.</td>
+</tr>
+<tr>
+<td>char[8]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-gid">gid</a></strong> <br>Owner group ID in octal ASCII or base-256 binary.</td>
+</tr>
+<tr>
+<td>char[12]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-size">size</a></strong> <br>File payload size in octal ASCII or base-256 binary.</td>
+</tr>
+<tr>
+<td>char[12]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-mtime">mtime</a></strong> <br>Modification time (Unix epoch seconds) in octal ASCII or base-256 binary.</td>
+</tr>
+<tr>
+<td>char[8]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-checksum">checksum</a></strong> <br>Header checksum in octal ASCII.</td>
+</tr>
+<tr>
+<td>char</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-typeflag">typeflag</a></strong> <br>File entry type flag.</td>
+</tr>
+<tr>
+<td>char[100]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-linkname">linkname</a></strong> <br>Target path for symbolic or hard links.</td>
+</tr>
+<tr>
+<td>char[6]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-magic">magic</a></strong> <br>USTAR magic indicator ("ustar" or "ustar\0").</td>
+</tr>
+<tr>
+<td>char[2]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-version">version</a></strong> <br>USTAR version string ("00").</td>
+</tr>
+<tr>
+<td>char[32]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-uname">uname</a></strong> <br>Owner user name string.</td>
+</tr>
+<tr>
+<td>char[32]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-gname">gname</a></strong> <br>Owner group name string.</td>
+</tr>
+<tr>
+<td>char[8]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-devmajor">devmajor</a></strong> <br>Major device number for character/block special files in octal ASCII or base-256 binary.</td>
+</tr>
+<tr>
+<td>char[8]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-devminor">devminor</a></strong> <br>Minor device number for character/block special files in octal ASCII or base-256 binary.</td>
+</tr>
+<tr>
+<td>char[155]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-prefix">prefix</a></strong> <br>Path prefix used to extend file paths up to 256 total characters.</td>
+</tr>
+<tr>
+<td>char[12]</td>
+<td><strong><a href="/MiniPaxTar/api/Classes/structmptar__header#variable-padding">padding</a></strong> <br>Zero-padding bytes to complete the 512-byte block boundary.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">mptar_header</span><span class="p">;</span>
+</code></pre></div>
+<p>Raw 512-byte POSIX USTAR header layout matching the exact on-disk binary format. </p>
+<p><strong>Note</strong>: All octal ASCII fields (such as size, mtime, uid, gid, etc.) can optionally use base-256 binary encoding by setting the high-order bit (<a href="/MiniPaxTar/api/Modules/group__mptar__format__misc#define-mptar-octal-binary-flag">MPTAR_OCTAL_BINARY_FLAG</a>) in the first byte, with the explicit exception of the checksum field, which must always remain in octal ASCII. </p>
+<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
+<h3 id="variable-name">variable name</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+</code></pre></div>
+<p>File path or filename (null-terminated if under 100 bytes). </p>
+<h3 id="variable-mode">variable mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="n">mode</span><span class="p">;</span>
+</code></pre></div>
+<p>File permissions in octal ASCII or base-256 binary. </p>
+<h3 id="variable-uid">variable uid</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="n">uid</span><span class="p">;</span>
+</code></pre></div>
+<p>Owner user ID in octal ASCII or base-256 binary. </p>
+<h3 id="variable-gid">variable gid</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="n">gid</span><span class="p">;</span>
+</code></pre></div>
+<p>Owner group ID in octal ASCII or base-256 binary. </p>
+<h3 id="variable-size">variable size</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+</code></pre></div>
+<p>File payload size in octal ASCII or base-256 binary. </p>
+<h3 id="variable-mtime">variable mtime</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="w"> </span><span class="n">mtime</span><span class="p">;</span>
+</code></pre></div>
+<p>Modification time (Unix epoch seconds) in octal ASCII or base-256 binary. </p>
+<h3 id="variable-checksum">variable checksum</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="n">checksum</span><span class="p">;</span>
+</code></pre></div>
+<p>Header checksum in octal ASCII. </p>
+<p><strong>Note</strong>: Calculated by treating these 8 bytes as ASCII spaces, summing all 512 bytes of the header as unsigned bytes, and storing the result as an octal string followed by a null and a space. Binary encoding is strictly forbidden here. </p>
+<h3 id="variable-typeflag">variable typeflag</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">typeflag</span><span class="p">;</span>
+</code></pre></div>
+<p>File entry type flag. </p>
+<p><strong>Note</strong>: Standard values include:</p>
+<ul>
+<li><code>'0'</code> or <code>'\0'</code>: Regular file</li>
+<li><code>'1'</code>: Hard link</li>
+<li><code>'2'</code>: Symbolic link</li>
+<li><code>'3'</code>: Character special file</li>
+<li><code>'4'</code>: Block special file</li>
+<li><code>'5'</code>: Directory</li>
+<li><code>'6'</code>: FIFO / pipe</li>
+<li><code>'7'</code>: Contiguous file</li>
+<li><code>'x'</code>: PAX extended header</li>
+<li><code>'g'</code>: PAX global extended header </li>
+</ul>
+<h3 id="variable-linkname">variable linkname</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="w"> </span><span class="n">linkname</span><span class="p">;</span>
+</code></pre></div>
+<p>Target path for symbolic or hard links. </p>
+<h3 id="variable-magic">variable magic</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="w"> </span><span class="n">magic</span><span class="p">;</span>
+</code></pre></div>
+<p>USTAR magic indicator ("ustar" or "ustar\0"). </p>
+<h3 id="variable-version">variable version</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="n">version</span><span class="p">;</span>
+</code></pre></div>
+<p>USTAR version string ("00"). </p>
+<h3 id="variable-uname">variable uname</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="w"> </span><span class="n">uname</span><span class="p">;</span>
+</code></pre></div>
+<p>Owner user name string. </p>
+<h3 id="variable-gname">variable gname</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="w"> </span><span class="n">gname</span><span class="p">;</span>
+</code></pre></div>
+<p>Owner group name string. </p>
+<h3 id="variable-devmajor">variable devmajor</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="n">devmajor</span><span class="p">;</span>
+</code></pre></div>
+<p>Major device number for character/block special files in octal ASCII or base-256 binary. </p>
+<h3 id="variable-devminor">variable devminor</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="n">devminor</span><span class="p">;</span>
+</code></pre></div>
+<p>Minor device number for character/block special files in octal ASCII or base-256 binary. </p>
+<h3 id="variable-prefix">variable prefix</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">155</span><span class="p">]</span><span class="w"> </span><span class="n">prefix</span><span class="p">;</span>
+</code></pre></div>
+<p>Path prefix used to extend file paths up to 256 total characters. </p>
+<h3 id="variable-padding">variable padding</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">char</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="w"> </span><span class="n">padding</span><span class="p">;</span>
+</code></pre></div>
+<p>Zero-padding bytes to complete the 512-byte block boundary. </p>
+<hr />
+<p>Updated on 2026-07-23 at 20:07:34 +0000</p>
+</section>
+
+<section id="mkdocs-terminal-after-content">
+    
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

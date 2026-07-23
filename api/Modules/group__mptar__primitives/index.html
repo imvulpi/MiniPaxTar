@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/api/Modules/group__mptar__primitives/"><link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>Primitive Types and Limits - MiniPaxTar</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../../..",
+    shortcuts = "{}";
+</script>
+<script src="../../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#primitive-types-and-limits">Primitive Types and Limits</a></li>
+        <li><a href="#types">Types</a></li><li><a href="#defines">Defines</a></li><li><a href="#types-documentation">Types Documentation</a></li><li><a href="#macros-documentation">Macros Documentation</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+    
+    
+    
+    
+    
+
+<section id="mkdocs-terminal-content">
+    <h1 id="primitive-types-and-limits">Primitive Types and Limits</h1>
+<p>Fundamental integer, size, floating-point types, and their scalar limits. </p>
+<h2 id="types">Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>typedef int64_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int64">mptar_int64</a></strong> <br>Signed 64-bit integer.</td>
+</tr>
+<tr>
+<td>typedef int32_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int32">mptar_int32</a></strong> <br>Signed 32-bit integer.</td>
+</tr>
+<tr>
+<td>typedef int16_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int16">mptar_int16</a></strong> <br>Signed 16-bit integer.</td>
+</tr>
+<tr>
+<td>typedef int8_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int8">mptar_int8</a></strong> <br>Signed 8-bit integer.</td>
+</tr>
+<tr>
+<td>typedef uint64_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint64">mptar_uint64</a></strong> <br>Unsigned 64-bit integer.</td>
+</tr>
+<tr>
+<td>typedef uint32_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint32">mptar_uint32</a></strong> <br>Unsigned 32-bit integer.</td>
+</tr>
+<tr>
+<td>typedef uint16_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint16">mptar_uint16</a></strong> <br>Unsigned 16-bit integer.</td>
+</tr>
+<tr>
+<td>typedef uint8_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint8">mptar_uint8</a></strong> <br>Unsigned 8-bit integer.</td>
+</tr>
+<tr>
+<td>typedef size_t</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-size-t">mptar_size_t</a></strong> <br>Unsigned size type.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="defines">Defines</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#define-mptar-null">MPTAR_NULL</a></strong> <br>Null pointer constant.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#define-mptar-int64-min">MPTAR_INT64_MIN</a></strong> <br>Minimum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int64">mptar_int64</a>.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#define-mptar-int64-max">MPTAR_INT64_MAX</a></strong> <br>Maximum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int64">mptar_int64</a>.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#define-mptar-uint64-max">MPTAR_UINT64_MAX</a></strong> <br>Maximum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint64">mptar_uint64</a>.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__primitives#define-mptar-uint32-max">MPTAR_UINT32_MAX</a></strong> <br>Maximum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint32">mptar_uint32</a>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="types-documentation">Types Documentation</h2>
+<h3 id="typedef-mptar_int64">typedef mptar_int64</h3>
+<div class="highlight"><pre><span></span><code>typedef int64_t mptar_int64;
+</code></pre></div>
+<p>Signed 64-bit integer. </p>
+<h3 id="typedef-mptar_int32">typedef mptar_int32</h3>
+<div class="highlight"><pre><span></span><code>typedef int32_t mptar_int32;
+</code></pre></div>
+<p>Signed 32-bit integer. </p>
+<h3 id="typedef-mptar_int16">typedef mptar_int16</h3>
+<div class="highlight"><pre><span></span><code>typedef int16_t mptar_int16;
+</code></pre></div>
+<p>Signed 16-bit integer. </p>
+<h3 id="typedef-mptar_int8">typedef mptar_int8</h3>
+<div class="highlight"><pre><span></span><code>typedef int8_t mptar_int8;
+</code></pre></div>
+<p>Signed 8-bit integer. </p>
+<h3 id="typedef-mptar_uint64">typedef mptar_uint64</h3>
+<div class="highlight"><pre><span></span><code>typedef uint64_t mptar_uint64;
+</code></pre></div>
+<p>Unsigned 64-bit integer. </p>
+<h3 id="typedef-mptar_uint32">typedef mptar_uint32</h3>
+<div class="highlight"><pre><span></span><code>typedef uint32_t mptar_uint32;
+</code></pre></div>
+<p>Unsigned 32-bit integer. </p>
+<h3 id="typedef-mptar_uint16">typedef mptar_uint16</h3>
+<div class="highlight"><pre><span></span><code>typedef uint16_t mptar_uint16;
+</code></pre></div>
+<p>Unsigned 16-bit integer. </p>
+<h3 id="typedef-mptar_uint8">typedef mptar_uint8</h3>
+<div class="highlight"><pre><span></span><code>typedef uint8_t mptar_uint8;
+</code></pre></div>
+<p>Unsigned 8-bit integer. </p>
+<h3 id="typedef-mptar_size_t">typedef mptar_size_t</h3>
+<div class="highlight"><pre><span></span><code>typedef size_t mptar_size_t;
+</code></pre></div>
+<p>Unsigned size type. </p>
+<h2 id="macros-documentation">Macros Documentation</h2>
+<h3 id="define-mptar_null">define MPTAR_NULL</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_NULL NULL
+</code></pre></div>
+<p>Null pointer constant. </p>
+<h3 id="define-mptar_int64_min">define MPTAR_INT64_MIN</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_INT64_MIN INT64_MIN
+</code></pre></div>
+<p>Minimum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int64">mptar_int64</a>. </p>
+<h3 id="define-mptar_int64_max">define MPTAR_INT64_MAX</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_INT64_MAX INT64_MAX
+</code></pre></div>
+<p>Maximum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-int64">mptar_int64</a>. </p>
+<h3 id="define-mptar_uint64_max">define MPTAR_UINT64_MAX</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_UINT64_MAX UINT64_MAX
+</code></pre></div>
+<p>Maximum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint64">mptar_uint64</a>. </p>
+<h3 id="define-mptar_uint32_max">define MPTAR_UINT32_MAX</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_UINT32_MAX UINT32_MAX
+</code></pre></div>
+<p>Maximum value for <a href="/MiniPaxTar/api/Modules/group__mptar__primitives#typedef-mptar-uint32">mptar_uint32</a>. </p>
+<hr />
+<p>Updated on 2026-07-23 at 20:07:34 +0000</p>
+</section>
+
+<section id="mkdocs-terminal-after-content">
+    
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

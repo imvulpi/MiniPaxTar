@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__internal__diagnostics" kind="group">
+    <compoundname>mptar_internal_diagnostics</compoundname>
+    <title>Internal Compiler</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__internal__diagnostics_1gafcb4aaea9dcffd98f85c298fb68fe8f3" prot="public" static="no">
+        <name>MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="709" column="14" bodyfile="minipaxtar.h" bodystart="709" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__internal__diagnostics_1ga42e3f731da6f6d49d2d5d2d3ac46b653" prot="public" static="no">
+        <name>MPTAR_SUPPRESS_WARNING_CAST_QUAL_END</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="710" column="13" bodyfile="minipaxtar.h" bodystart="710" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Cross-compiler warning/diagnostics suppression and platform-abstraction macros. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

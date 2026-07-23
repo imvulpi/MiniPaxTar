@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structmptar__memory__cfg" kind="struct" language="C++" prot="public">
+    <compoundname>mptar_memory_cfg</compoundname>
+    <includes refid="minipaxtar_8h" local="no">minipaxtar.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmptar__memory__cfg_1a5208d7a3cdf5fe0c02c8e4677d77ce79" prot="public" static="no" mutable="no">
+        <type><ref refid="group__mptar__memory_1gab3be2249150625802815225b1100e52f" kindref="member">mptar_alloc_fn</ref></type>
+        <definition>mptar_alloc_fn mptar_memory_cfg::alloc</definition>
+        <argsstring></argsstring>
+        <name>alloc</name>
+        <qualifiedname>mptar_memory_cfg::alloc</qualifiedname>
+        <briefdescription>
+<para>Pointer to custom allocation function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="499" column="20" bodyfile="minipaxtar.h" bodystart="499" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__memory__cfg_1a14fde62f9db96df36ab9f2bf9bd52d11" prot="public" static="no" mutable="no">
+        <type><ref refid="group__mptar__memory_1ga181d6c1654791c4f050924666c957a06" kindref="member">mptar_free_fn</ref></type>
+        <definition>mptar_free_fn mptar_memory_cfg::free</definition>
+        <argsstring></argsstring>
+        <name>free</name>
+        <qualifiedname>mptar_memory_cfg::free</qualifiedname>
+        <briefdescription>
+<para>Pointer to custom deallocation function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="500" column="19" bodyfile="minipaxtar.h" bodystart="500" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__memory__cfg_1ab1b4386a9d5835de1a1daa517d89d7ad" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* mptar_memory_cfg::alloc_user_data</definition>
+        <argsstring></argsstring>
+        <name>alloc_user_data</name>
+        <qualifiedname>mptar_memory_cfg::alloc_user_data</qualifiedname>
+        <briefdescription>
+<para>User-provided opaque pointer that is passed directly to alloc/free. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="501" column="10" bodyfile="minipaxtar.h" bodystart="501" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Custom allocator configuration structure. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="minipaxtar.h" line="498" column="1" bodyfile="minipaxtar.h" bodystart="498" bodyend="502"/>
+    <listofallmembers>
+      <member refid="structmptar__memory__cfg_1a5208d7a3cdf5fe0c02c8e4677d77ce79" prot="public" virt="non-virtual"><scope>mptar_memory_cfg</scope><name>alloc</name></member>
+      <member refid="structmptar__memory__cfg_1ab1b4386a9d5835de1a1daa517d89d7ad" prot="public" virt="non-virtual"><scope>mptar_memory_cfg</scope><name>alloc_user_data</name></member>
+      <member refid="structmptar__memory__cfg_1a14fde62f9db96df36ab9f2bf9bd52d11" prot="public" virt="non-virtual"><scope>mptar_memory_cfg</scope><name>free</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__experimental__config" kind="group">
+    <compoundname>mptar_experimental_config</compoundname>
+    <title>Experimental &amp; Internal Overrides</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__experimental__config_1gab817a49c00c4b9462dcd99a0c84a85cf" prot="public" static="no">
+        <name>MPTAR_CUSTOM_INTERNAL_HOOK_EXAMPLE</name>
+        <briefdescription>
+<para>General catch-all representation for internal or undocumented custom hooks. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="155" column="9" bodyfile="minipaxtar.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Unstable low-level hooks and internal customization switches. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="warning"><para><bold>Volatile API / No Stability Guarantees:</bold> These internal macros and low-level hooks are subject to change or complete removal without notice in future versions. Use them at your own risk.</para>
+</simplesect>
+All <computeroutput>MPTAR_CUSTOM_*</computeroutput> hooks are related to internal functions inside <computeroutput><ref refid="minipaxtar_8c" kindref="compound">minipaxtar.c</ref></computeroutput>. Unless explicitly listed under <ref refid="group__mptar__stable__config" kindref="compound">Stable Compile-Time Options</ref>, these custom functions are considered internal and carry no stability guarantees. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

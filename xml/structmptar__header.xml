@@ -1,0 +1,310 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structmptar__header" kind="struct" language="C++" prot="public">
+    <compoundname>mptar_header</compoundname>
+    <includes refid="minipaxtar_8h" local="no">minipaxtar.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmptar__header_1a406be24bb0012ec88c6b1097323c32ba" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::name[100]</definition>
+        <argsstring>[100]</argsstring>
+        <name>name</name>
+        <qualifiedname>mptar_header::name</qualifiedname>
+        <briefdescription>
+<para>File path or filename (null-terminated if under 100 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="352" column="10" bodyfile="minipaxtar.h" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a84fc469154b06b3f11f5a40b5700d966" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::mode[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>mode</name>
+        <qualifiedname>mptar_header::mode</qualifiedname>
+        <briefdescription>
+<para>File permissions in octal ASCII or base-256 binary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="353" column="10" bodyfile="minipaxtar.h" bodystart="353" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a82c75b9a29abdc77de4e457d45e89a3f" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::uid[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>uid</name>
+        <qualifiedname>mptar_header::uid</qualifiedname>
+        <briefdescription>
+<para>Owner user ID in octal ASCII or base-256 binary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="354" column="10" bodyfile="minipaxtar.h" bodystart="354" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a4897edb394090be08c702f6a27465c3f" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::gid[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>gid</name>
+        <qualifiedname>mptar_header::gid</qualifiedname>
+        <briefdescription>
+<para>Owner group ID in octal ASCII or base-256 binary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="355" column="10" bodyfile="minipaxtar.h" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1ad7a3d9049f4b870659b44bd6809f9513" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::size[12]</definition>
+        <argsstring>[12]</argsstring>
+        <name>size</name>
+        <qualifiedname>mptar_header::size</qualifiedname>
+        <briefdescription>
+<para>File payload size in octal ASCII or base-256 binary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="356" column="10" bodyfile="minipaxtar.h" bodystart="356" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1ad8cf0859ea3126adb682f276a77bb523" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::mtime[12]</definition>
+        <argsstring>[12]</argsstring>
+        <name>mtime</name>
+        <qualifiedname>mptar_header::mtime</qualifiedname>
+        <briefdescription>
+<para>Modification time (Unix epoch seconds) in octal ASCII or base-256 binary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="357" column="10" bodyfile="minipaxtar.h" bodystart="357" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a28250e3fb7e47c83d9cfb134c65ffd0b" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::checksum[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>checksum</name>
+        <qualifiedname>mptar_header::checksum</qualifiedname>
+        <briefdescription>
+<para>Header checksum in octal ASCII. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Calculated by treating these 8 bytes as ASCII spaces, summing all 512 bytes of the header as unsigned bytes, and storing the result as an octal string followed by a null and a space. Binary encoding is strictly forbidden here. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="365" column="10" bodyfile="minipaxtar.h" bodystart="365" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a238f2de9c21918a1c4213edbc4eb2ea0" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::typeflag</definition>
+        <argsstring></argsstring>
+        <name>typeflag</name>
+        <qualifiedname>mptar_header::typeflag</qualifiedname>
+        <briefdescription>
+<para>File entry type flag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Standard values include:<itemizedlist>
+<listitem><para><computeroutput>&apos;0&apos;</computeroutput> or <computeroutput>&apos;\0&apos;</computeroutput>: Regular file</para>
+</listitem><listitem><para><computeroutput>&apos;1&apos;</computeroutput>: Hard link</para>
+</listitem><listitem><para><computeroutput>&apos;2&apos;</computeroutput>: Symbolic link</para>
+</listitem><listitem><para><computeroutput>&apos;3&apos;</computeroutput>: Character special file</para>
+</listitem><listitem><para><computeroutput>&apos;4&apos;</computeroutput>: Block special file</para>
+</listitem><listitem><para><computeroutput>&apos;5&apos;</computeroutput>: Directory</para>
+</listitem><listitem><para><computeroutput>&apos;6&apos;</computeroutput>: FIFO / pipe</para>
+</listitem><listitem><para><computeroutput>&apos;7&apos;</computeroutput>: Contiguous file</para>
+</listitem><listitem><para><computeroutput>&apos;x&apos;</computeroutput>: PAX extended header</para>
+</listitem><listitem><para><computeroutput>&apos;g&apos;</computeroutput>: PAX global extended header </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="381" column="10" bodyfile="minipaxtar.h" bodystart="381" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a05d74c8906925624cf4e6329d661171c" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::linkname[100]</definition>
+        <argsstring>[100]</argsstring>
+        <name>linkname</name>
+        <qualifiedname>mptar_header::linkname</qualifiedname>
+        <briefdescription>
+<para>Target path for symbolic or hard links. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="382" column="10" bodyfile="minipaxtar.h" bodystart="382" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a5e4fa82421ace9b62f6902035b67869b" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::magic[6]</definition>
+        <argsstring>[6]</argsstring>
+        <name>magic</name>
+        <qualifiedname>mptar_header::magic</qualifiedname>
+        <briefdescription>
+<para>USTAR magic indicator (&quot;ustar&quot; or &quot;ustar\0&quot;). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="383" column="10" bodyfile="minipaxtar.h" bodystart="383" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a43dd3fa6da1b2aa28979541c9f6c4670" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::version[2]</definition>
+        <argsstring>[2]</argsstring>
+        <name>version</name>
+        <qualifiedname>mptar_header::version</qualifiedname>
+        <briefdescription>
+<para>USTAR version string (&quot;00&quot;). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="384" column="10" bodyfile="minipaxtar.h" bodystart="384" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a3c369bd6fbe8de89902cb3e59cb303bc" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::uname[32]</definition>
+        <argsstring>[32]</argsstring>
+        <name>uname</name>
+        <qualifiedname>mptar_header::uname</qualifiedname>
+        <briefdescription>
+<para>Owner user name string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="385" column="10" bodyfile="minipaxtar.h" bodystart="385" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a4b3b9a17692930e0bb7b814c00eaa890" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::gname[32]</definition>
+        <argsstring>[32]</argsstring>
+        <name>gname</name>
+        <qualifiedname>mptar_header::gname</qualifiedname>
+        <briefdescription>
+<para>Owner group name string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="386" column="10" bodyfile="minipaxtar.h" bodystart="386" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a4fba5cccc37b2e3b5395b5044d8c4d51" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::devmajor[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>devmajor</name>
+        <qualifiedname>mptar_header::devmajor</qualifiedname>
+        <briefdescription>
+<para>Major device number for character/block special files in octal ASCII or base-256 binary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="387" column="10" bodyfile="minipaxtar.h" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a85fe70755dd5b3dddd771e68133d4487" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::devminor[8]</definition>
+        <argsstring>[8]</argsstring>
+        <name>devminor</name>
+        <qualifiedname>mptar_header::devminor</qualifiedname>
+        <briefdescription>
+<para>Minor device number for character/block special files in octal ASCII or base-256 binary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="388" column="10" bodyfile="minipaxtar.h" bodystart="388" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1af95c8483b082a7d89075ebf88266f54e" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::prefix[155]</definition>
+        <argsstring>[155]</argsstring>
+        <name>prefix</name>
+        <qualifiedname>mptar_header::prefix</qualifiedname>
+        <briefdescription>
+<para>Path prefix used to extend file paths up to 256 total characters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="389" column="10" bodyfile="minipaxtar.h" bodystart="389" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__header_1a82d950905f45dfc59bae9110439d3f20" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_header::padding[12]</definition>
+        <argsstring>[12]</argsstring>
+        <name>padding</name>
+        <qualifiedname>mptar_header::padding</qualifiedname>
+        <briefdescription>
+<para>Zero-padding bytes to complete the 512-byte block boundary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="390" column="10" bodyfile="minipaxtar.h" bodystart="390" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Raw 512-byte POSIX USTAR header layout matching the exact on-disk binary format. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>All octal ASCII fields (such as size, mtime, uid, gid, etc.) can optionally use base-256 binary encoding by setting the high-order bit (<ref refid="group__mptar__format__misc_1gaf718c76019cd89b0117a47219010c9c9" kindref="member">MPTAR_OCTAL_BINARY_FLAG</ref>) in the first byte, with the explicit exception of the checksum field, which must always remain in octal ASCII. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="minipaxtar.h" line="351" column="1" bodyfile="minipaxtar.h" bodystart="351" bodyend="391"/>
+    <listofallmembers>
+      <member refid="structmptar__header_1a28250e3fb7e47c83d9cfb134c65ffd0b" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>checksum</name></member>
+      <member refid="structmptar__header_1a4fba5cccc37b2e3b5395b5044d8c4d51" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>devmajor</name></member>
+      <member refid="structmptar__header_1a85fe70755dd5b3dddd771e68133d4487" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>devminor</name></member>
+      <member refid="structmptar__header_1a4897edb394090be08c702f6a27465c3f" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>gid</name></member>
+      <member refid="structmptar__header_1a4b3b9a17692930e0bb7b814c00eaa890" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>gname</name></member>
+      <member refid="structmptar__header_1a05d74c8906925624cf4e6329d661171c" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>linkname</name></member>
+      <member refid="structmptar__header_1a5e4fa82421ace9b62f6902035b67869b" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>magic</name></member>
+      <member refid="structmptar__header_1a84fc469154b06b3f11f5a40b5700d966" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>mode</name></member>
+      <member refid="structmptar__header_1ad8cf0859ea3126adb682f276a77bb523" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>mtime</name></member>
+      <member refid="structmptar__header_1a406be24bb0012ec88c6b1097323c32ba" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>name</name></member>
+      <member refid="structmptar__header_1a82d950905f45dfc59bae9110439d3f20" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>padding</name></member>
+      <member refid="structmptar__header_1af95c8483b082a7d89075ebf88266f54e" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>prefix</name></member>
+      <member refid="structmptar__header_1ad7a3d9049f4b870659b44bd6809f9513" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>size</name></member>
+      <member refid="structmptar__header_1a238f2de9c21918a1c4213edbc4eb2ea0" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>typeflag</name></member>
+      <member refid="structmptar__header_1a82c75b9a29abdc77de4e457d45e89a3f" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>uid</name></member>
+      <member refid="structmptar__header_1a3c369bd6fbe8de89902cb3e59cb303bc" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>uname</name></member>
+      <member refid="structmptar__header_1a43dd3fa6da1b2aa28979541c9f6c4670" prot="public" virt="non-virtual"><scope>mptar_header</scope><name>version</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

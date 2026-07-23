@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structmptar__timespec" kind="struct" language="C++" prot="public">
+    <compoundname>mptar_timespec</compoundname>
+    <includes refid="minipaxtar_8h" local="no">minipaxtar.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmptar__timespec_1a9c458440169e1abdf4b88661f7d12375" prot="public" static="no" mutable="no">
+        <type><ref refid="group__mptar__primitives_1ga7122689cd9d43a22b2b955e20a896bcc" kindref="member">mptar_int64</ref></type>
+        <definition>mptar_int64 mptar_timespec::sec</definition>
+        <argsstring></argsstring>
+        <name>sec</name>
+        <qualifiedname>mptar_timespec::sec</qualifiedname>
+        <briefdescription>
+<para>Standard Unix timestamp in seconds. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Supports negative epoch values. Writing a negative timestamp forces the emission of a PAX extended header because standard USTAR headers cannot natively represent negative time values. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="406" column="17" bodyfile="minipaxtar.h" bodystart="406" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__timespec_1a2570be70ce62f62acd5f27361e218b53" prot="public" static="no" mutable="no">
+        <type><ref refid="group__mptar__primitives_1gaa853c551a1d0d9f5dea366b9395e5a31" kindref="member">mptar_uint32</ref></type>
+        <definition>mptar_uint32 mptar_timespec::nsec</definition>
+        <argsstring></argsstring>
+        <name>nsec</name>
+        <qualifiedname>mptar_timespec::nsec</qualifiedname>
+        <briefdescription>
+<para>Sub-second precision in nanoseconds. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Must not exceed 999,999,999 when writing, or an error will occur. Attempting to write an invalid nanosecond value triggers a specific error: <ref refid="group__mptar__error__codes_1gadf41e0d6c299f94b8380e32ac9d6e75c" kindref="member">MPTAR_ERR_NS_CONVERSION_FAILED</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="414" column="18" bodyfile="minipaxtar.h" bodystart="414" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>High-resolution timestamp holding Unix epoch seconds and sub-second nanoseconds. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>Negative epoch seconds are supported via <ref refid="group__mptar__primitives_1ga7122689cd9d43a22b2b955e20a896bcc" kindref="member">mptar_int64</ref>, but writing a negative timestamp forces the emission of a PAX extended header because standard USTAR formats cannot natively represent negative time values. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="minipaxtar.h" line="399" column="1" bodyfile="minipaxtar.h" bodystart="399" bodyend="415"/>
+    <listofallmembers>
+      <member refid="structmptar__timespec_1a2570be70ce62f62acd5f27361e218b53" prot="public" virt="non-virtual"><scope>mptar_timespec</scope><name>nsec</name></member>
+      <member refid="structmptar__timespec_1a9c458440169e1abdf4b88661f7d12375" prot="public" virt="non-virtual"><scope>mptar_timespec</scope><name>sec</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

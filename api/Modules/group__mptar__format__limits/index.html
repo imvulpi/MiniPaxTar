@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/api/Modules/group__mptar__format__limits/"><link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>USTAR & PAX Field Capacities, Bounds, and Buffer Limits - MiniPaxTar</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../../..",
+    shortcuts = "{}";
+</script>
+<script src="../../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#ustar-pax-field-capacities-bounds-and-buffer-limits">USTAR &amp; PAX Field Capacities, Bounds, and Buffer Limits</a></li>
+        <li><a href="#defines">Defines</a></li><li><a href="#macros-documentation">Macros Documentation</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+    
+    
+    
+    
+    
+
+<section id="mkdocs-terminal-content">
+    <h1 id="ustar-pax-field-capacities-bounds-and-buffer-limits">USTAR &amp; PAX Field Capacities, Bounds, and Buffer Limits</h1>
+<p>Fixed array sizes, maximum string lengths, encoding numeric limits, and formatting buffer sizes. </p>
+<h2 id="defines">Defines</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-size-linkname">MPTAR_USTAR_SIZE_LINKNAME</a></strong> <br>Raw size of the header linkname field in bytes.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-size-name">MPTAR_USTAR_SIZE_NAME</a></strong> <br>Raw size of the header filename field in bytes.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-size-prefix">MPTAR_USTAR_SIZE_PREFIX</a></strong> <br>Raw size of the header prefix field in bytes.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-size-uname">MPTAR_USTAR_SIZE_UNAME</a></strong> <br>Raw size of the header owner user name field in bytes.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-size-gname">MPTAR_USTAR_SIZE_GNAME</a></strong> <br>Raw size of the header owner group name field in bytes.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-max-len-name">MPTAR_USTAR_MAX_LEN_NAME</a></strong> <br>Maximum string length for filename (99 chars).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-max-len-linkname">MPTAR_USTAR_MAX_LEN_LINKNAME</a></strong> <br>Maximum string length for linkname (99 chars).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-max-len-prefix">MPTAR_USTAR_MAX_LEN_PREFIX</a></strong> <br>Maximum string length for prefix (154 chars).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-max-len-uname">MPTAR_USTAR_MAX_LEN_UNAME</a></strong> <br>Maximum string length for uname (31 chars).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-max-len-gname">MPTAR_USTAR_MAX_LEN_GNAME</a></strong> <br>Maximum string length for gname (31 chars).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-max-octal-12b">MPTAR_USTAR_MAX_OCTAL_12B</a></strong> <br>Maximum value encodeable in a 12-byte USTAR octal field (77777777777 octal).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-ustar-max-octal-8b">MPTAR_USTAR_MAX_OCTAL_8B</a></strong> <br>Maximum value encodeable in an 8-byte USTAR octal field (7777777 octal).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-max-octal-digits-64">MPTAR_MAX_OCTAL_DIGITS_64</a></strong> <br>Max octal digits required to represent a 64-bit integer.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-binary-max-8b">MPTAR_BINARY_MAX_8B</a></strong> <br>Max boundary for 8-byte base-256 binary encoded values.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-pax-max-uint32-str-len">MPTAR_PAX_MAX_UINT32_STR_LEN</a></strong> <br>String length required to represent a uint32 value when its value exceeds 999999999 (10 digits, up to 4294967295).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-pax-nsec-max-digits">MPTAR_PAX_NSEC_MAX_DIGITS</a></strong> <br>Maximum digits needed for writing nanoseconds precision (10^-9).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-pax-nsec-initial-multiplier">MPTAR_PAX_NSEC_INITIAL_MULTIPLIER</a></strong> <br>Scale factor (10^8) for extracting top nanosecond digit.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-pax-max-data-len">MPTAR_PAX_MAX_DATA_LEN</a></strong> <br>Maximum payload byte capacity inside a single PAX record.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-uint64-str-buf-size">MPTAR_UINT64_STR_BUF_SIZE</a></strong> <br>Buffer capacity used to safely format a 64-bit uint string (including terminator).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-timespec-str-buf-size">MPTAR_TIMESPEC_STR_BUF_SIZE</a></strong> <br>Buffer capacity used to safely format full PAX timestamp string ("sec.nsec", including null terminator).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__format__limits#define-mptar-max-pax-size">MPTAR_MAX_PAX_SIZE</a></strong> <br>Maximum permitted byte size for a single PAX extended header payload.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="macros-documentation">Macros Documentation</h2>
+<h3 id="define-mptar_ustar_size_linkname">define MPTAR_USTAR_SIZE_LINKNAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_SIZE_LINKNAME 100
+</code></pre></div>
+<p>Raw size of the header linkname field in bytes. </p>
+<h3 id="define-mptar_ustar_size_name">define MPTAR_USTAR_SIZE_NAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_SIZE_NAME 100
+</code></pre></div>
+<p>Raw size of the header filename field in bytes. </p>
+<h3 id="define-mptar_ustar_size_prefix">define MPTAR_USTAR_SIZE_PREFIX</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_SIZE_PREFIX 155
+</code></pre></div>
+<p>Raw size of the header prefix field in bytes. </p>
+<h3 id="define-mptar_ustar_size_uname">define MPTAR_USTAR_SIZE_UNAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_SIZE_UNAME 32
+</code></pre></div>
+<p>Raw size of the header owner user name field in bytes. </p>
+<h3 id="define-mptar_ustar_size_gname">define MPTAR_USTAR_SIZE_GNAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_SIZE_GNAME 32
+</code></pre></div>
+<p>Raw size of the header owner group name field in bytes. </p>
+<h3 id="define-mptar_ustar_max_len_name">define MPTAR_USTAR_MAX_LEN_NAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_MAX_LEN_NAME (MPTAR_USTAR_SIZE_NAME - 1)
+</code></pre></div>
+<p>Maximum string length for filename (99 chars). </p>
+<h3 id="define-mptar_ustar_max_len_linkname">define MPTAR_USTAR_MAX_LEN_LINKNAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1)
+</code></pre></div>
+<p>Maximum string length for linkname (99 chars). </p>
+<h3 id="define-mptar_ustar_max_len_prefix">define MPTAR_USTAR_MAX_LEN_PREFIX</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_MAX_LEN_PREFIX (MPTAR_USTAR_SIZE_PREFIX - 1)
+</code></pre></div>
+<p>Maximum string length for prefix (154 chars). </p>
+<h3 id="define-mptar_ustar_max_len_uname">define MPTAR_USTAR_MAX_LEN_UNAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_MAX_LEN_UNAME (MPTAR_USTAR_SIZE_UNAME - 1)
+</code></pre></div>
+<p>Maximum string length for uname (31 chars). </p>
+<h3 id="define-mptar_ustar_max_len_gname">define MPTAR_USTAR_MAX_LEN_GNAME</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_MAX_LEN_GNAME (MPTAR_USTAR_SIZE_GNAME - 1)
+</code></pre></div>
+<p>Maximum string length for gname (31 chars). </p>
+<h3 id="define-mptar_ustar_max_octal_12b">define MPTAR_USTAR_MAX_OCTAL_12B</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_MAX_OCTAL_12B 8589934591ULL
+</code></pre></div>
+<p>Maximum value encodeable in a 12-byte USTAR octal field (77777777777 octal). </p>
+<h3 id="define-mptar_ustar_max_octal_8b">define MPTAR_USTAR_MAX_OCTAL_8B</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_USTAR_MAX_OCTAL_8B 2097151ULL
+</code></pre></div>
+<p>Maximum value encodeable in an 8-byte USTAR octal field (7777777 octal). </p>
+<h3 id="define-mptar_max_octal_digits_64">define MPTAR_MAX_OCTAL_DIGITS_64</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_MAX_OCTAL_DIGITS_64 22U
+</code></pre></div>
+<p>Max octal digits required to represent a 64-bit integer. </p>
+<h3 id="define-mptar_binary_max_8b">define MPTAR_BINARY_MAX_8B</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_BINARY_MAX_8B MPTAR_INT64_MAX
+</code></pre></div>
+<p>Max boundary for 8-byte base-256 binary encoded values. </p>
+<h3 id="define-mptar_pax_max_uint32_str_len">define MPTAR_PAX_MAX_UINT32_STR_LEN</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_PAX_MAX_UINT32_STR_LEN 10U
+</code></pre></div>
+<p>String length required to represent a uint32 value when its value exceeds 999999999 (10 digits, up to 4294967295). </p>
+<h3 id="define-mptar_pax_nsec_max_digits">define MPTAR_PAX_NSEC_MAX_DIGITS</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_PAX_NSEC_MAX_DIGITS 9U
+</code></pre></div>
+<p>Maximum digits needed for writing nanoseconds precision (10^-9). </p>
+<h3 id="define-mptar_pax_nsec_initial_multiplier">define MPTAR_PAX_NSEC_INITIAL_MULTIPLIER</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_PAX_NSEC_INITIAL_MULTIPLIER 100000000U
+</code></pre></div>
+<p>Scale factor (10^8) for extracting top nanosecond digit. </p>
+<h3 id="define-mptar_pax_max_data_len">define MPTAR_PAX_MAX_DATA_LEN</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_PAX_MAX_DATA_LEN (MPTAR_UINT32_MAX - MPTAR_PAX_MAX_UINT32_STR_LEN)
+</code></pre></div>
+<p>Maximum payload byte capacity inside a single PAX record. </p>
+<h3 id="define-mptar_uint64_str_buf_size">define MPTAR_UINT64_STR_BUF_SIZE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_UINT64_STR_BUF_SIZE 24U
+</code></pre></div>
+<p>Buffer capacity used to safely format a 64-bit uint string (including terminator). </p>
+<h3 id="define-mptar_timespec_str_buf_size">define MPTAR_TIMESPEC_STR_BUF_SIZE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TIMESPEC_STR_BUF_SIZE 32U
+</code></pre></div>
+<p>Buffer capacity used to safely format full PAX timestamp string ("sec.nsec", including null terminator). </p>
+<h3 id="define-mptar_max_pax_size">define MPTAR_MAX_PAX_SIZE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_MAX_PAX_SIZE (8 * 1024 * 1024)
+</code></pre></div>
+<p>Maximum permitted byte size for a single PAX extended header payload. </p>
+<p>Protects against Denial of Service (DoS) attacks or dynamic allocation panics caused by corrupted or untrusted TAR archives with unnaturally large PAX size headers. Defaults to 8 MiB (8,388,608 bytes). Can be overridden at compile-time. </p>
+<hr />
+<p>Updated on 2026-07-23 at 20:07:34 +0000</p>
+</section>
+
+<section id="mkdocs-terminal-after-content">
+    
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

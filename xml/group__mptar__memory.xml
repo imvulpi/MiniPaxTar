@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__memory" kind="group">
+    <compoundname>mptar_memory</compoundname>
+    <title>Memory Management Callbacks and Configuration</title>
+    <innerclass refid="structmptar__memory__cfg" prot="public">mptar_memory_cfg</innerclass>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__mptar__memory_1gab3be2249150625802815225b1100e52f" prot="public" static="no">
+        <type>void *(*</type>
+        <definition>typedef void *(* mptar_alloc_fn) (void *user_data, mptar_size_t size)</definition>
+        <argsstring>)(void *user_data, mptar_size_t size)</argsstring>
+        <name>mptar_alloc_fn</name>
+        <briefdescription>
+<para>Custom memory allocation function signature. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Opaque pointer passed through from <ref refid="structmptar__memory__cfg" kindref="compound">mptar_memory_cfg</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to allocated memory, or NULL on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="486" column="9" bodyfile="minipaxtar.h" bodystart="486" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__mptar__memory_1ga181d6c1654791c4f050924666c957a06" prot="public" static="no">
+        <type>void(*</type>
+        <definition>typedef void(* mptar_free_fn) (void *user_data, void *ptr)</definition>
+        <argsstring>)(void *user_data, void *ptr)</argsstring>
+        <name>mptar_free_fn</name>
+        <briefdescription>
+<para>Custom memory deallocation function signature. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>user_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Opaque pointer passed through from <ref refid="structmptar__memory__cfg" kindref="compound">mptar_memory_cfg</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the memory block to free. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="493" column="9" bodyfile="minipaxtar.h" bodystart="493" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Custom memory allocation hook definitions and configuration context. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>
