@@ -658,6 +658,7 @@ int mptar_close_archive(mptar_writer *ctx);
 #ifndef MPTAR_CUSTOM_STRLEN
 /**
  * \brief Compute the length of a null-terminated string safely.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_STRLEN.
  * \param str Pointer to the null-terminated string.
  * \return The number of characters preceding the terminating null byte, or 0 if \p str is \c MPTAR_NULL.
  */
@@ -676,6 +677,7 @@ extern mptar_size_t mptar_strlen(const char* str);
 #ifndef MPTAR_CUSTOM_STRNLEN
 /**
  * \brief Compute the length of a string up to a maximum limit safely.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_STRNLEN.
  * \param str Pointer to the string.
  * \param max_limit Maximum number of bytes to inspect.
  * \return The number of characters preceding the terminating null byte or \p max_limit, 
@@ -696,6 +698,7 @@ extern mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit);
 #ifndef MPTAR_CUSTOM_STRNCPY
 /**
  * \brief Copy a string with a fixed maximum buffer size, padding remaining space with null bytes.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_STRNCPY.
  * \param dst Destination buffer.
  * \param src Source null-terminated string.
  * \param n Maximum number of bytes to copy into \p dst.
@@ -727,6 +730,7 @@ extern char* mptar_strncpy(char* dst, const char* src, mptar_size_t n);
 #ifndef MPTAR_CUSTOM_MEMCPY
 /**
  * \brief Copy a block of memory from source to destination.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_MEMCPY.
  * \param dest Pointer to the destination buffer.
  * \param src Pointer to the source buffer.
  * \param n Number of bytes to copy.
@@ -749,6 +753,7 @@ extern void mptar_memcpy(void* dest, const void* src, mptar_size_t n);
 #ifndef MPTAR_CUSTOM_MEMSET
 /**
  * \brief Fill a block of memory with a specific byte value.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_MEMSET.
  * \param data Pointer to the memory block to fill.
  * \param value Byte value to set.
  * \param amount Number of bytes to set.
@@ -769,6 +774,7 @@ extern void mptar_memset(void* data, char value, mptar_size_t amount);
 #ifndef MPTAR_CUSTOM_MEMCMP
 /**
  * \brief Compare two blocks of memory.
+ * \note This function can be overridden by defining \c MPTAR_CUSTOM_MEMCMP.
  * \param s1 Pointer to the first memory block.
  * \param s2 Pointer to the second memory block.
  * \param size Number of bytes to compare.
@@ -803,7 +809,16 @@ extern int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
 #endif
 
 #ifndef MPTAR_CUSTOM_U64TOA
-
+/**
+ * \brief Convert an unsigned 64-bit integer into an octal string representation.
+ * \details Formats the numeric value as an octal string and guarantees a null-terminated 
+ *          output within the specified buffer size.
+ * \param value The 64-bit unsigned integer to convert.
+ * \param str Output buffer to store the resulting null-terminated octal string.
+ * \param str_size Maximum capacity of the output buffer in bytes.
+ * \param[out] out_err Output status pointer receiving an error code on failure (e.g., if the buffer is too small).
+ * \return Pointer to the resulting string buffer \p str on success, or \c MPTAR_NULL on failure.
+ */
 static char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, int *out_err){
     if (out_err) *out_err = MPTAR_OK;
     if (str == MPTAR_NULL || str_size < 2) {
