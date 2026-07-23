@@ -6,6 +6,11 @@
 #ifndef MINIPAXTAR_H
 #define MINIPAXTAR_H
 
+/**
+ * @file minipaxtar.h
+ * @brief Header for MiniPaxTar library.
+ */
+ 
 #ifdef MPTAR_NO_STD
     typedef unsigned char mptar_uint8;
     typedef signed char mptar_int8;
@@ -54,230 +59,544 @@
     #include <stddef.h>
     #include <stdbool.h>
 
-    typedef int64_t mptar_int64;
-    typedef int32_t mptar_int32;
-    typedef int16_t mptar_int16;
-    typedef int8_t  mptar_int8;
+    /**
+     * \defgroup mptar_primitives Primitive Types and Limits
+     * \brief Fundamental integer, size, floating-point types, and their scalar limits.
+     * @{
+     */
+    typedef int64_t  mptar_int64;  /**< Signed 64-bit integer. */
+    typedef int32_t  mptar_int32;  /**< Signed 32-bit integer. */
+    typedef int16_t  mptar_int16;  /**< Signed 16-bit integer. */
+    typedef int8_t   mptar_int8;   /**< Signed 8-bit integer. */
 
-    typedef uint64_t mptar_uint64;
-    typedef uint32_t mptar_uint32;
-    typedef uint16_t mptar_uint16;
-    typedef uint8_t  mptar_uint8;
-    typedef size_t   mptar_size_t;
+    #define MPTAR_NULL       NULL       /**< Null pointer constant. */
+
+    typedef uint64_t mptar_uint64; /**< Unsigned 64-bit integer. */
+    typedef uint32_t mptar_uint32; /**< Unsigned 32-bit integer. */
+    typedef uint16_t mptar_uint16; /**< Unsigned 16-bit integer. */
+    typedef uint8_t  mptar_uint8;  /**< Unsigned 8-bit integer. */
+    typedef size_t   mptar_size_t; /**< Unsigned size type. */
     
-    #define MPTAR_NULL       NULL
-
-    #define MPTAR_INT64_MIN  INT64_MIN
-    #define MPTAR_INT64_MAX  INT64_MAX
-    #define MPTAR_UINT64_MAX UINT64_MAX
-    #define MPTAR_UINT32_MAX UINT32_MAX
+    #define MPTAR_INT64_MIN  INT64_MIN  /**< Minimum value for \ref mptar_int64. */
+    #define MPTAR_INT64_MAX  INT64_MAX  /**< Maximum value for \ref mptar_int64. */
+    #define MPTAR_UINT64_MAX UINT64_MAX /**< Maximum value for \ref mptar_uint64. */
+    #define MPTAR_UINT32_MAX UINT32_MAX /**< Maximum value for \ref mptar_uint32. */
+    /** @} */
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define MPTAR_OK                        0   /* Operation completed successfully */
-#define MPTAR_EOF                       1   /* End of Archive reached (two consecutive null blocks) */
-#define MPTAR_NEEDS_PAX                 2   /* Item cannot fit in standard USTAR and requires a PAX extended header. */
+/**
+ * \defgroup mptar_status_codes Status and Return Codes
+ * \brief Non-negative codes indicating successful operations, streams conditions, or encoding requirements.
+ * @{
+ */
+#define MPTAR_OK                        0   /**< Operation completed successfully. */
+#define MPTAR_EOF                       1   /**< End of Archive reached (two consecutive null blocks). */
+#define MPTAR_NEEDS_PAX                 2   /**< Item cannot fit in standard USTAR and requires a PAX extended header. */
+/** @} */
 
-#define MPTAR_ERR_INVALID_ARG          -1   /* NULL context pointers or zero-length arguments passed */
-#define MPTAR_ERR_ALLOC                -2   /* Memory allocation failed or returned an invalid pointer */
-#define MPTAR_ERR_IO_READ              -3   /* Read callback failed to return the requested number of bytes */
-#define MPTAR_ERR_IO_WRITE             -4   /* Write callback failed to write the complete chunk to storage */
-#define MPTAR_ERR_CHECKSUM             -5   /* Header checksum verification failed; record is corrupted */
-#define MPTAR_ERR_UNSUPPORTED_TYPE     -6   /* Encountered an explicit special file type (FIFO, Block, Char) not supported */
-#define MPTAR_ERR_RESERVED_LEGACY_1    -7   /* Reserved / Legacy. Formerly used for write overflow prior to automatic payload clamping. */
-#define MPTAR_ERR_INCOMPLETE_PAYLOAD   -8   /* mptar_write_finalize called while bytes_left is still greater than 0 */
-#define MPTAR_ERR_MALFORMED            -9   /* Archive format anomaly or structural corruption was detected. */
-#define MPTAR_ERR_OVERFLOW             -10  /* An arithmetic wrap-around or internal buffer write boundary violation detected */
-#define MPTAR_ERR_RESERVED_LEGACY_2    -11  /* Reserved / Legacy. Formerly used to signal PAX need, but now checks are done without an error signaling that. */
-#define MPTAR_ERR_NS_CONVERSION_FAILED -12  /* Conversion of nanoseconds to string failed. One way for this to occur is if the value is above 999,999,999. */
-#define MPTAR_ERR_BUFFER_TOO_SMALL     -13  /* Buffer was too small. */
+/**
+ * \defgroup mptar_error_codes Error Codes
+ * \brief Negative error codes indicating some failure, returned by minipaxtar API functions.
+ * @{
+ */
+#define MPTAR_ERR_INVALID_ARG          -1   /**< NULL context pointers or zero-length arguments passed to an API function. */
+#define MPTAR_ERR_ALLOC                -2   /**< Memory allocation failed or returned an invalid pointer. */
+#define MPTAR_ERR_IO_READ              -3   /**< Read callback failed to return the requested number of bytes (unexpected end of stream). */
+#define MPTAR_ERR_IO_WRITE             -4   /**< Write callback failed to write the complete chunk to storage. */
+#define MPTAR_ERR_CHECKSUM             -5   /**< Header checksum verification failed; record is corrupted or misaligned. */
+/**
+ * \brief Encountered a special file type flag (FIFO, Block, Char device).
+ * \note Returning this error code usually indicates that special file support 
+ *       was disabled at compile time via \ref MPTAR_SUPPORT_SPECIAL.
+ */
+#define MPTAR_ERR_UNSUPPORTED_TYPE     -6
+#define MPTAR_ERR_RESERVED_LEGACY_1    -7   /**< Reserved / Legacy. Formerly used for write overflow prior to automatic payload clamping. */
+#define MPTAR_ERR_INCOMPLETE_PAYLOAD   -8   /**< Called mptar_write_finalize() or attempted to start a new header while bytes_left > 0 on the current file payload. */
+#define MPTAR_ERR_MALFORMED            -9   /**< Archive structural corruption or malformed header formatting detected (e.g., invalid octal fields, mangled PAX key-value pairs). */
+#define MPTAR_ERR_OVERFLOW             -10  /**< An arithmetic wrap-around or internal buffer write boundary violation detected. */
+#define MPTAR_ERR_RESERVED_LEGACY_2    -11  /**< Reserved / Legacy. Formerly used to signal PAX requirement due to a long path. */
+#define MPTAR_ERR_NS_CONVERSION_FAILED -12  /**< Conversion of sub-second nanoseconds to string failed (nanosecond value exceeded 999,999,999). */
+#define MPTAR_ERR_BUFFER_TOO_SMALL     -13  /**< Output or destination buffer lacked sufficient capacity to hold some data. */
+/** @} */
 
-#define MPTAR_PAX_KEY_LEN_PATH   4
-#define MPTAR_PAX_KEY_LEN_SIZE   4
-#define MPTAR_PAX_KEY_LEN_LINK   8
-#define MPTAR_PAX_KEY_LEN_TIME   5
-#define MPTAR_PAX_KEY_LEN_UID    3 
-#define MPTAR_PAX_KEY_LEN_GID    3 
-#define MPTAR_PAX_KEY_LEN_UNAME  5 
-#define MPTAR_PAX_KEY_LEN_GNAME  5 
+/**
+ * \defgroup mptar_pax_overhead PAX Fixed Keywords & Static Overhead
+ * \brief Constants defining raw keyword sizes and structural character overhead for PAX records.
+ * @{
+ */
+#define MPTAR_PAX_KEY_LEN_PATH            4    /**< Length of "path" keyword string. */
+#define MPTAR_PAX_KEY_LEN_SIZE            4    /**< Length of "size" keyword string. */
+#define MPTAR_PAX_KEY_LEN_LINK            8    /**< Length of "linkpath" keyword string. */
+#define MPTAR_PAX_KEY_LEN_TIME            5    /**< Length of "mtime", "ctime", "atime" keywords string. */
+#define MPTAR_PAX_KEY_LEN_UID             3    /**< Length of "uid" keyword string. */
+#define MPTAR_PAX_KEY_LEN_GID             3    /**< Length of "gid" keyword string. */
+#define MPTAR_PAX_KEY_LEN_UNAME           5    /**< Length of "uname" keyword string. */
+#define MPTAR_PAX_KEY_LEN_GNAME           5    /**< Length of "gname" keyword string. */
 
-#define MPTAR_PAX_STATIC_CHARS   3 /* Space (' '), Equals ('='), and Newline ('\n') */
+#define MPTAR_PAX_STATIC_CHARS            3    /**< Fixed character count per record: space (' '), equals ('='), and newline ('\n'). */
 
-#define MPTAR_PAX_OVERHEAD_PATH  (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS)  /* 7 */
-#define MPTAR_PAX_OVERHEAD_SIZE  (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS)  /* 7 */
-#define MPTAR_PAX_OVERHEAD_LINK  (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS)  /* 11 */
-#define MPTAR_PAX_OVERHEAD_TIME  (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS)  /* 8 */
-#define MPTAR_PAX_OVERHEAD_UID   (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
-#define MPTAR_PAX_OVERHEAD_GID   (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS) /* 6 */
-#define MPTAR_PAX_OVERHEAD_UNAME (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
-#define MPTAR_PAX_OVERHEAD_GNAME (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS) /* 8 */
-#define MPTAR_PAX_NSEC_OVERHEAD  2U  /* '.' delimiter + '\0' terminator */
+#define MPTAR_PAX_OVERHEAD_PATH           (MPTAR_PAX_KEY_LEN_PATH + MPTAR_PAX_STATIC_CHARS)   /**< Total key+formatting overhead for "path" record (7 bytes). */
+#define MPTAR_PAX_OVERHEAD_SIZE           (MPTAR_PAX_KEY_LEN_SIZE + MPTAR_PAX_STATIC_CHARS)   /**< Total key+formatting overhead for "size" record (7 bytes). */
+#define MPTAR_PAX_OVERHEAD_LINK           (MPTAR_PAX_KEY_LEN_LINK + MPTAR_PAX_STATIC_CHARS)   /**< Total key+formatting overhead for "linkpath" record (11 bytes). */
+#define MPTAR_PAX_OVERHEAD_TIME           (MPTAR_PAX_KEY_LEN_TIME + MPTAR_PAX_STATIC_CHARS)   /**< Total key+formatting overhead for "mtime" record (8 bytes). */
+#define MPTAR_PAX_OVERHEAD_UID            (MPTAR_PAX_KEY_LEN_UID   + MPTAR_PAX_STATIC_CHARS)  /**< Total key+formatting overhead for "uid" record (6 bytes). */
+#define MPTAR_PAX_OVERHEAD_GID            (MPTAR_PAX_KEY_LEN_GID   + MPTAR_PAX_STATIC_CHARS)  /**< Total key+formatting overhead for "gid" record (6 bytes). */
+#define MPTAR_PAX_OVERHEAD_UNAME          (MPTAR_PAX_KEY_LEN_UNAME + MPTAR_PAX_STATIC_CHARS)  /**< Total key+formatting overhead for "uname" record (8 bytes). */
+#define MPTAR_PAX_OVERHEAD_GNAME          (MPTAR_PAX_KEY_LEN_GNAME + MPTAR_PAX_STATIC_CHARS)  /**< Total key+formatting overhead for "gname" record (8 bytes). */
+#define MPTAR_PAX_NSEC_OVERHEAD           2U   /**< Additional bytes for sub-second formatting: '.' delimiter + '\0' null terminator. */
+/** @} */
 
-#define MPTAR_USTAR_SIZE_LINKNAME 100
-#define MPTAR_USTAR_SIZE_NAME 100
-#define MPTAR_USTAR_SIZE_PREFIX 155
-#define MPTAR_USTAR_SIZE_UNAME 32
-#define MPTAR_USTAR_SIZE_GNAME 32
-#define MPTAR_USTAR_MAX_LEN_NAME     (MPTAR_USTAR_SIZE_NAME - 1)     /* 99 */
-#define MPTAR_USTAR_MAX_LEN_LINKNAME (MPTAR_USTAR_SIZE_LINKNAME - 1) /* 99 */
-#define MPTAR_USTAR_MAX_LEN_PREFIX   (MPTAR_USTAR_SIZE_PREFIX - 1)   /* 154 */
-#define MPTAR_USTAR_MAX_LEN_UNAME    (MPTAR_USTAR_SIZE_UNAME - 1)    /* 31 */
-#define MPTAR_USTAR_MAX_LEN_GNAME    (MPTAR_USTAR_SIZE_GNAME - 1)    /* 31 */
+/**
+ * \defgroup mptar_format_limits USTAR & PAX Field Capacities, Bounds, and Buffer Limits
+ * \brief Fixed array sizes, maximum string lengths, encoding numeric limits, and formatting buffer sizes.
+ * @{
+ */
 
-#define MPTAR_OCTAL_BINARY_FLAG 0x80U
-#define MPTAR_USTAR_HEADER_SIZE 512
-#define MPTAR_BLOCK_SIZE 512
-#define MPTAR_PAX_MAX_UINT32_STR_LEN   10U  /* strlen("4294967295") */
-#define MPTAR_PAX_MAX_DATA_LEN (MPTAR_UINT32_MAX - MPTAR_PAX_MAX_UINT32_STR_LEN) /* UINT32_MAX - 10 */
-#define MPTAR_SPACE_CHECKSUM_VAL 256
-#define MPTAR_CHECKSUM_OFFSET 148U
-#define MPTAR_CHECKSUM_LEN 8U
-#define MPTAR_CHECKSUM_END_OFFSET (MPTAR_CHECKSUM_OFFSET + MPTAR_CHECKSUM_LEN) /* 156 */
-#define MPTAR_PAX_NSEC_MAX_DIGITS 9U /* Nanoseconds precision (10^-9) */
-#define MPTAR_PAX_NSEC_INITIAL_MULTIPLIER 100000000U  /* 10^8 multiplier for 1st decimal digit */
-#define MPTAR_UINT64_STR_BUF_SIZE 24U /* Maximum string buffer size required to format a 64-bit unsigned integer (20 digits + sign/NUL) */
-#define MPTAR_TIMESPEC_STR_BUF_SIZE 32U /* Safe string buffer size to format a full PAX timestamp (sec.nsec, e.g., "-9223372036854775808.999999999") */
-#define MPTAR_MAX_OCTAL_DIGITS_64 22U
+/* Raw Header Field Capacities */
+#define MPTAR_USTAR_SIZE_LINKNAME         100  /**< Raw size of the header linkname field in bytes. */
+#define MPTAR_USTAR_SIZE_NAME             100  /**< Raw size of the header filename field in bytes. */
+#define MPTAR_USTAR_SIZE_PREFIX           155  /**< Raw size of the header prefix field in bytes. */
+#define MPTAR_USTAR_SIZE_UNAME            32   /**< Raw size of the header owner user name field in bytes. */
+#define MPTAR_USTAR_SIZE_GNAME            32   /**< Raw size of the header owner group name field in bytes. */
 
-/* Standard POSIX TAR End-of-Archive (EOA) marker length */
-#define MPTAR_EOA_BLOCK_COUNT 2U
-#define MPTAR_EOA_MARKER_SIZE (MPTAR_EOA_BLOCK_COUNT * MPTAR_BLOCK_SIZE) /* 1024 bytes */
+/* Maximum String Lengths (excluding null terminators) */
+#define MPTAR_USTAR_MAX_LEN_NAME          (MPTAR_USTAR_SIZE_NAME - 1)     /**< Maximum string length for filename (99 chars). */
+#define MPTAR_USTAR_MAX_LEN_LINKNAME      (MPTAR_USTAR_SIZE_LINKNAME - 1) /**< Maximum string length for linkname (99 chars). */
+#define MPTAR_USTAR_MAX_LEN_PREFIX        (MPTAR_USTAR_SIZE_PREFIX - 1)   /**< Maximum string length for prefix (154 chars). */
+#define MPTAR_USTAR_MAX_LEN_UNAME         (MPTAR_USTAR_SIZE_UNAME - 1)    /**< Maximum string length for uname (31 chars). */
+#define MPTAR_USTAR_MAX_LEN_GNAME         (MPTAR_USTAR_SIZE_GNAME - 1)    /**< Maximum string length for gname (31 chars). */
 
-#define MPTAR_USTAR_MAX_OCTAL_12B 8589934591ULL
-#define MPTAR_USTAR_MAX_OCTAL_8B  2097151ULL
-#define MPTAR_BINARY_MAX_8B       MPTAR_INT64_MAX
+/* Encoding Numeric Bounds & Formatting Limits */
+#define MPTAR_USTAR_MAX_OCTAL_12B         8589934591ULL     /**< Maximum value encodeable in a 12-byte USTAR octal field (77777777777 octal). */
+#define MPTAR_USTAR_MAX_OCTAL_8B          2097151ULL        /**< Maximum value encodeable in an 8-byte USTAR octal field (7777777 octal). */
+#define MPTAR_MAX_OCTAL_DIGITS_64         22U               /**< Max octal digits required to represent a 64-bit integer. */
+#define MPTAR_BINARY_MAX_8B               MPTAR_INT64_MAX   /**< Max boundary for 8-byte base-256 binary encoded values. */
+#define MPTAR_PAX_MAX_UINT32_STR_LEN      10U               /**< String length required to represent a uint32 value when its value exceeds 999999999 (10 digits, up to 4294967295). */
+#define MPTAR_PAX_NSEC_MAX_DIGITS         9U                /**< Maximum digits needed for writing nanoseconds precision (10^-9). */
+#define MPTAR_PAX_NSEC_INITIAL_MULTIPLIER 100000000U        /**< Scale factor (10^8) for extracting top nanosecond digit. */
+#define MPTAR_PAX_MAX_DATA_LEN            (MPTAR_UINT32_MAX - MPTAR_PAX_MAX_UINT32_STR_LEN) /**< Maximum payload byte capacity inside a single PAX record. */
 
-#define MPTAR_PAX_HAS_PATH  (1 << 0)
-#define MPTAR_PAX_HAS_LINK  (1 << 1)
-#define MPTAR_PAX_HAS_SIZE  (1 << 2)
-#define MPTAR_PAX_HAS_MTIME (1 << 3)
-#define MPTAR_PAX_HAS_UID   (1 << 4)
-#define MPTAR_PAX_HAS_GID   (1 << 5)
-#define MPTAR_PAX_HAS_ATIME (1 << 6)
-#define MPTAR_PAX_HAS_CTIME (1 << 7)
-#define MPTAR_PAX_HAS_UNAME (1 << 8)
-#define MPTAR_PAX_HAS_GNAME (1 << 9)
+/* Formatting Buffer Sizes */
+#define MPTAR_UINT64_STR_BUF_SIZE         24U               /**< Buffer capacity used to safely format a 64-bit uint string (including terminator). */
+#define MPTAR_TIMESPEC_STR_BUF_SIZE       32U               /**< Buffer capacity used to safely format full PAX timestamp string ("sec.nsec", including null terminator). */
 
-/* --- Writer Flags --- */
-#define MPTAR_CTX_ALLOW_PAX_FOR_OCTAL   (1U << 0)  /* 0x01 */
+/** @} */
 
-#define MPTAR_MODE_DIR  493 /* Equivalent to octal 0755: rwxr-xr-x */
-#define MPTAR_MODE_REG  420 /* Equivalent to octal 0644: rw-r--r-- */
+/**
+ * \defgroup mptar_format_misc Archive Format Misc & Block Layout Constants
+ * \brief Fundamental block sizes, binary encoding flags, checksum field offsets, and scaling factors.
+ * @{
+ */
+#define MPTAR_OCTAL_BINARY_FLAG           0x80U     /**< High bit flag set in octal fields to indicate base-256 binary encoding. */
+#define MPTAR_USTAR_HEADER_SIZE           512       /**< Byte size of a standard USTAR header block. */
+#define MPTAR_BLOCK_SIZE                  512       /**< Standard block layout size for tar archives. */
+#define MPTAR_SPACE_CHECKSUM_VAL          256       /**< Pre-calculated checksum baseline for an empty checksum field (8 ASCII spaces). */
+#define MPTAR_CHECKSUM_OFFSET             148U      /**< Byte offset of the checksum field within the standard 512-byte header. */
+#define MPTAR_CHECKSUM_LEN                8U        /**< Byte length of the checksum field inside the header. */
+#define MPTAR_CHECKSUM_END_OFFSET         (MPTAR_CHECKSUM_OFFSET + MPTAR_CHECKSUM_LEN) /**< End offset of the checksum field (156). */
 
+#define MPTAR_EOA_BLOCK_COUNT             2U        /**< Number of trailing zero-filled blocks designating End-of-Archive (EOA). */
+#define MPTAR_EOA_MARKER_SIZE             (MPTAR_EOA_BLOCK_COUNT * MPTAR_BLOCK_SIZE) /**< Total marker size for archive termination (1024 bytes). */
+/** @} */
+
+/**
+ * \defgroup mptar_pax_flags PAX Record Tracking Flags
+ * \brief Bit flags tracking successfully parsed fields from a PAX extended header.
+ * \note These flags indicate that a PAX keyword was both present in the block 
+ *       and successfully parsed into \ref mptar_metadata. If keyword parsing fails, 
+ *       the respective bit is explicitly left unset.
+ * @{
+ */
+#define MPTAR_PAX_HAS_PATH                (1 << 0) /**< Bit set if a path keyword existed in the pax entry and parsing the path was successful. */
+#define MPTAR_PAX_HAS_LINK                (1 << 1) /**< Bit set if a linkpath keyword existed in the pax entry and parsing the linkpath was successful. */
+#define MPTAR_PAX_HAS_SIZE                (1 << 2) /**< Bit set if a size keyword existed in the pax entry and parsing the size was successful. */
+#define MPTAR_PAX_HAS_MTIME               (1 << 3) /**< Bit set if an mtime keyword existed in the pax entry and parsing the mtime was successful. */
+#define MPTAR_PAX_HAS_UID                 (1 << 4) /**< Bit set if a uid keyword existed in the pax entry and parsing the uid was successful. */
+#define MPTAR_PAX_HAS_GID                 (1 << 5) /**< Bit set if a gid keyword existed in the pax entry and parsing the gid was successful. */
+#define MPTAR_PAX_HAS_ATIME               (1 << 6) /**< Bit set if an atime keyword existed in the pax entry and parsing the atime was successful. */
+#define MPTAR_PAX_HAS_CTIME               (1 << 7) /**< Bit set if a ctime keyword existed in the pax entry and parsing the ctime was successful. */
+#define MPTAR_PAX_HAS_UNAME               (1 << 8) /**< Bit set if a uname keyword existed in the pax entry and parsing the uname was successful. */
+#define MPTAR_PAX_HAS_GNAME               (1 << 9) /**< Bit set if a gname keyword existed in the pax entry and parsing the gname was successful. */
+/** @} */
+
+
+/**
+ * \defgroup mptar_writer_flags Writer Flags
+ * \brief Control flags that alter writing behavior and fallback logic.
+ * @{
+ */
+
+/**
+ * \brief Context flag to prefer PAX extended headers over base-256 binary encoding for large octal fields.
+ * \note When an archive field value exceeds standard USTAR octal capacity, mptar
+ *       normally encodes it using a base-256 binary representation (setting the high-order bit via 
+ *       \ref MPTAR_OCTAL_BINARY_FLAG). 
+ *       \n\n
+ *       If this flag is set, PAX extended headers are emitted alongside binary encoding whenever 
+ *       binary encoding is available. Setting this flag does *not* prevent binary encoding from being used; 
+ *       rather, it allows PAX entries to be included in addition to it.
+ *       \n\n
+ *       If binary encoding is not possible because the value is too large to fit in a 
+ *       64-bit integer (exceeds \ref MPTAR_INT64_MAX), a PAX entry is included automatically 
+ *       regardless of whether this flag is set. By default, this flag is unset, meaning PAX records 
+ *       are omitted when binary encoding can be used.
+ */
+#define MPTAR_CTX_ALLOW_PAX_FOR_OCTAL     (1U << 0)
+/** @} */
+
+/**
+ * \defgroup mptar_default_permissions Default File Permissions
+ * \brief Standard UNIX permission masks used when creating entries.
+ * @{
+ */
+#define MPTAR_MODE_DIR                    493  /**< Default directory permissions: 0755 (rwxr-xr-x). */
+#define MPTAR_MODE_REG                    420  /**< Default regular file permissions: 0644 (rw-r--r--). */
+/** @} */
+
+/**
+ * \defgroup mptar_data_structure Archive Data Structures
+ * \brief Representations for raw 512-byte USTAR header blocks, timestamps, and parsed entry metadata.
+ * @{
+ */
+
+/**
+ * \brief Raw 512-byte POSIX USTAR header layout matching the exact on-disk binary format.
+ * \note All octal ASCII fields (such as size, mtime, uid, gid, etc.) can optionally use base-256 binary 
+ *       encoding by setting the high-order bit (\ref MPTAR_OCTAL_BINARY_FLAG) in the first byte, 
+ *       with the explicit exception of the checksum field, which must always remain in octal ASCII.
+ */
 typedef struct {
-    char name[100];
-    char mode[8];
-    char uid[8];
-    char gid[8];
-    char size[12];
-    char mtime[12]; 
-    char checksum[8];
+    char name[100];     /**< File path or filename (null-terminated if under 100 bytes). */
+    char mode[8];       /**< File permissions in octal ASCII or base-256 binary. */
+    char uid[8];        /**< Owner user ID in octal ASCII or base-256 binary. */
+    char gid[8];        /**< Owner group ID in octal ASCII or base-256 binary. */
+    char size[12];      /**< File payload size in octal ASCII or base-256 binary. */
+    char mtime[12];     /**< Modification time (Unix epoch seconds) in octal ASCII or base-256 binary. */
+    
+    /**
+     * \brief Header checksum in octal ASCII.
+     * \note Calculated by treating these 8 bytes as ASCII spaces, summing all 512 bytes 
+     *       of the header as unsigned bytes, and storing the result as an octal string 
+     *       followed by a null and a space. Binary encoding is strictly forbidden here.
+     */
+    char checksum[8];   
+
+    /**
+     * \brief File entry type flag.
+     * \note Standard values include: 
+     *   - \c '0' or \c '\0': Regular file 
+     *   - \c '1': Hard link
+     *   - \c '2': Symbolic link
+     *   - \c '3': Character special file
+     *   - \c '4': Block special file
+     *   - \c '5': Directory
+     *   - \c '6': FIFO / pipe
+     *   - \c '7': Contiguous file
+     *   - \c 'x': PAX extended header
+     *   - \c 'g': PAX global extended header
+     */
     char typeflag;
-    char linkname[100];
-    char magic[6];
-    char version[2];
-    char uname[32];
-    char gname[32];
-    char devmajor[8];
-    char devminor[8];
-    char prefix[155];
-    char padding[12];
+    char linkname[100]; /**< Target path for symbolic or hard links. */
+    char magic[6];      /**< USTAR magic indicator ("ustar" or "ustar\0"). */
+    char version[2];    /**< USTAR version string ("00"). */
+    char uname[32];     /**< Owner user name string. */
+    char gname[32];     /**< Owner group name string. */
+    char devmajor[8];   /**< Major device number for character/block special files in octal ASCII or base-256 binary. */
+    char devminor[8];   /**< Minor device number for character/block special files in octal ASCII or base-256 binary. */
+    char prefix[155];   /**< Path prefix used to extend file paths up to 256 total characters. */
+    char padding[12];   /**< Zero-padding bytes to complete the 512-byte block boundary. */
 } mptar_header;
 
+/**
+ * \brief High-resolution timestamp holding Unix epoch seconds and sub-second nanoseconds.
+ * \note Negative epoch seconds are supported via \ref mptar_int64, but writing a negative 
+ *       timestamp forces the emission of a PAX extended header because standard USTAR formats 
+ *       cannot natively represent negative time values.
+ */
 typedef struct {
-    mptar_int64 sec;   /* Standard Unix timestamp (seconds) */
-    mptar_uint32 nsec; /* Nanoseconds (0 to 999,999,999) for subsecond precision */
+    /**
+     * \brief Standard Unix timestamp in seconds.
+     * \note Supports negative epoch values. Writing a negative timestamp forces 
+     *       the emission of a PAX extended header because standard USTAR headers 
+     *       cannot natively represent negative time values.
+     */
+    mptar_int64 sec;
+
+    /**
+     * \brief Sub-second precision in nanoseconds.
+     * \note Must not exceed 999,999,999 when writing, or an error will occur. 
+     *       Attempting to write an invalid nanosecond value triggers a specific error: 
+     *       \ref MPTAR_ERR_NS_CONVERSION_FAILED.
+     */
+    mptar_uint32 nsec;
 } mptar_timespec;
 
+/**
+ * \brief Optional timestamp container. 
+ */
 typedef struct {
-    mptar_timespec value;
-    bool has_value;
+    mptar_timespec value; /**< High-resolution timestamp value. */
+    bool has_value;       /**< True if the timestamp is present and valid. */
 } mptar_opt_time;
 
+/**
+ * \brief Universal, high-level archive entry metadata.
+ * \note Unlike the fixed-size on-disk \ref mptar_header, this structure uses spacious 
+ *       data types (such as 64-bit integers for IDs and sizes) and supports unbounded strings 
+ *       (like fully unconstrained paths and usernames). Time values like \ref mtime support 
+ *       sub-second nanosecond precision and negative epochs.
+ */
 typedef struct {
-    mptar_opt_time mtime;
+    mptar_opt_time mtime;     /**< File modification time with optional sub-second precision. */
 #ifdef MPTAR_SUPPORT_EXTRA_TIMES
-    mptar_opt_time atime; /* Access time */
-    mptar_opt_time ctime; /* Change time */
+    mptar_opt_time atime;     /**< File access time (used in a PAX extended header). */
+    mptar_opt_time ctime;     /**< File metadata change time (used in a PAX extended header). */
 #endif
 
-    mptar_uint64 size;
-    mptar_uint64 uid;
-    mptar_uint64 gid;
+    mptar_uint64 size;        /**< Payload size in bytes. */
+    mptar_uint64 uid;         /**< Owner user ID. */
+    mptar_uint64 gid;         /**< Owner group ID. */
 
-    const char* path;
-    const char* link_target;
-    const char* uname;
-    const char* gname;
+    const char* path;         /**< Full file path string (null-terminated). */
+    const char* link_target;  /**< Symlink/hardlink target path string (null-terminated). */
+    const char* uname;        /**< Owner user name string (null-terminated). */
+    const char* gname;        /**< Owner group name string (null-terminated). */
 
-    mptar_uint32 mode;
+    mptar_uint32 mode;        /**< UNIX file permission bitmask. */
 #ifdef MPTAR_SUPPORT_SPECIAL
-    mptar_uint32 devminor;
-    mptar_uint32 devmajor;
+    mptar_uint32 devminor;    /**< Minor device number for special files. */
+    mptar_uint32 devmajor;    /**< Major device number for special files. */
 #endif
 
+    /**
+     * \brief File entry type flag.
+     * \note Standard values include: 
+     *   - \c '0' or \c '\0': Regular file 
+     *   - \c '1': Hard link
+     *   - \c '2': Symbolic link
+     *   - \c '3': Character special file
+     *   - \c '4': Block special file
+     *   - \c '5': Directory
+     *   - \c '6': FIFO / pipe
+     *   - \c '7': Contiguous file
+     *   - \c 'x': PAX extended header
+     *   - \c 'g': PAX global extended header
+     */
     char typeflag;
-    bool internal_alloc;
+    bool internal_alloc;      /**< True if string fields were heap-allocated internally by reader. */
 } mptar_metadata;
 
+/** @} */
+
+/**
+ * \defgroup mptar_memory Memory Management Callbacks and Configuration
+ * \brief Custom memory allocation hook definitions and configuration context.
+ * @{
+ */
+
+/**
+ * \brief Custom memory allocation function signature.
+ * \param user_data Opaque pointer passed through from \ref mptar_memory_cfg.
+ * \param size Number of bytes to allocate.
+ * \return Pointer to allocated memory, or NULL on failure.
+ */
 typedef void* (*mptar_alloc_fn)(void* user_data, mptar_size_t size);
+
+/**
+ * \brief Custom memory deallocation function signature.
+ * \param user_data Opaque pointer passed through from \ref mptar_memory_cfg.
+ * \param ptr Pointer to the memory block to free.
+ */
 typedef void (*mptar_free_fn)(void* user_data, void* ptr);
 
+/**
+ * \brief Custom allocator configuration structure.
+ */
 typedef struct {
-    mptar_alloc_fn alloc;
-    mptar_free_fn free;
-    void* alloc_user_data;
+    mptar_alloc_fn alloc;    /**< Pointer to custom allocation function. */
+    mptar_free_fn free;      /**< Pointer to custom deallocation function. */
+    void* alloc_user_data;   /**< User-provided opaque pointer that is passed directly to alloc/free. */
 } mptar_memory_cfg;
 
-#ifndef MPTAR_NO_READ
+/** @} */
 
+#ifndef MPTAR_NO_READ
+/**
+ * \defgroup mptar_reader Reader Subsystem
+ * \brief Reader callbacks, stream context, and entry extraction functions.
+ * @{
+ */
+
+/**
+ * \brief Read stream callback signature.
+ * \param user_data Opaque stream context pointer.
+ * \param buffer Output buffer to receive read bytes.
+ * \param size Maximum number of bytes to read.
+ * \return Total number of bytes actually read, or 0 on error/EOF.
+ */
 typedef mptar_size_t (*mptar_read_fn)(void* user_data, void* buffer, mptar_size_t size);
 
+/**
+ * \brief Archive reader state and context structure.
+ */
 typedef struct {
-    mptar_uint64 bytes_left;
-    mptar_uint64 offset;
-    mptar_memory_cfg memory;
-    mptar_read_fn read;
-    void* read_user_data;
+    mptar_uint64 bytes_left;  /**< Remaining unread payload bytes in current file entry. */
+    mptar_uint64 offset;      /**< Total byte offset processed within stream. */
+    mptar_memory_cfg memory;  /**< Memory allocator configuration context. */
+    mptar_read_fn read;       /**< I/O stream read callback function. */
+    void* read_user_data;     /**< Opaque user context pointer passed to read callback. */
 } mptar_reader;
 
+/**
+ * \brief Reads and parses the next header entry in the tar archive.
+ * \param reader Pointer to initialized reader context.
+ * \param out_meta Output structure populated with entry metadata.
+ * \return \ref MPTAR_OK on success, \ref MPTAR_EOF at archive end, or a negative error code.
+ */
 int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
+
+/**
+ * \brief Read a slice of current tar file entry payload data into a buffer.
+ * \note Must be called after a header has been successfully read, as reading a header 
+ *       initializes the necessary remaining payload byte counter (\c bytes_left) for the current entry.
+ * \param reader Pointer to initialized reader context.
+ * \param buffer Output buffer to copy payload data.
+ * \param size Maximum capacity of target buffer in bytes.
+ * \param[out] out_err Output status pointer receiving error code on failure (e.g. \ref MPTAR_ERR_IO_READ).
+ * \return Total number of payload bytes successfully written into buffer.
+ */
 mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err);
+
+/**
+ * \brief Read through and discard remaining payload bytes in the current tar entry by consuming stream data.
+ * \note After returning \ref MPTAR_OK, the remaining payload byte counter (\c bytes_left) is guaranteed to be 0.
+ * \param reader Pointer to initialized reader context.
+ * \return \ref MPTAR_OK on success, or a negative error code.
+ */
 int mptar_discard_data(mptar_reader* reader);
+
+/**
+ * \brief Directly align the reader to the next 512-byte header boundary by updating stream offsets and resetting bytes_left to 0.
+ * \note Call this function if you read or processed payload bytes manually without using \ref mptar_read_data_chunk.
+ * \warning This function does not actually read from or advance the underlying stream; it only adjusts internal tracking counters, 
+ *          assuming the user has already externally consumed the payload bytes.
+ * \param reader Pointer to initialized reader context.
+ * \return \ref MPTAR_OK on success, or a negative error code.
+ */
 int mptar_skip_data(mptar_reader* reader);
+
+/**
+ * \brief Free internal heap resources allocated inside a metadata structure during header parsing.
+ * \warning Since \ref mptar_metadata can be shared or reused, this should not be called on metadata 
+ *          that was not allocated by the reader. Although calling it on unmanaged metadata is generally 
+ *          guarded internally by checking \c !meta->internal_alloc (which indicates whether the memory 
+ *          was dynamically allocated by the library), doing so should be avoided.
+ * \param reader Pointer to initialized reader context containing memory configuration.
+ * \param meta Pointer to metadata structure to clean up.
+ */
 void mptar_reader_free_metadata(mptar_reader* reader, mptar_metadata* meta);
 
+/** @} */
 #endif /* MPTAR_NO_READ */
 
 #ifndef MPTAR_NO_WRITE
+/**
+ * \defgroup mptar_writer Writer Subsystem
+ * \brief Writer callbacks, stream context, and archive creation functions.
+ * @{
+ */
 
+/**
+ * \brief Write stream callback signature.
+ * \param user_data Opaque stream context pointer.
+ * \param buffer Buffer containing data bytes to write out.
+ * \param size Total number of bytes to write.
+ * \return Total number of bytes written, or 0 on error.
+ */
 typedef mptar_size_t (*mptar_write_fn)(void* user_data, const void* buffer, mptar_size_t size);
 
+/**
+ * \brief Archive writer state and context structure.
+ * \note The remaining payload byte counter (\ref bytes_left) must be 0 before finalizing an entry; 
+ *       attempting to finalize while bytes remain will trigger \ref MPTAR_ERR_INCOMPLETE_PAYLOAD.
+ */
 typedef struct {
-    mptar_uint64 bytes_left;
-    mptar_memory_cfg memory;
-    mptar_write_fn write;
-    void* write_user_data;
-    mptar_uint32 flags;
+    mptar_uint64 bytes_left;  /**< Expected remaining payload bytes left to write for current entry (must reach 0 before finalization). */
+    mptar_memory_cfg memory;  /**< Memory allocator configuration context. */
+    mptar_write_fn write;     /**< I/O stream write callback function. */
+    void* write_user_data;    /**< Opaque user context pointer passed to write callback. */
+    mptar_uint32 flags;       /**< Bitmask of writer flags (e.g. \ref MPTAR_CTX_ALLOW_PAX_FOR_OCTAL). */
 } mptar_writer;
 
+/**
+ * \brief Format and emit a new header entry to the output stream.
+ * \note This function also updates the writer's internal state to match the provided metadata. 
+ *       For example, if the metadata specifies a file payload size of 10 MB, the writer's 
+ *       \ref bytes_left counter will be initialized to that value.
+ * \param ctx Pointer to initialized writer context.
+ * \param meta Metadata description of entry to create.
+ * \return \ref MPTAR_OK on success, or a negative error code.
+ */
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);
+
+/**
+ * \brief Stream a payload chunk for the current entry out to storage.
+ * \warning The output error pointer (\c out_err) should always be checked. If a write fails 
+ *          or writes fewer bytes than requested, the underlying stream can become corrupted. 
+ * \param ctx Pointer to initialized writer context.
+ * \param buffer Buffer holding payload data to write.
+ * \param size Number of bytes in input buffer to write.
+ * \param[out] out_err Output status pointer receiving error code on failure.
+ * \return Number of payload bytes actually accepted and written out.
+ */
 mptar_size_t mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar_size_t size, int *out_err);
+
+/**
+ * \brief Finalize current entry payload writing by calculating and emitting 512-byte alignment padding.
+ * \details Checks if all promised payload bytes (`meta->size`) have been written. If `ctx->bytes_left == 0`,
+ *          pads out the stream to the nearest 512-byte boundary using zero-bytes.
+ * \param ctx Pointer to initialized writer context.
+ * \param meta Pointer to entry metadata containing the total payload size.
+ * \return \ref MPTAR_OK on success, or \ref MPTAR_ERR_INCOMPLETE_PAYLOAD if `ctx->bytes_left > 0`.
+ */
 int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
+
+/**
+ * \brief Write standard POSIX End-of-Archive (EOA) zero blocks to properly terminate the archive stream.
+ * \param ctx Pointer to initialized writer context.
+ * \return \ref MPTAR_OK on success, or a negative error code.
+ */
 int mptar_close_archive(mptar_writer *ctx);
 
+/** @} */
 #endif /* MPTAR_NO_WRITE */
 
-/* Compile time pragmas: */ 
+/**
+ * \defgroup mptar_internal_diagnostics Internal Compiler
+ * \brief Cross-compiler warning/diagnostics suppression and platform-abstraction macros.
+ * @{
+ */
+
 #if defined(__clang__)
+    /**
+     * \brief Push compiler diagnostic state and suppress `-Wcast-qual` warnings.
+     * \details Used when casting away `const` qualifiers in low-level buffer manipulation routines.
+     */
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
         _Pragma("clang diagnostic push") \
         _Pragma("clang diagnostic ignored \"-Wcast-qual\"")
+
+    /**
+     * \brief Restore previous compiler diagnostic state after casting operations.
+     */
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
         _Pragma("clang diagnostic pop")
+
+/* \cond INTERNAL_COMPILER_BRANCHES */
 #elif defined(__GNUC__) || defined(__GNUG__)
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
         _Pragma("GCC diagnostic push") \
@@ -294,10 +613,8 @@ int mptar_close_archive(mptar_writer *ctx);
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
 #endif
-
-#ifdef __cplusplus
-}
-#endif
+/* \endcond */
+/** @} */
 
 #endif /* MINIPAXTAR_H */
 
