@@ -876,15 +876,6 @@ static int mptar_write_pax_header(mptar_writer* ctx, mptar_uint64 size, const mp
 extern int mptar_write_pax_header(mptar_writer* ctx, mptar_uint64 size, const mptar_metadata* meta);
 #endif
 
-/**
- * \brief Writes an archive entry header (and optional PAX extended headers) to the output stream.
- * \details Validates the provided metadata parameters, checks whether any fields exceed standard 
- *          POSIX USTAR boundary limits (such as paths, sizes, large timestamps, or high user/group IDs), 
- *          and generates either a standard USTAR header or both a PAX extended header and a USTAR header.
- * \param ctx Pointer to the initialized \ref mptar_writer context structure.
- * \param meta Pointer to the source \ref mptar_metadata structure containing the entry's attributes.
- * \return \ref MPTAR_OK on success, or a negative error code (e.g., \ref MPTAR_ERR_INVALID_ARG, \ref MPTAR_ERR_INCOMPLETE_PAYLOAD, \ref MPTAR_ERR_UNSUPPORTED_TYPE, \ref MPTAR_ERR_ALLOC, or \ref MPTAR_ERR_IO_WRITE).
- */
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
     if (ctx == MPTAR_NULL || meta == MPTAR_NULL || meta->path == MPTAR_NULL || 
         ctx->memory.alloc == MPTAR_NULL || ctx->memory.free == MPTAR_NULL || ctx->write == MPTAR_NULL) {
@@ -1107,17 +1098,6 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
     return MPTAR_OK;    
 }
 
-/**
- * \brief Writes a chunk of payload data to the active archive entry stream.
- * \details Validates the available data capacity remaining for the current entry (`bytes_left`), 
- *          clamps the write size if it exceeds the expected entry length, and transmits the bytes 
- *          via the writer's underlying I/O stream callback.
- * \param ctx Pointer to the initialized \ref mptar_writer context structure.
- * \param buffer Pointer to the source data buffer to write.
- * \param size Number of bytes available in the source buffer.
- * \param out_err Optional pointer to an integer variable to receive error status codes (e.g., \ref MPTAR_OK or \ref MPTAR_ERR_INVALID_ARG).
- * \return The actual number of bytes successfully written to the underlying stream.
- */
 mptar_size_t mptar_write_data_chunk(mptar_writer *ctx, const void *buffer, mptar_size_t size, int *out_err)
 {
     if(out_err) *out_err = MPTAR_OK;
@@ -1143,16 +1123,6 @@ mptar_size_t mptar_write_data_chunk(mptar_writer *ctx, const void *buffer, mptar
     return written;
 }
 
-/**
- * \brief Finalizes an archive entry by writing any required USTAR block padding.
- * \details Checks that all expected entry payload bytes have been written completely, 
- *          then calculates and writes the necessary trailing zero-padding bytes to align 
- *          the entry's total size to the standard 512-byte tar block boundary.
- * \note After finalizing, the writer is ready to write a new header or to close the archive.
- * \param ctx Pointer to the initialized \ref mptar_writer context structure.
- * \param meta Pointer to the \ref mptar_metadata structure representing the entry being finalized.
- * \return \ref MPTAR_OK on success, or a negative error code (e.g., \ref MPTAR_ERR_INVALID_ARG or \ref MPTAR_ERR_INCOMPLETE_PAYLOAD).
- */
 int mptar_write_finalize(mptar_writer *ctx, const mptar_metadata *meta)
 {
     if (!ctx || !meta) return MPTAR_ERR_INVALID_ARG;
@@ -1173,13 +1143,6 @@ int mptar_write_finalize(mptar_writer *ctx, const mptar_metadata *meta)
     return MPTAR_OK;
 }
 
-/**
- * \brief Finalizes and closes the archive stream by writing end-of-archive (EOA) markers.
- * \details Appends the standard tar end-of-archive marker blocks (two consecutive 512-byte blocks of zeroes) 
- *          to properly terminate the archive data stream.
- * \param ctx Pointer to the initialized \ref mptar_writer context structure.
- * \return \ref MPTAR_OK on success, or a negative error code (e.g., \ref MPTAR_ERR_INVALID_ARG or I/O write errors).
- */
 int mptar_close_archive(mptar_writer *ctx)
 {
     if (!ctx) return MPTAR_ERR_INVALID_ARG;
@@ -2046,15 +2009,6 @@ static int mptar_parse_ustar_header(const mptar_header* header, mptar_metadata* 
 extern int mptar_parse_ustar_header(const mptar_header* header, mptar_metadata* out_meta);
 #endif
 
-/**
- * \brief Reads and parses the next archive entry header from the reader stream.
- * \details Iterates through the input stream handling standard USTAR header blocks, PAX extended attributes, 
- *          and unhandled extension records, populating the destination metadata structure with parsed file 
- *          attributes, paths, and allocation configurations.
- * \param reader Pointer to the initialized \ref mptar_reader context structure.
- * \param out_meta Pointer to the destination \ref mptar_metadata structure to populate with entry details.
- * \return \ref MPTAR_OK on success, \ref MPTAR_EOF if the end-of-archive marker is encountered, or a negative error code (e.g., \ref MPTAR_ERR_INVALID_ARG, \ref MPTAR_ERR_IO_READ, \ref MPTAR_ERR_CHECKSUM, or \ref MPTAR_ERR_ALLOC).
- */
 int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
     if (!reader || !out_meta) return MPTAR_ERR_INVALID_ARG;
 
@@ -2214,16 +2168,6 @@ error_cleanup:
     return res;
 }
 
-/**
- * \brief Reads a chunk of payload data from the current archive entry stream.
- * \details Validates reader state, ensures proper block stream alignment, clamps read requests 
- *          to remaining entry payload lengths, and reads data via the underlying callback reader.
- * \param reader Pointer to the initialized \ref mptar_reader context structure.
- * \param buffer Pointer to the destination memory buffer to receive read bytes.
- * \param size Maximum number of bytes to read into the buffer.
- * \param out_err Optional pointer to an integer variable to receive error or success status codes.
- * \return The actual number of bytes successfully read from the underlying stream.
- */
 mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err) {
     if (out_err) *out_err = MPTAR_OK;
 
@@ -2262,13 +2206,6 @@ mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_siz
     return bytes_read;
 }
 
-/**
- * \brief Discards and consumes all remaining payload bytes and padding for the current archive entry.
- * \details Actively reads and discards any remaining unread bytes of the active entry from the input stream 
- *          and synchronizes block alignment via active stream discarding.
- * \param reader Pointer to the initialized \ref mptar_reader context structure.
- * \return \ref MPTAR_OK on success, or a negative error code (e.g., \ref MPTAR_ERR_INVALID_ARG or I/O read errors).
- */
 int mptar_discard_data(mptar_reader* reader) {
     if (!reader) {
         return MPTAR_ERR_INVALID_ARG;
@@ -2291,13 +2228,6 @@ int mptar_discard_data(mptar_reader* reader) {
     return MPTAR_OK;
 }
 
-/**
- * \brief Skips all remaining payload bytes and padding for the current archive entry by updating stream offsets.
- * \details Fast-forwards the reader stream offset past the remaining entry payload and block padding 
- *          without performing physical read/discard operations on the underlying stream.
- * \param reader Pointer to the initialized \ref mptar_reader context structure.
- * \return \ref MPTAR_OK on success, or \ref MPTAR_ERR_INVALID_ARG if the reader pointer is invalid.
- */
 int mptar_skip_data(mptar_reader* reader) {
     if (!reader) {
         return MPTAR_ERR_INVALID_ARG;
@@ -2314,13 +2244,6 @@ int mptar_skip_data(mptar_reader* reader) {
     return MPTAR_OK;
 }
 
-/**
- * \brief Frees dynamically allocated memory strings associated with an entry metadata structure.
- * \details Releases allocated memory for path, link target, user name, and group name strings 
- *          using the reader's configured memory allocator if they were internally allocated.
- * \param reader Pointer to the initialized \ref mptar_reader context structure.
- * \param meta Pointer to the \ref mptar_metadata structure to clean up.
- */
 void mptar_reader_free_metadata(mptar_reader *reader, mptar_metadata *meta)
 {
     if (!reader || !meta || !meta->internal_alloc) return;

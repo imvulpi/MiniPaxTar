@@ -458,17 +458,22 @@ typedef struct {
 
 /**
  * \brief Reads and parses the next header entry in the tar archive.
- * \param reader Pointer to initialized reader context.
- * \param out_meta Output structure populated with entry metadata.
- * \return \ref MPTAR_OK on success, \ref MPTAR_EOF at archive end, or a negative error code.
+ * \details Iterates through the input stream handling standard USTAR header blocks, PAX extended attributes, 
+ *          and unhandled extension records, populating the destination metadata structure with parsed file 
+ *          attributes, paths, and allocation configurations.
+ * \param reader Pointer to initialized \ref mptar_reader context.
+ * \param out_meta Output structure populated with entry \ref mptar_metadata.
+ * \return \ref MPTAR_OK on success, \ref MPTAR_EOF if the end-of-archive marker is encountered, or a negative error code.
  */
 int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
 
 /**
- * \brief Read a slice of current tar file entry payload data into a buffer.
+ * \brief Reads a slice of current tar file entry payload data into a buffer.
+ * \details Validates reader state, ensures proper block stream alignment, clamps read requests 
+ *          to remaining entry payload lengths, and reads data via the underlying callback reader.
  * \note Must be called after a header has been successfully read, as reading a header 
  *       initializes the necessary remaining payload byte counter (\c bytes_left) for the current entry.
- * \param reader Pointer to initialized reader context.
+ * \param reader Pointer to initialized \ref mptar_reader context.
  * \param buffer Output buffer to copy payload data.
  * \param size Maximum capacity of target buffer in bytes.
  * \param[out] out_err Output status pointer receiving error code on failure (e.g. \ref MPTAR_ERR_IO_READ).
@@ -477,31 +482,36 @@ int mptar_read_header(mptar_reader* reader, mptar_metadata* out_meta);
 mptar_size_t mptar_read_data_chunk(mptar_reader* reader, void* buffer, mptar_size_t size, int *out_err);
 
 /**
- * \brief Read through and discard remaining payload bytes in the current tar entry by consuming stream data.
+ * \brief Discards data by reading the remaining payload bytes in the current tar entry stream.
+ * \details Actively reads and discards any remaining unread bytes of the active entry from the input stream 
+ *          and synchronizes block alignment via active stream discarding.
  * \note After returning \ref MPTAR_OK, the remaining payload byte counter (\c bytes_left) is guaranteed to be 0.
- * \param reader Pointer to initialized reader context.
- * \return \ref MPTAR_OK on success, or a negative error code.
+ * \param reader Pointer to initialized \ref mptar_reader context.
+ * \return \ref MPTAR_OK on success, or a negative error code (e.g., \ref MPTAR_ERR_INVALID_ARG or I/O read errors).
  */
 int mptar_discard_data(mptar_reader* reader);
 
 /**
- * \brief Directly align the reader to the next 512-byte header boundary by updating stream offsets and resetting bytes_left to 0.
+ * \brief Directly aligns the reader to the next 512-byte header boundary by updating stream offsets and resetting bytes_left to 0 
+ *        without actually performing reads.
  * \note Call this function if you read or processed payload bytes manually without using \ref mptar_read_data_chunk.
  * \warning This function does not actually read from or advance the underlying stream; it only adjusts internal tracking counters, 
  *          assuming the user has already externally consumed the payload bytes.
- * \param reader Pointer to initialized reader context.
- * \return \ref MPTAR_OK on success, or a negative error code.
+ * \param reader Pointer to initialized \ref mptar_reader context.
+ * \return \ref MPTAR_OK on success, or \ref MPTAR_ERR_INVALID_ARG if the reader pointer is invalid.
  */
 int mptar_skip_data(mptar_reader* reader);
 
 /**
- * \brief Free internal heap resources allocated inside a metadata structure during header parsing.
+ * \brief Frees internal heap resources allocated inside a metadata structure during header parsing.
+ * \details Releases allocated memory for path, link target, user name, and group name strings 
+ *          using the reader's configured memory allocator if they were internally allocated.
  * \warning Since \ref mptar_metadata can be shared or reused, this should not be called on metadata 
  *          that was not allocated by the reader. Although calling it on unmanaged metadata is generally 
  *          guarded internally by checking \c !meta->internal_alloc (which indicates whether the memory 
  *          was dynamically allocated by the library), doing so should be avoided.
- * \param reader Pointer to initialized reader context containing memory configuration.
- * \param meta Pointer to metadata structure to clean up.
+ * \param reader Pointer to initialized \ref mptar_reader context containing memory configuration.
+ * \param meta Pointer to metadata \ref mptar_metadata to clean up.
  */
 void mptar_reader_free_metadata(mptar_reader* reader, mptar_metadata* meta);
 
@@ -538,40 +548,48 @@ typedef struct {
 } mptar_writer;
 
 /**
- * \brief Format and emit a new header entry to the output stream.
+ * \brief Formats and emits a new header entry to the output stream.
+ * \details Validates the provided metadata parameters, checks whether any fields exceed standard 
+ *          POSIX USTAR boundary limits (such as paths, sizes, large timestamps, or high user/group IDs), 
+ *          and generates either a standard USTAR header or both a PAX extended header and a USTAR header.
  * \note This function also updates the writer's internal state to match the provided metadata. 
  *       For example, if the metadata specifies a file payload size of 10 MB, the writer's 
- *       \ref bytes_left counter will be initialized to that value.
- * \param ctx Pointer to initialized writer context.
- * \param meta Metadata description of entry to create.
- * \return \ref MPTAR_OK on success, or a negative error code.
+ *       \ref mptar_writer::bytes_left counter will be initialized to that value.
+ * \param ctx Pointer to initialized \ref mptar_writer context.
+ * \param meta Pointer to the \ref mptar_metadata structure of am entry to create.
+ * \return \ref MPTAR_OK on success, or a negative error code (e.g., \ref MPTAR_ERR_INVALID_ARG, \ref MPTAR_ERR_INCOMPLETE_PAYLOAD, \ref MPTAR_ERR_UNSUPPORTED_TYPE, \ref MPTAR_ERR_ALLOC, or \ref MPTAR_ERR_IO_WRITE).
  */
 int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta);
 
 /**
- * \brief Stream a payload chunk for the current entry out to storage.
+ * \brief Streams a payload chunk for the current entry out to storage.
+ * \details Validates the available data capacity remaining for the current entry (`bytes_left`), 
+ *          clamps the write size if it exceeds the expected entry length, and transmits the bytes 
+ *          via the writer's underlying I/O stream callback.
  * \warning The output error pointer (\c out_err) should always be checked. If a write fails 
  *          or writes fewer bytes than requested, the underlying stream can become corrupted. 
- * \param ctx Pointer to initialized writer context.
+ * \param ctx Pointer to initialized \ref mptar_writer context.
  * \param buffer Buffer holding payload data to write.
  * \param size Number of bytes in input buffer to write.
- * \param[out] out_err Output status pointer receiving error code on failure.
+ * \param[out] out_err Output status pointer receiving error code on failure (e.g., \ref MPTAR_OK or \ref MPTAR_ERR_INVALID_ARG).
  * \return Number of payload bytes actually accepted and written out.
  */
 mptar_size_t mptar_write_data_chunk(mptar_writer* ctx, const void* buffer, mptar_size_t size, int *out_err);
 
 /**
- * \brief Finalize current entry payload writing by calculating and emitting 512-byte alignment padding.
+ * \brief Finalizes current entry payload writing by calculating and emitting 512-byte alignment padding.
  * \details Checks if all promised payload bytes (`meta->size`) have been written. If `ctx->bytes_left == 0`,
  *          pads out the stream to the nearest 512-byte boundary using zero-bytes.
- * \param ctx Pointer to initialized writer context.
- * \param meta Pointer to entry metadata containing the total payload size.
+ * \param ctx Pointer to initialized \ref mptar_writer context.
+ * \param meta Pointer to entry \ref mptar_metadata containing the total payload size.
  * \return \ref MPTAR_OK on success, or \ref MPTAR_ERR_INCOMPLETE_PAYLOAD if `ctx->bytes_left > 0`.
  */
 int mptar_write_finalize(mptar_writer* ctx, const mptar_metadata* meta);
 
 /**
- * \brief Write standard POSIX End-of-Archive (EOA) zero blocks to properly terminate the archive stream.
+ * \brief Writes standard POSIX End-of-Archive (EOA) zero blocks to properly terminate the archive stream.
+ * \details Appends the standard tar end-of-archive marker blocks (two consecutive 512-byte blocks of zeroes) 
+ *          to properly terminate the archive data stream.
  * \param ctx Pointer to initialized writer context.
  * \return \ref MPTAR_OK on success, or a negative error code.
  */
@@ -601,7 +619,6 @@ int mptar_close_archive(mptar_writer *ctx);
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
         _Pragma("clang diagnostic pop")
 
-/* \cond INTERNAL_COMPILER_BRANCHES */
 #elif defined(__GNUC__) || defined(__GNUG__)
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
         _Pragma("GCC diagnostic push") \
@@ -618,7 +635,6 @@ int mptar_close_archive(mptar_writer *ctx);
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN
     #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
 #endif
-/* \endcond */
 /** @} */
 
 #endif /* MINIPAXTAR_H */
