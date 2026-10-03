@@ -49,3 +49,5 @@ nav:
     - Groups: api/index_groups.md
     - Structures: api/index_classes.md
     - Files: api/index_files.md
+  - Source files:
+    - Github: https://github.com/imvulpi/MiniPaxTar
