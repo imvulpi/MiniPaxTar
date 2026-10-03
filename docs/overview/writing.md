@@ -49,7 +49,7 @@ void create_archive_example(const char *output_path) {
     meta.path = "hello.txt";
     meta.size = payload_len;
     meta.mode = 0644;
-    meta.typeflag = '0'; /* Regular file */
+    meta.typeflag = MPTAR_FILE; /* or raw: '0' */
 
     /* Optional timestamp setup */
     meta.mtime.has_value = true;

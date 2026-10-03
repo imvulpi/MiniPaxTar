@@ -2,8 +2,10 @@
 
 This guide demonstrates how to unpack files and directories from a TAR archive onto the local filesystem using `minipaxtar`.
 
-When extracting an archive, inspect `meta.typeflag` to distinguish between directories (`'5'`) and regular files (`'0'` or `'\0'`).
+When extracting an archive, inspect `meta.typeflag` to distinguish between directories (`'5'` or `MPTAR_DIRECTORY`) and regular files (`'0'` or `MPTAR_FILE` and `'\0'` or `MPTAR_FILE_LEGACY`), for all the types inspect the `mptar_typeflags`.
 `mptar_read_data_chunk()` automatically handles internal byte-clamping and stream alignment - so you can pass your full buffer size directly to the function!
+
+You should handle both `MPTAR_FILE` and `MPTAR_FILE_LEGACY`, those are two typeflags that signify a file. One is older and less used than the other, but still there are binaries that encode with it.
 
 ## Example
 
@@ -12,9 +14,11 @@ This example below is fully copyable! Just copy it and test it - make sure you a
 ```c
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 #include "minipaxtar.h"
 
 static mptar_size_t stdlib_tar_read(void *u, void *b, mptar_size_t s)
@@ -53,14 +57,14 @@ void extract_archive_example(const char *tar_filepath) {
     while ((status = mptar_read_header(&reader, &meta)) == MPTAR_OK) {
 
         /* 1. Directory Entry */
-        if (meta.typeflag == '5') {
+        if (meta.typeflag == MPTAR_DIRECTORY) {
             printf("Creating directory: %s\n", meta.path);
             create_dir_if_not_exists(meta.path);
             continue;
         }
 
-        /* 2. Regular File Entry */
-        if (meta.typeflag == '0' || meta.typeflag == '\0') {
+        /* 2. Regular File Entry - Handle both standard and legacy typeflags */
+        if (meta.typeflag == MPTAR_FILE || meta.typeflag == MPTAR_FILE_LEGACY) {
             printf("Extracting file: %s (%llu bytes)\n", meta.path, (unsigned long long)meta.size);
 
             FILE *out_file = fopen(meta.path, "wb");
