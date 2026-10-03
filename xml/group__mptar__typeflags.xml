@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__typeflags" kind="group">
+    <compoundname>mptar_typeflags</compoundname>
+    <title>File Type Flags</title>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="group__mptar__typeflags_1ga26733dab5e45235a0d51d0ae2055820f" prot="public" static="no" strong="no">
+        <type></type>
+        <name>mptar_typeflags</name>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fadb433a2bf48828256e9ecacc16595b91" prot="public">
+          <name>MPTAR_FILE</name>
+          <initializer>=  &apos;0&apos;</initializer>
+          <briefdescription>
+<para>Regular file (ASCII &apos;0&apos;). </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa93f9224d8c8654b372e73269c8821bc4" prot="public">
+          <name>MPTAR_FILE_LEGACY</name>
+          <initializer>=  &apos;\0&apos;</initializer>
+          <briefdescription>
+<para>Regular file (Null byte, legacy). </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa7ad9100be15b262e61e00880e1751116" prot="public">
+          <name>MPTAR_HARD_LINK</name>
+          <initializer>=  &apos;1&apos;</initializer>
+          <briefdescription>
+<para>Hard link to another file in the archive. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa04edda73cb96bc8c638811c0e14c6f3b" prot="public">
+          <name>MPTAR_SYMLINK</name>
+          <initializer>=  &apos;2&apos;</initializer>
+          <briefdescription>
+<para>Symbolic link. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa1cae5942ec834eedadba012194532498" prot="public">
+          <name>MPTAR_CHAR_FILE</name>
+          <initializer>=  &apos;3&apos;</initializer>
+          <briefdescription>
+<para>Character special device node. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa6688d925c3ec370e5c5e901d716fe6d3" prot="public">
+          <name>MPTAR_BLOCK_FILE</name>
+          <initializer>=  &apos;4&apos;</initializer>
+          <briefdescription>
+<para>Block special device node. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fac27611e80f93f28d6fd523770f472f79" prot="public">
+          <name>MPTAR_DIRECTORY</name>
+          <initializer>=  &apos;5&apos;</initializer>
+          <briefdescription>
+<para>Directory. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa4a05562af8e80d2403c55c67cf6ecb4e" prot="public">
+          <name>MPTAR_PIPE</name>
+          <initializer>=  &apos;6&apos;</initializer>
+          <briefdescription>
+<para>FIFO special file (named pipe). </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820facfe35ec16403353afd1b613243d9c052" prot="public">
+          <name>MPTAR_CONTINOUS_FILE</name>
+          <initializer>=  &apos;7&apos;</initializer>
+          <briefdescription>
+<para>Contiguous file. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fabed31f90d02ee7a638b7d4fadb509eca" prot="public">
+          <name>MPTAR_PAX_EX_HEADER</name>
+          <initializer>=  &apos;x&apos;</initializer>
+          <briefdescription>
+<para>PAX extended header for the next file. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fadc0494cca7e70a5bc4051e78d772e7e0" prot="public">
+          <name>MPTAR_PAX_GLOBAL_EX_HEADER</name>
+          <initializer>=  &apos;g&apos;</initializer>
+          <briefdescription>
+<para>PAX global extended header for all following files. </para>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>Enumeration of tar header typeflag values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Provides strongly-typed constants corresponding to the <computeroutput>MPTAR_TYPE_*</computeroutput> macro definitions. Regular files can be encoded as either <ref refid="group__mptar__typeflags_1ga69a24759c7606a35f42b2e9eb7fbf9d6" kindref="member">MPTAR_TYPE_FILE</ref> (&apos;0&apos;) or <ref refid="group__mptar__typeflags_1gabbc1ace27b004e4af7e9f05b91eceef7" kindref="member">MPTAR_TYPE_FILE_LEGACY</ref> (&apos;\0&apos;); parsers should check for both types when identifying standard files. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="365" column="1" bodyfile="minipaxtar.h" bodystart="365" bodyend="377"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__typeflags_1ga69a24759c7606a35f42b2e9eb7fbf9d6" prot="public" static="no">
+        <name>MPTAR_TYPE_FILE</name>
+        <initializer>&apos;0&apos;</initializer>
+        <briefdescription>
+<para>Regular file (ASCII &apos;0&apos;). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="345" column="9" bodyfile="minipaxtar.h" bodystart="345" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1gabbc1ace27b004e4af7e9f05b91eceef7" prot="public" static="no">
+        <name>MPTAR_TYPE_FILE_LEGACY</name>
+        <initializer>&apos;\0&apos;</initializer>
+        <briefdescription>
+<para>Regular file (Null byte, legacy). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="346" column="9" bodyfile="minipaxtar.h" bodystart="346" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1ga8b97a640c6a8e999348c49af8667b5cf" prot="public" static="no">
+        <name>MPTAR_TYPE_HARD_LINK</name>
+        <initializer>&apos;1&apos;</initializer>
+        <briefdescription>
+<para>Hard link to another file in the archive. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="347" column="9" bodyfile="minipaxtar.h" bodystart="347" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1ga70cff5b16f3913160ed6bf7cc3ac6d3b" prot="public" static="no">
+        <name>MPTAR_TYPE_SYMLINK</name>
+        <initializer>&apos;2&apos;</initializer>
+        <briefdescription>
+<para>Symbolic link. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="348" column="9" bodyfile="minipaxtar.h" bodystart="348" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1ga15ba16eb339b4fde9292b0d736d81ff1" prot="public" static="no">
+        <name>MPTAR_TYPE_SPECIAL_CHARACTER_FILE</name>
+        <initializer>&apos;3&apos;</initializer>
+        <briefdescription>
+<para>Character special device node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="349" column="9" bodyfile="minipaxtar.h" bodystart="349" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1ga0b4180628e0c835098273e515d2a7902" prot="public" static="no">
+        <name>MPTAR_TYPE_SPECIAL_BLOCK_FILE</name>
+        <initializer>&apos;4&apos;</initializer>
+        <briefdescription>
+<para>Block special device node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="350" column="9" bodyfile="minipaxtar.h" bodystart="350" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1ga27e6c8c49a4b8595387915b0d9305de0" prot="public" static="no">
+        <name>MPTAR_TYPE_DIRECTORY</name>
+        <initializer>&apos;5&apos;</initializer>
+        <briefdescription>
+<para>Directory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="351" column="9" bodyfile="minipaxtar.h" bodystart="351" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1gaff02046842fe57b00468b6e9f78fbedd" prot="public" static="no">
+        <name>MPTAR_TYPE_PIPE</name>
+        <initializer>&apos;6&apos;</initializer>
+        <briefdescription>
+<para>FIFO special file (named pipe). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="352" column="9" bodyfile="minipaxtar.h" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1ga132b4f92d8d9effdc8dae5f21a0a00b2" prot="public" static="no">
+        <name>MPTAR_TYPE_CONTINOUS_FILE</name>
+        <initializer>&apos;7&apos;</initializer>
+        <briefdescription>
+<para>Contiguous file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="353" column="9" bodyfile="minipaxtar.h" bodystart="353" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1gad41af498f503e79c67d5a20bf2fdc3df" prot="public" static="no">
+        <name>MPTAR_PAX_EXTENDED_HEADER</name>
+        <initializer>&apos;x&apos;</initializer>
+        <briefdescription>
+<para>PAX extended header for the next file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="355" column="9" bodyfile="minipaxtar.h" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__typeflags_1ga8f47d70fcc827fa21f26b8b35f4955ad" prot="public" static="no">
+        <name>MPTAR_PAX_GLOBAL_EXTENDED_HEADER</name>
+        <initializer>&apos;g&apos;</initializer>
+        <briefdescription>
+<para>PAX global extended header for all following files. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="356" column="9" bodyfile="minipaxtar.h" bodystart="356" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Identifiers for the tar header typeflag field. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

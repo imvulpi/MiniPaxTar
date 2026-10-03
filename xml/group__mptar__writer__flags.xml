@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__writer__flags" kind="group">
+    <compoundname>mptar_writer_flags</compoundname>
+    <title>Writer Flags</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__writer__flags_1ga1939a6bb44f1c2a0688bc9189050f964" prot="public" static="no">
+        <name>MPTAR_CTX_ALLOW_PAX_FOR_OCTAL</name>
+        <initializer>(1U &lt;&lt; 0)</initializer>
+        <briefdescription>
+<para>Context flag to prefer PAX extended headers over base-256 binary encoding for large octal fields. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>When an archive field value exceeds standard USTAR octal capacity, mptar normally encodes it using a base-256 binary representation (setting the high-order bit via <ref refid="group__mptar__format__misc_1gaf718c76019cd89b0117a47219010c9c9" kindref="member">MPTAR_OCTAL_BINARY_FLAG</ref>). <linebreak/>
+<linebreak/>
+ If this flag is set, PAX extended headers are emitted alongside binary encoding whenever binary encoding is available. Setting this flag does <emphasis>not</emphasis> prevent binary encoding from being used; rather, it allows PAX entries to be included in addition to it. <linebreak/>
+<linebreak/>
+ If binary encoding is not possible because the value is too large to fit in a 64-bit integer (exceeds <ref refid="group__mptar__primitives_1ga4373629e1254f025907379318ad764fe" kindref="member">MPTAR_INT64_MAX</ref>), a PAX entry is included automatically regardless of whether this flag is set. By default, this flag is unset, meaning PAX records are omitted when binary encoding can be used. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="327" column="9" bodyfile="minipaxtar.h" bodystart="327" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Control flags that alter writing behavior and fallback logic. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/api/Modules/group__mptar__typeflags/"><link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>File Type Flags - MiniPaxTar</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../../..",
+    shortcuts = "{}";
+</script>
+<script src="../../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/config-defines/">Configuration Flags</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../../guides/error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Source files</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="https://github.com/imvulpi/MiniPaxTar">Github</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#file-type-flags">File Type Flags</a></li>
+        <li><a href="#types">Types</a></li><li><a href="#defines">Defines</a></li><li><a href="#types-documentation">Types Documentation</a></li><li><a href="#macros-documentation">Macros Documentation</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+    
+    
+    
+    
+    
+
+<section id="mkdocs-terminal-content">
+    <h1 id="file-type-flags">File Type Flags</h1>
+<p>Identifiers for the tar header typeflag field. </p>
+<h2 id="types">Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enum</td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#enum-mptar-typeflags">mptar_typeflags</a></strong> { MPTAR_FILE =  '0', MPTAR_FILE_LEGACY =  '\0', MPTAR_HARD_LINK =  '1', MPTAR_SYMLINK =  '2', MPTAR_CHAR_FILE =  '3', MPTAR_BLOCK_FILE =  '4', MPTAR_DIRECTORY =  '5', MPTAR_PIPE =  '6', MPTAR_CONTINOUS_FILE =  '7', MPTAR_PAX_EX_HEADER =  'x', MPTAR_PAX_GLOBAL_EX_HEADER =  'g'}<br>Enumeration of tar header typeflag values.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="defines">Defines</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-file">MPTAR_TYPE_FILE</a></strong> <br>Regular file (ASCII '0').</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-file-legacy">MPTAR_TYPE_FILE_LEGACY</a></strong> <br>Regular file (Null byte, legacy).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-hard-link">MPTAR_TYPE_HARD_LINK</a></strong> <br>Hard link to another file in the archive.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-symlink">MPTAR_TYPE_SYMLINK</a></strong> <br>Symbolic link.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-special-character-file">MPTAR_TYPE_SPECIAL_CHARACTER_FILE</a></strong> <br>Character special device node.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-special-block-file">MPTAR_TYPE_SPECIAL_BLOCK_FILE</a></strong> <br>Block special device node.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-directory">MPTAR_TYPE_DIRECTORY</a></strong> <br>Directory.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-pipe">MPTAR_TYPE_PIPE</a></strong> <br>FIFO special file (named pipe).</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-continous-file">MPTAR_TYPE_CONTINOUS_FILE</a></strong> <br>Contiguous file.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-pax-extended-header">MPTAR_PAX_EXTENDED_HEADER</a></strong> <br>PAX extended header for the next file.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-pax-global-extended-header">MPTAR_PAX_GLOBAL_EXTENDED_HEADER</a></strong> <br>PAX global extended header for all following files.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="types-documentation">Types Documentation</h2>
+<h3 id="enum-mptar_typeflags">enum mptar_typeflags</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MPTAR_FILE</td>
+<td>'0'</td>
+<td>Regular file (ASCII '0').</td>
+</tr>
+<tr>
+<td>MPTAR_FILE_LEGACY</td>
+<td>'\0'</td>
+<td>Regular file (Null byte, legacy).</td>
+</tr>
+<tr>
+<td>MPTAR_HARD_LINK</td>
+<td>'1'</td>
+<td>Hard link to another file in the archive.</td>
+</tr>
+<tr>
+<td>MPTAR_SYMLINK</td>
+<td>'2'</td>
+<td>Symbolic link.</td>
+</tr>
+<tr>
+<td>MPTAR_CHAR_FILE</td>
+<td>'3'</td>
+<td>Character special device node.</td>
+</tr>
+<tr>
+<td>MPTAR_BLOCK_FILE</td>
+<td>'4'</td>
+<td>Block special device node.</td>
+</tr>
+<tr>
+<td>MPTAR_DIRECTORY</td>
+<td>'5'</td>
+<td>Directory.</td>
+</tr>
+<tr>
+<td>MPTAR_PIPE</td>
+<td>'6'</td>
+<td>FIFO special file (named pipe).</td>
+</tr>
+<tr>
+<td>MPTAR_CONTINOUS_FILE</td>
+<td>'7'</td>
+<td>Contiguous file.</td>
+</tr>
+<tr>
+<td>MPTAR_PAX_EX_HEADER</td>
+<td>'x'</td>
+<td>PAX extended header for the next file.</td>
+</tr>
+<tr>
+<td>MPTAR_PAX_GLOBAL_EX_HEADER</td>
+<td>'g'</td>
+<td>PAX global extended header for all following files.</td>
+</tr>
+</tbody>
+</table>
+<p>Enumeration of tar header typeflag values. </p>
+<p>Provides strongly-typed constants corresponding to the <code>MPTAR_TYPE_*</code> macro definitions. Regular files can be encoded as either <a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-file">MPTAR_TYPE_FILE</a> ('0') or <a href="/MiniPaxTar/api/Modules/group__mptar__typeflags#define-mptar-type-file-legacy">MPTAR_TYPE_FILE_LEGACY</a> ('\0'); parsers should check for both types when identifying standard files. </p>
+<h2 id="macros-documentation">Macros Documentation</h2>
+<h3 id="define-mptar_type_file">define MPTAR_TYPE_FILE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_FILE '0'
+</code></pre></div>
+<p>Regular file (ASCII '0'). </p>
+<h3 id="define-mptar_type_file_legacy">define MPTAR_TYPE_FILE_LEGACY</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_FILE_LEGACY '\0'
+</code></pre></div>
+<p>Regular file (Null byte, legacy). </p>
+<h3 id="define-mptar_type_hard_link">define MPTAR_TYPE_HARD_LINK</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_HARD_LINK '1'
+</code></pre></div>
+<p>Hard link to another file in the archive. </p>
+<h3 id="define-mptar_type_symlink">define MPTAR_TYPE_SYMLINK</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_SYMLINK '2'
+</code></pre></div>
+<p>Symbolic link. </p>
+<h3 id="define-mptar_type_special_character_file">define MPTAR_TYPE_SPECIAL_CHARACTER_FILE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_SPECIAL_CHARACTER_FILE '3'
+</code></pre></div>
+<p>Character special device node. </p>
+<h3 id="define-mptar_type_special_block_file">define MPTAR_TYPE_SPECIAL_BLOCK_FILE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_SPECIAL_BLOCK_FILE '4'
+</code></pre></div>
+<p>Block special device node. </p>
+<h3 id="define-mptar_type_directory">define MPTAR_TYPE_DIRECTORY</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_DIRECTORY '5'
+</code></pre></div>
+<p>Directory. </p>
+<h3 id="define-mptar_type_pipe">define MPTAR_TYPE_PIPE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_PIPE '6'
+</code></pre></div>
+<p>FIFO special file (named pipe). </p>
+<h3 id="define-mptar_type_continous_file">define MPTAR_TYPE_CONTINOUS_FILE</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_TYPE_CONTINOUS_FILE '7'
+</code></pre></div>
+<p>Contiguous file. </p>
+<h3 id="define-mptar_pax_extended_header">define MPTAR_PAX_EXTENDED_HEADER</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_PAX_EXTENDED_HEADER 'x'
+</code></pre></div>
+<p>PAX extended header for the next file. </p>
+<h3 id="define-mptar_pax_global_extended_header">define MPTAR_PAX_GLOBAL_EXTENDED_HEADER</h3>
+<div class="highlight"><pre><span></span><code>#define MPTAR_PAX_GLOBAL_EXTENDED_HEADER 'g'
+</code></pre></div>
+<p>PAX global extended header for all following files. </p>
+<hr />
+<p>Updated on 2026-10-03 at 17:18:40 +0000</p>
+</section>
+
+<section id="mkdocs-terminal-after-content">
+    
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>

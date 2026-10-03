@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__status__codes" kind="group">
+    <compoundname>mptar_status_codes</compoundname>
+    <title>Status and Return Codes</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__status__codes_1ga2095baf8571aee381906e7c3906ebc74" prot="public" static="no">
+        <name>MPTAR_OK</name>
+        <initializer>0</initializer>
+        <briefdescription>
+<para>Operation completed successfully. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="165" column="9" bodyfile="minipaxtar.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__status__codes_1ga0673f7c7e97dfebd70881fdbe54b915e" prot="public" static="no">
+        <name>MPTAR_EOF</name>
+        <initializer>1</initializer>
+        <briefdescription>
+<para>End of Archive reached (two consecutive null blocks). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="166" column="9" bodyfile="minipaxtar.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__status__codes_1gac9de60429a141767a4454585cd97f6ee" prot="public" static="no">
+        <name>MPTAR_NEEDS_PAX</name>
+        <initializer>2</initializer>
+        <briefdescription>
+<para>Item cannot fit in standard USTAR and requires a PAX extended header. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="167" column="9" bodyfile="minipaxtar.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Non-negative codes indicating successful operations, streams conditions, or encoding requirements. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

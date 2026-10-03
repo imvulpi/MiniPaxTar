@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__data__structure" kind="group">
+    <compoundname>mptar_data_structure</compoundname>
+    <title>Archive Data Structures</title>
+    <innerclass refid="structmptar__header" prot="public">mptar_header</innerclass>
+    <innerclass refid="structmptar__timespec" prot="public">mptar_timespec</innerclass>
+    <innerclass refid="structmptar__opt__time" prot="public">mptar_opt_time</innerclass>
+    <innerclass refid="structmptar__metadata" prot="public">mptar_metadata</innerclass>
+    <briefdescription>
+<para>Representations for raw 512-byte USTAR header blocks, timestamps, and parsed entry metadata. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

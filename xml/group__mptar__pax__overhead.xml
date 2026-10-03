@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__pax__overhead" kind="group">
+    <compoundname>mptar_pax_overhead</compoundname>
+    <title>PAX Fixed Keywords &amp; Static Overhead</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__pax__overhead_1gae25fde176e051cf56a89ea3ea77f32f4" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_PATH</name>
+        <initializer>4</initializer>
+        <briefdescription>
+<para>Length of &quot;path&quot; keyword string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="200" column="9" bodyfile="minipaxtar.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1gaf224e4542cd921217e87a041e3909723" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_SIZE</name>
+        <initializer>4</initializer>
+        <briefdescription>
+<para>Length of &quot;size&quot; keyword string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="201" column="9" bodyfile="minipaxtar.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga8af166e5e6df87df32e8d3698d10863b" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_LINK</name>
+        <initializer>8</initializer>
+        <briefdescription>
+<para>Length of &quot;linkpath&quot; keyword string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="202" column="9" bodyfile="minipaxtar.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga2cbb2ecffd8355a1f302da27454f7995" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_TIME</name>
+        <initializer>5</initializer>
+        <briefdescription>
+<para>Length of &quot;mtime&quot;, &quot;ctime&quot;, &quot;atime&quot; keywords string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="203" column="9" bodyfile="minipaxtar.h" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1gaaa556f969ec4974ffc0edf0bfafa6521" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_UID</name>
+        <initializer>3</initializer>
+        <briefdescription>
+<para>Length of &quot;uid&quot; keyword string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="204" column="9" bodyfile="minipaxtar.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga25a4e4663c4fed7fbe9158d6fa022928" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_GID</name>
+        <initializer>3</initializer>
+        <briefdescription>
+<para>Length of &quot;gid&quot; keyword string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="205" column="9" bodyfile="minipaxtar.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga2be74441b52d4fca2421cc4857416599" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_UNAME</name>
+        <initializer>5</initializer>
+        <briefdescription>
+<para>Length of &quot;uname&quot; keyword string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="206" column="9" bodyfile="minipaxtar.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga9a1b83091635266d9ef695667c0f100c" prot="public" static="no">
+        <name>MPTAR_PAX_KEY_LEN_GNAME</name>
+        <initializer>5</initializer>
+        <briefdescription>
+<para>Length of &quot;gname&quot; keyword string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="207" column="9" bodyfile="minipaxtar.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" prot="public" static="no">
+        <name>MPTAR_PAX_STATIC_CHARS</name>
+        <initializer>3</initializer>
+        <briefdescription>
+<para>Fixed character count per record: space (&apos; &apos;), equals (&apos;=&apos;), and newline (&apos;<linebreak/>
+&apos;). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="209" column="9" bodyfile="minipaxtar.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga1365c8cfa430046d83f8d4ffedf7c0a6" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_PATH</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1gae25fde176e051cf56a89ea3ea77f32f4" kindref="member">MPTAR_PAX_KEY_LEN_PATH</ref> + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;path&quot; record (7 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="211" column="9" bodyfile="minipaxtar.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1gadd0e39af6dfad22e00aa3ac758bfd15b" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_SIZE</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1gaf224e4542cd921217e87a041e3909723" kindref="member">MPTAR_PAX_KEY_LEN_SIZE</ref> + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;size&quot; record (7 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="212" column="9" bodyfile="minipaxtar.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1gafa8bbcec3038051cad15e577365903a0" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_LINK</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1ga8af166e5e6df87df32e8d3698d10863b" kindref="member">MPTAR_PAX_KEY_LEN_LINK</ref> + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;linkpath&quot; record (11 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="213" column="9" bodyfile="minipaxtar.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga7a32f9e62f4dbf2545b3ee5ed499ffb8" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_TIME</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1ga2cbb2ecffd8355a1f302da27454f7995" kindref="member">MPTAR_PAX_KEY_LEN_TIME</ref> + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;mtime&quot; record (8 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="214" column="9" bodyfile="minipaxtar.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga075e342baf44541bebb187d229e3f107" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_UID</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1gaaa556f969ec4974ffc0edf0bfafa6521" kindref="member">MPTAR_PAX_KEY_LEN_UID</ref>   + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;uid&quot; record (6 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="215" column="9" bodyfile="minipaxtar.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga306c98550740da17b05c4eae2eee47a6" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_GID</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1ga25a4e4663c4fed7fbe9158d6fa022928" kindref="member">MPTAR_PAX_KEY_LEN_GID</ref>   + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;gid&quot; record (6 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="216" column="9" bodyfile="minipaxtar.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga50c0d5f652e4795eedda59c1b505812f" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_UNAME</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1ga2be74441b52d4fca2421cc4857416599" kindref="member">MPTAR_PAX_KEY_LEN_UNAME</ref> + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;uname&quot; record (8 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="217" column="9" bodyfile="minipaxtar.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1ga04a373005836e6dbd9b8b3d3abad93d9" prot="public" static="no">
+        <name>MPTAR_PAX_OVERHEAD_GNAME</name>
+        <initializer>(<ref refid="group__mptar__pax__overhead_1ga9a1b83091635266d9ef695667c0f100c" kindref="member">MPTAR_PAX_KEY_LEN_GNAME</ref> + <ref refid="group__mptar__pax__overhead_1ga11a1af0ec6d2c20ef51e4b747d7afe1c" kindref="member">MPTAR_PAX_STATIC_CHARS</ref>)</initializer>
+        <briefdescription>
+<para>Total key+formatting overhead for &quot;gname&quot; record (8 bytes). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="218" column="9" bodyfile="minipaxtar.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__pax__overhead_1gab3ffab5208c69c8dca5497c3160b4ed6" prot="public" static="no">
+        <name>MPTAR_PAX_NSEC_OVERHEAD</name>
+        <initializer>2U</initializer>
+        <briefdescription>
+<para>Additional bytes for sub-second formatting: &apos;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>&apos; delimiter + &apos;\0&apos; null terminator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="219" column="9" bodyfile="minipaxtar.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Constants defining raw keyword sizes and structural character overhead for PAX records. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>
