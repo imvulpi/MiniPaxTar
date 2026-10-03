@@ -716,6 +716,10 @@ int mptar_close_archive(mptar_writer *ctx);
 #endif
 /** @} */
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* MINIPAXTAR_H */
 
 #ifdef MINIPAXTAR_IMPLEMENTATION
