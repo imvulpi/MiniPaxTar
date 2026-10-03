@@ -419,6 +419,7 @@ typedef struct {
      *   - \c '7': Contiguous file
      *   - \c 'x': PAX extended header
      *   - \c 'g': PAX global extended header
+     * 
      * See \ref mptar_typeflags for defines of those.
      */
     char typeflag;
@@ -507,6 +508,7 @@ typedef struct {
      *   - \c '7': Contiguous file
      *   - \c 'x': PAX extended header
      *   - \c 'g': PAX global extended header
+     * 
      * See \ref mptar_typeflags for defines of those.
      */
     char typeflag;
