@@ -342,6 +342,48 @@ extern "C" {
 /** @} */
 
 /**
+ * \defgroup mptar_typeflags File Type Flags
+ * \brief Identifiers for the tar header typeflag field.
+ * @{
+ */
+
+#define MPTAR_TYPE_FILE                     '0'  /**< Regular file (ASCII '0'). */
+#define MPTAR_TYPE_FILE_LEGACY              '\0' /**< Regular file (Null byte, legacy). */
+#define MPTAR_TYPE_HARD_LINK                '1'  /**< Hard link to another file in the archive. */
+#define MPTAR_TYPE_SYMLINK                  '2'  /**< Symbolic link. */
+#define MPTAR_TYPE_SPECIAL_CHARACTER_FILE   '3'  /**< Character special device node. */
+#define MPTAR_TYPE_SPECIAL_BLOCK_FILE       '4'  /**< Block special device node. */
+#define MPTAR_TYPE_DIRECTORY                '5'  /**< Directory. */
+#define MPTAR_TYPE_PIPE                     '6'  /**< FIFO special file (named pipe). */
+#define MPTAR_TYPE_CONTINOUS_FILE           '7'  /**< Contiguous file. */
+
+#define MPTAR_PAX_EXTENDED_HEADER           'x'  /**< PAX extended header for the next file. */
+#define MPTAR_PAX_GLOBAL_EXTENDED_HEADER    'g'  /**< PAX global extended header for all following files. */
+
+/**
+ * \brief Enumeration of tar header typeflag values.
+ *
+ * Provides strongly-typed constants corresponding to the \c MPTAR_TYPE_* macro definitions.
+ * Regular files can be encoded as either \ref MPTAR_TYPE_FILE ('0') or \ref MPTAR_TYPE_FILE_LEGACY ('\0');
+ * parsers should check for both types when identifying standard files.
+ */
+typedef enum{
+    FILE        = MPTAR_TYPE_FILE,
+    FILE_LEGACY = MPTAR_TYPE_FILE_LEGACY,
+    HARD_LINK   = MPTAR_TYPE_HARD_LINK,
+    SYMLINK     = MPTAR_TYPE_SYMLINK,
+    CHAR_FILE   = MPTAR_TYPE_SPECIAL_CHARACTER_FILE,
+    BLOCK_FILE  = MPTAR_TYPE_SPECIAL_BLOCK_FILE,
+    DIRECTORY   = MPTAR_TYPE_DIRECTORY,
+    PIPE        = MPTAR_TYPE_PIPE,
+    CONTINOUS_FILE  = MPTAR_TYPE_CONTINOUS_FILE,
+    PAX_EX_HEADER   = MPTAR_PAX_EXTENDED_HEADER,
+    PAX_GLOBAL_EX_HEADER = MPTAR_PAX_GLOBAL_EXTENDED_HEADER 
+} mptar_typeflags;
+
+/** @} */
+
+/**
  * \defgroup mptar_data_structure Archive Data Structures
  * \brief Representations for raw 512-byte USTAR header blocks, timestamps, and parsed entry metadata.
  * @{
@@ -382,6 +424,7 @@ typedef struct {
      *   - \c '7': Contiguous file
      *   - \c 'x': PAX extended header
      *   - \c 'g': PAX global extended header
+     * See \ref mptar_typeflags for defines of those.
      */
     char typeflag;
     char linkname[100]; /**< Target path for symbolic or hard links. */
@@ -469,6 +512,7 @@ typedef struct {
      *   - \c '7': Contiguous file
      *   - \c 'x': PAX extended header
      *   - \c 'g': PAX global extended header
+     * See \ref mptar_typeflags for defines of those.
      */
     char typeflag;
     bool internal_alloc;      /**< True if string fields were heap-allocated internally by reader. */
