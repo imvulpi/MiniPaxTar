@@ -10,7 +10,6 @@
 #ifndef MPTAR_NO_STD
 
 #include <string.h>
-#include <stdlib.h>
 
 /**
  * \brief String length utility 
