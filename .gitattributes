@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Exclude build, doc, and pre-commit scripts from language statistics
+*.py linguist-vendored
+*.bat linguist-vendored
+*.md linguist-documentation
