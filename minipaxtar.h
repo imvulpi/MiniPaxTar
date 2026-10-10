@@ -64,12 +64,12 @@
     #define MPTAR_INT64_MIN  (-MPTAR_INT64_MAX - 1LL)
     #define MPTAR_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
     #define MPTAR_UINT32_MAX (4294967295U)
-#ifndef bool
-    typedef _Bool bool;
-    #define true  1
-    #define false 0
-#endif
 
+    #ifndef bool
+        typedef _Bool bool;
+        #define true  1
+        #define false 0
+    #endif
 #else
     #include <stdint.h>
     #include <stddef.h>
@@ -85,7 +85,7 @@
     typedef int16_t  mptar_int16;  /**< Signed 16-bit integer. */
     typedef int8_t   mptar_int8;   /**< Signed 8-bit integer. */
 
-    #define MPTAR_NULL       NULL       /**< Null pointer constant. */
+    #define MPTAR_NULL       NULL  /**< Null pointer constant. */
 
     typedef uint64_t mptar_uint64; /**< Unsigned 64-bit integer. */
     typedef uint32_t mptar_uint32; /**< Unsigned 32-bit integer. */
@@ -104,6 +104,150 @@
 extern "C" {
 #endif
 
+#if defined(MPTAR_CUSTOM_STRLEN) || defined(mptar_strlen)
+    extern mptar_size_t mptar_strlen(const char* str);
+#endif
+
+#if defined(MPTAR_CUSTOM_STRNLEN) || defined(mptar_strnlen)
+    extern mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit);
+#endif
+
+#if defined(MPTAR_CUSTOM_STRNCPY) || defined(mptar_strncpy)
+    extern char* mptar_strncpy(char* dst, const char* src, mptar_size_t n);
+#endif
+
+#if defined(MPTAR_CUSTOM_MEMCPY) || defined(mptar_memcpy)
+    extern void mptar_memcpy(void* dest, const void* src, mptar_size_t n);
+#endif
+
+#if defined(MPTAR_CUSTOM_MEMSET) || defined(mptar_memset)
+    extern void mptar_memset(void* data, char value, mptar_size_t amount);
+#endif 
+
+#if defined(MPTAR_CUSTOM_MEMCMP) || defined(mptar_memcmp)
+    extern int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
+#endif
+
+#ifdef MPTAR_NO_STD
+    #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
+        /**
+         * \brief Computes the length of a null-terminated string safely.
+         * \note This function can be overridden by defining \ref mptar_strlen.
+         * \param str Pointer to the null-terminated string.
+         * \return The number of characters preceding the terminating null byte, or 0 if \p str is \ref MPTAR_NULL.
+        */
+        mptar_size_t mptar_strlen(const char* str);
+    #endif
+
+    #if !defined(mptar_strnlen) && !defined(MPTAR_CUSTOM_STRNLEN)
+        /**
+         * \brief Computes the length of a string up to a maximum limit safely.
+         * \note This function can be overridden by defining \ref mptar_strnlen.
+         * \param str Pointer to the string.
+         * \param max_limit Maximum number of bytes to inspect.
+         * \return The number of characters preceding the terminating null byte or \p max_limit, 
+         *         whichever comes first, or 0 if \p str is \ref MPTAR_NULL.
+         */
+        mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit);
+    #endif
+
+    #if !defined(mptar_strncpy) && !defined(MPTAR_CUSTOM_STRNCPY)
+        /**
+         * \brief Copies a string with a fixed maximum buffer size, padding remaining space with null bytes.
+         * \note This function can be overridden by defining \ref mptar_strncpy.
+         * \param dst Destination buffer.
+         * \param src Source null-terminated string.
+         * \param n Maximum number of bytes to copy into \p dst.
+         * \return Pointer to the destination buffer \p dst.
+         */
+        char* mptar_strncpy(char* dst, const char* src, mptar_size_t n);
+    #endif
+
+    #if !defined(mptar_memcpy) && !defined(MPTAR_CUSTOM_MEMCPY)
+        /**
+         * \brief Copies a block of memory from source to destination.
+         * \note This function can be overridden by defining \ref mptar_memcpy.
+         * \param dest Pointer to the destination buffer.
+         * \param src Pointer to the source buffer.
+         * \param n Number of bytes to copy.
+         */
+        void mptar_memcpy(void* dest, const void* src, mptar_size_t n);
+    #endif
+
+    #if !defined(mptar_memset) && !defined(MPTAR_CUSTOM_MEMSET)
+        /**
+         * \brief Fills a block of memory with a specific byte value.
+         * \note This function can be overridden by defining \ref mptar_memset.
+         * \param data Pointer to the memory block to fill.
+         * \param value Byte value to set.
+         * \param amount Number of bytes to set.
+         */
+        void mptar_memset(void* data, char value, mptar_size_t amount);
+    #endif
+
+    #if !defined(mptar_memcmp) && !defined(MPTAR_CUSTOM_MEMCMP)
+        /**
+         * \brief Compares two blocks of memory.
+         * \note This function can be overridden by defining \ref mptar_memcmp.
+         * \param s1 Pointer to the first memory block.
+         * \param s2 Pointer to the second memory block.
+         * \param size Number of bytes to compare.
+         * \return 0 if the blocks match, a negative value if \p s1 is less than \p s2, or a positive value if \p s1 is greater than \p s2.
+         */
+        int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
+    #endif
+#else
+    #include <string.h>
+
+    #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
+    /**
+     * \brief String length utility 
+     * \details Maps to standard library function: size_t strlen(const char* str).
+     */
+    #define mptar_strlen strlen
+    #endif
+
+    #if !defined(mptar_strnlen) && !defined(MPTAR_CUSTOM_STRNLEN)
+    /**
+     * \brief Bounded string length utility 
+     * \details Maps to standard library function: size_t strnlen(const char* str, size_t maxlen).
+     */
+    #define mptar_strnlen strnlen
+    #endif
+
+    #if !defined(mptar_strncpy) && !defined(MPTAR_CUSTOM_STRNCPY)
+    /**
+     * \brief Bounded string copy utility 
+     * \details Maps to standard library function: char* strncpy(char* restrict dest, const char* restrict src, size_t count).
+     */
+    #define mptar_strncpy strncpy
+    #endif
+
+    #if !defined(mptar_memcpy) && !defined(MPTAR_CUSTOM_MEMCPY)
+    /**
+     * \brief Memory copy utility 
+     * \details Maps to standard library function: void* memcpy(void* restrict dest, const void* restrict src, size_t size).
+     */
+    #define mptar_memcpy memcpy
+    #endif
+
+    #if !defined(mptar_memset) && !defined(MPTAR_CUSTOM_MEMSET)
+    /**
+     * \brief Memory set utility 
+     * \details Maps to standard library function: void* memset(void* dest, int val, size_t size).
+     */
+    #define mptar_memset memset
+    #endif
+
+    #if !defined(mptar_memcmp) && !defined(MPTAR_CUSTOM_MEMCMP)
+    /**
+     * \brief Memory comparison utility 
+     * \details Maps to standard library function: int memcmp(const void* buf1, const void* buf2, size_t size).
+     */
+    #define mptar_memcmp memcmp
+    #endif
+#endif
+
 /**
  * \brief Documentation for compile-time configuration macros.
  * \details The \c DOXYGEN_DOCS macro is used exclusively by documentation generators 
@@ -118,6 +262,9 @@ extern "C" {
  * \brief Stable configuration macros and custom conversion/string hooks.
  * \details These options, features, and custom conversion hooks are guaranteed stable 
  *          and will follow standard deprecation cycles if ever slated for modification or removal.
+ * \note Custom function hooks can now be provided directly by defining the exact 
+ *       function name macro (e.g., #define mptar_strlen my_strlen). The legacy 
+ *       \c MPTAR_CUSTOM_* macros are deprecated but remain supported for backward compatibility.
  * \{
  */
 
@@ -127,16 +274,16 @@ extern "C" {
 #define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
 #define MPTAR_SUPPORT_EXTRA_TIMES   /**< Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. */
 
-#define MPTAR_CUSTOM_U64TOA         /**< Custom implementation override for unsigned 64-bit integer to string. */
-#define MPTAR_CUSTOM_I64TOA         /**< Custom implementation override for signed 64-bit integer to string. */
-#define MPTAR_CUSTOM_ATOU64         /**< Custom implementation override for string to unsigned 64-bit integer. */
-#define MPTAR_CUSTOM_ATOI64         /**< Custom implementation override for string to signed 64-bit integer. */
-#define MPTAR_CUSTOM_STRLEN         /**< Custom implementation override for string length calculation. */
-#define MPTAR_CUSTOM_STRNLEN        /**< Custom implementation override for bounded string length calculation. */
-#define MPTAR_CUSTOM_STRNCPY        /**< Custom implementation override for bounded string copying. */
-#define MPTAR_CUSTOM_MEMCPY         /**< Custom implementation override for memory block copying. */
-#define MPTAR_CUSTOM_MEMSET         /**< Custom implementation override for memory block setting. */
-#define MPTAR_CUSTOM_MEMCMP         /**< Custom implementation override for memory block comparison. */
+#define MPTAR_CUSTOM_U64TOA         /**< \deprecated Legacy macro override. Use \c mptar_u64toa instead. */
+#define MPTAR_CUSTOM_I64TOA         /**< \deprecated Legacy macro override. Use \c mptar_i64toa instead. */
+#define MPTAR_CUSTOM_ATOU64         /**< \deprecated Legacy macro override. Use \c mptar_atou64 instead. */
+#define MPTAR_CUSTOM_ATOI64         /**< \deprecated Legacy macro override. Use \c mptar_atoi64 instead. */
+#define MPTAR_CUSTOM_STRLEN         /**< \deprecated Legacy macro override. Use \c mptar_strlen instead. */
+#define MPTAR_CUSTOM_STRNLEN        /**< \deprecated Legacy macro override. Use \c mptar_strnlen instead. */
+#define MPTAR_CUSTOM_STRNCPY        /**< \deprecated Legacy macro override. Use \c mptar_strncpy instead. */
+#define MPTAR_CUSTOM_MEMCPY         /**< \deprecated Legacy macro override. Use \c mptar_memcpy instead. */
+#define MPTAR_CUSTOM_MEMSET         /**< \deprecated Legacy macro override. Use \c mptar_memset instead. */
+#define MPTAR_CUSTOM_MEMCMP         /**< \deprecated Legacy macro override. Use \c mptar_memcmp instead. */
 
 /** \} */
 
@@ -146,13 +293,13 @@ extern "C" {
  *          are subject to change or complete removal without notice in future versions. 
  *          Use them at your own risk.
  * \brief Unstable low-level hooks and internal customization switches.
- * \details All \c MPTAR_CUSTOM_* hooks are related to internal functions inside \c minipaxtar.c. 
- *          Unless explicitly listed under \ref mptar_stable_config, these custom functions 
+ * \details Internal function overrides use direct function name defines (e.g. mptar_internal_foo) from 
+ *          \c minipaxtar.c Unless explicitly listed under \ref mptar_stable_config, these custom functions 
  *          are considered internal and carry no stability guarantees.
  * \{
  */
 
-#define MPTAR_CUSTOM_INTERNAL_HOOK_EXAMPLE /**< General catch-all representation for internal or undocumented custom hooks. */
+#define mptar_internal_hook_example /**< General catch-all representation for internal or undocumented custom hooks. */
 
 /** \} */
 #endif

@@ -69,12 +69,12 @@
     #define MPTAR_INT64_MIN  (-MPTAR_INT64_MAX - 1LL)
     #define MPTAR_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
     #define MPTAR_UINT32_MAX (4294967295U)
-#ifndef bool
-    typedef _Bool bool;
-    #define true  1
-    #define false 0
-#endif
 
+    #ifndef bool
+        typedef _Bool bool;
+        #define true  1
+        #define false 0
+    #endif
 #else
     #include <stdint.h>
     #include <stddef.h>
@@ -90,7 +90,7 @@
     typedef int16_t  mptar_int16;  /**< Signed 16-bit integer. */
     typedef int8_t   mptar_int8;   /**< Signed 8-bit integer. */
 
-    #define MPTAR_NULL       NULL       /**< Null pointer constant. */
+    #define MPTAR_NULL       NULL  /**< Null pointer constant. */
 
     typedef uint64_t mptar_uint64; /**< Unsigned 64-bit integer. */
     typedef uint32_t mptar_uint32; /**< Unsigned 32-bit integer. */
@@ -109,6 +109,150 @@
 extern "C" {
 #endif
 
+#if defined(MPTAR_CUSTOM_STRLEN) || defined(mptar_strlen)
+    extern mptar_size_t mptar_strlen(const char* str);
+#endif
+
+#if defined(MPTAR_CUSTOM_STRNLEN) || defined(mptar_strnlen)
+    extern mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit);
+#endif
+
+#if defined(MPTAR_CUSTOM_STRNCPY) || defined(mptar_strncpy)
+    extern char* mptar_strncpy(char* dst, const char* src, mptar_size_t n);
+#endif
+
+#if defined(MPTAR_CUSTOM_MEMCPY) || defined(mptar_memcpy)
+    extern void mptar_memcpy(void* dest, const void* src, mptar_size_t n);
+#endif
+
+#if defined(MPTAR_CUSTOM_MEMSET) || defined(mptar_memset)
+    extern void mptar_memset(void* data, char value, mptar_size_t amount);
+#endif 
+
+#if defined(MPTAR_CUSTOM_MEMCMP) || defined(mptar_memcmp)
+    extern int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
+#endif
+
+#ifdef MPTAR_NO_STD
+    #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
+        /**
+         * \brief Computes the length of a null-terminated string safely.
+         * \note This function can be overridden by defining \ref mptar_strlen.
+         * \param str Pointer to the null-terminated string.
+         * \return The number of characters preceding the terminating null byte, or 0 if \p str is \ref MPTAR_NULL.
+        */
+        mptar_size_t mptar_strlen(const char* str);
+    #endif
+
+    #if !defined(mptar_strnlen) && !defined(MPTAR_CUSTOM_STRNLEN)
+        /**
+         * \brief Computes the length of a string up to a maximum limit safely.
+         * \note This function can be overridden by defining \ref mptar_strnlen.
+         * \param str Pointer to the string.
+         * \param max_limit Maximum number of bytes to inspect.
+         * \return The number of characters preceding the terminating null byte or \p max_limit, 
+         *         whichever comes first, or 0 if \p str is \ref MPTAR_NULL.
+         */
+        mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit);
+    #endif
+
+    #if !defined(mptar_strncpy) && !defined(MPTAR_CUSTOM_STRNCPY)
+        /**
+         * \brief Copies a string with a fixed maximum buffer size, padding remaining space with null bytes.
+         * \note This function can be overridden by defining \ref mptar_strncpy.
+         * \param dst Destination buffer.
+         * \param src Source null-terminated string.
+         * \param n Maximum number of bytes to copy into \p dst.
+         * \return Pointer to the destination buffer \p dst.
+         */
+        char* mptar_strncpy(char* dst, const char* src, mptar_size_t n);
+    #endif
+
+    #if !defined(mptar_memcpy) && !defined(MPTAR_CUSTOM_MEMCPY)
+        /**
+         * \brief Copies a block of memory from source to destination.
+         * \note This function can be overridden by defining \ref mptar_memcpy.
+         * \param dest Pointer to the destination buffer.
+         * \param src Pointer to the source buffer.
+         * \param n Number of bytes to copy.
+         */
+        void mptar_memcpy(void* dest, const void* src, mptar_size_t n);
+    #endif
+
+    #if !defined(mptar_memset) && !defined(MPTAR_CUSTOM_MEMSET)
+        /**
+         * \brief Fills a block of memory with a specific byte value.
+         * \note This function can be overridden by defining \ref mptar_memset.
+         * \param data Pointer to the memory block to fill.
+         * \param value Byte value to set.
+         * \param amount Number of bytes to set.
+         */
+        void mptar_memset(void* data, char value, mptar_size_t amount);
+    #endif
+
+    #if !defined(mptar_memcmp) && !defined(MPTAR_CUSTOM_MEMCMP)
+        /**
+         * \brief Compares two blocks of memory.
+         * \note This function can be overridden by defining \ref mptar_memcmp.
+         * \param s1 Pointer to the first memory block.
+         * \param s2 Pointer to the second memory block.
+         * \param size Number of bytes to compare.
+         * \return 0 if the blocks match, a negative value if \p s1 is less than \p s2, or a positive value if \p s1 is greater than \p s2.
+         */
+        int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
+    #endif
+#else
+    #include <string.h>
+
+    #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
+    /**
+     * \brief String length utility 
+     * \details Maps to standard library function: size_t strlen(const char* str).
+     */
+    #define mptar_strlen strlen
+    #endif
+
+    #if !defined(mptar_strnlen) && !defined(MPTAR_CUSTOM_STRNLEN)
+    /**
+     * \brief Bounded string length utility 
+     * \details Maps to standard library function: size_t strnlen(const char* str, size_t maxlen).
+     */
+    #define mptar_strnlen strnlen
+    #endif
+
+    #if !defined(mptar_strncpy) && !defined(MPTAR_CUSTOM_STRNCPY)
+    /**
+     * \brief Bounded string copy utility 
+     * \details Maps to standard library function: char* strncpy(char* restrict dest, const char* restrict src, size_t count).
+     */
+    #define mptar_strncpy strncpy
+    #endif
+
+    #if !defined(mptar_memcpy) && !defined(MPTAR_CUSTOM_MEMCPY)
+    /**
+     * \brief Memory copy utility 
+     * \details Maps to standard library function: void* memcpy(void* restrict dest, const void* restrict src, size_t size).
+     */
+    #define mptar_memcpy memcpy
+    #endif
+
+    #if !defined(mptar_memset) && !defined(MPTAR_CUSTOM_MEMSET)
+    /**
+     * \brief Memory set utility 
+     * \details Maps to standard library function: void* memset(void* dest, int val, size_t size).
+     */
+    #define mptar_memset memset
+    #endif
+
+    #if !defined(mptar_memcmp) && !defined(MPTAR_CUSTOM_MEMCMP)
+    /**
+     * \brief Memory comparison utility 
+     * \details Maps to standard library function: int memcmp(const void* buf1, const void* buf2, size_t size).
+     */
+    #define mptar_memcmp memcmp
+    #endif
+#endif
+
 /**
  * \brief Documentation for compile-time configuration macros.
  * \details The \c DOXYGEN_DOCS macro is used exclusively by documentation generators 
@@ -123,6 +267,9 @@ extern "C" {
  * \brief Stable configuration macros and custom conversion/string hooks.
  * \details These options, features, and custom conversion hooks are guaranteed stable 
  *          and will follow standard deprecation cycles if ever slated for modification or removal.
+ * \note Custom function hooks can now be provided directly by defining the exact 
+ *       function name macro (e.g., #define mptar_strlen my_strlen). The legacy 
+ *       \c MPTAR_CUSTOM_* macros are deprecated but remain supported for backward compatibility.
  * \{
  */
 
@@ -132,16 +279,16 @@ extern "C" {
 #define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
 #define MPTAR_SUPPORT_EXTRA_TIMES   /**< Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. */
 
-#define MPTAR_CUSTOM_U64TOA         /**< Custom implementation override for unsigned 64-bit integer to string. */
-#define MPTAR_CUSTOM_I64TOA         /**< Custom implementation override for signed 64-bit integer to string. */
-#define MPTAR_CUSTOM_ATOU64         /**< Custom implementation override for string to unsigned 64-bit integer. */
-#define MPTAR_CUSTOM_ATOI64         /**< Custom implementation override for string to signed 64-bit integer. */
-#define MPTAR_CUSTOM_STRLEN         /**< Custom implementation override for string length calculation. */
-#define MPTAR_CUSTOM_STRNLEN        /**< Custom implementation override for bounded string length calculation. */
-#define MPTAR_CUSTOM_STRNCPY        /**< Custom implementation override for bounded string copying. */
-#define MPTAR_CUSTOM_MEMCPY         /**< Custom implementation override for memory block copying. */
-#define MPTAR_CUSTOM_MEMSET         /**< Custom implementation override for memory block setting. */
-#define MPTAR_CUSTOM_MEMCMP         /**< Custom implementation override for memory block comparison. */
+#define MPTAR_CUSTOM_U64TOA         /**< \deprecated Legacy macro override. Use \c mptar_u64toa instead. */
+#define MPTAR_CUSTOM_I64TOA         /**< \deprecated Legacy macro override. Use \c mptar_i64toa instead. */
+#define MPTAR_CUSTOM_ATOU64         /**< \deprecated Legacy macro override. Use \c mptar_atou64 instead. */
+#define MPTAR_CUSTOM_ATOI64         /**< \deprecated Legacy macro override. Use \c mptar_atoi64 instead. */
+#define MPTAR_CUSTOM_STRLEN         /**< \deprecated Legacy macro override. Use \c mptar_strlen instead. */
+#define MPTAR_CUSTOM_STRNLEN        /**< \deprecated Legacy macro override. Use \c mptar_strnlen instead. */
+#define MPTAR_CUSTOM_STRNCPY        /**< \deprecated Legacy macro override. Use \c mptar_strncpy instead. */
+#define MPTAR_CUSTOM_MEMCPY         /**< \deprecated Legacy macro override. Use \c mptar_memcpy instead. */
+#define MPTAR_CUSTOM_MEMSET         /**< \deprecated Legacy macro override. Use \c mptar_memset instead. */
+#define MPTAR_CUSTOM_MEMCMP         /**< \deprecated Legacy macro override. Use \c mptar_memcmp instead. */
 
 /** \} */
 
@@ -151,13 +298,13 @@ extern "C" {
  *          are subject to change or complete removal without notice in future versions. 
  *          Use them at your own risk.
  * \brief Unstable low-level hooks and internal customization switches.
- * \details All \c MPTAR_CUSTOM_* hooks are related to internal functions inside \c minipaxtar.c. 
- *          Unless explicitly listed under \ref mptar_stable_config, these custom functions 
+ * \details Internal function overrides use direct function name defines (e.g. mptar_internal_foo) from 
+ *          \c minipaxtar.c Unless explicitly listed under \ref mptar_stable_config, these custom functions 
  *          are considered internal and carry no stability guarantees.
  * \{
  */
 
-#define MPTAR_CUSTOM_INTERNAL_HOOK_EXAMPLE /**< General catch-all representation for internal or undocumented custom hooks. */
+#define mptar_internal_hook_example /**< General catch-all representation for internal or undocumented custom hooks. */
 
 /** \} */
 #endif
@@ -777,61 +924,10 @@ int mptar_close_archive(mptar_writer *ctx);
  * SPDX-License-Identifier: MIT
  */
 
-#ifndef MPTAR_NO_STD
-
-#include <string.h>
-
-/**
- * \brief String length utility 
- * \details Maps to standard library function: \c size_t \c strlen(const char* str).
- */
-#define mptar_strlen  strlen
-
-/**
- * \brief Bounded string length utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
- * \c size_t \c strnlen(const \c char* str, size_t maxlen).
- */
-#define mptar_strnlen strnlen
-
-/**
- * \brief Bounded string copy utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
- * \c char* \c strncpy(char* restrict dest, const \c char* restrict src, size_t count).
- */
-#define mptar_strncpy strncpy
-
-/**
- * \brief Memory copy utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
- * \c void* \c memcpy(void* restrict dest, const \c void* restrict src, size_t size).
- */
-#define mptar_memcpy  memcpy
-
-/**
- * \brief Memory set utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
- * \c void* \c memset(void* dest, int val, size_t size).
- */
-#define mptar_memset  memset
-
-/**
- * \brief Memory comparison utility 
- * \details Maps to standard library function when \ref MPTAR_NO_STD is undefined: 
- * \c int \c memcmp(const \c void* buf1, const \c void* buf2, size_t size).
- */
-#define mptar_memcmp  memcmp
-
-#else
-
-#ifndef MPTAR_CUSTOM_STRLEN
-/**
- * \brief Computes the length of a null-terminated string safely.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_STRLEN.
- * \param str Pointer to the null-terminated string.
- * \return The number of characters preceding the terminating null byte, or 0 if \p str is \ref MPTAR_NULL.
- */
-static mptar_size_t mptar_strlen(const char* str) {
+#ifdef MPTAR_NO_STD
+#if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
+__attribute__((no_builtin("strlen")))
+mptar_size_t mptar_strlen(const char* str) {
     if (!str) return 0;
     mptar_size_t len = 0;
     while (str[len] != '\0') {
@@ -839,20 +935,10 @@ static mptar_size_t mptar_strlen(const char* str) {
     }
     return len;
 }
-#else
-extern mptar_size_t mptar_strlen(const char* str);
 #endif
 
-#ifndef MPTAR_CUSTOM_STRNLEN
-/**
- * \brief Computes the length of a string up to a maximum limit safely.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_STRNLEN.
- * \param str Pointer to the string.
- * \param max_limit Maximum number of bytes to inspect.
- * \return The number of characters preceding the terminating null byte or \p max_limit, 
- *         whichever comes first, or 0 if \p str is \ref MPTAR_NULL.
- */
-static mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit) {
+#if !defined(mptar_strnlen) && !defined(MPTAR_CUSTOM_STRNLEN)
+mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit) {
     if (!str) return 0;
     mptar_size_t count = 0;
     while (count < max_limit && str[count] != '\0') {
@@ -860,20 +946,11 @@ static mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit) {
     }
     return count;
 }
-#else
-extern mptar_size_t mptar_strnlen(const char* str, mptar_size_t max_limit);
 #endif
 
-#ifndef MPTAR_CUSTOM_STRNCPY
-/**
- * \brief Copies a string with a fixed maximum buffer size, padding remaining space with null bytes.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_STRNCPY.
- * \param dst Destination buffer.
- * \param src Source null-terminated string.
- * \param n Maximum number of bytes to copy into \p dst.
- * \return Pointer to the destination buffer \p dst.
- */
-static char* mptar_strncpy(char* dst, const char* src, mptar_size_t n) {
+#if !defined(mptar_strncpy) && !defined(MPTAR_CUSTOM_STRNCPY)
+__attribute__((no_builtin("strncpy")))
+char* mptar_strncpy(char* dst, const char* src, mptar_size_t n) {
     if (dst == MPTAR_NULL || n == 0) return dst;
     
     mptar_size_t i = 0;
@@ -892,19 +969,11 @@ static char* mptar_strncpy(char* dst, const char* src, mptar_size_t n) {
     
     return dst;
 }
-#else
-extern char* mptar_strncpy(char* dst, const char* src, mptar_size_t n);
 #endif
 
-#ifndef MPTAR_CUSTOM_MEMCPY
-/**
- * \brief Copies a block of memory from source to destination.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_MEMCPY.
- * \param dest Pointer to the destination buffer.
- * \param src Pointer to the source buffer.
- * \param n Number of bytes to copy.
- */
-static void mptar_memcpy(void* dest, const void* src, mptar_size_t n) {
+#if !defined(mptar_memcpy) && !defined(MPTAR_CUSTOM_MEMCPY)
+__attribute__((no_builtin("memcpy")))
+void mptar_memcpy(void* dest, const void* src, mptar_size_t n) {
     if (!dest || !src || n == 0) return;
     
     char* d = (char*)dest;
@@ -915,19 +984,11 @@ static void mptar_memcpy(void* dest, const void* src, mptar_size_t n) {
         d[i] = s[i];
     }
 }
-#else
-extern void mptar_memcpy(void* dest, const void* src, mptar_size_t n);
 #endif
 
-#ifndef MPTAR_CUSTOM_MEMSET
-/**
- * \brief Fills a block of memory with a specific byte value.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_MEMSET.
- * \param data Pointer to the memory block to fill.
- * \param value Byte value to set.
- * \param amount Number of bytes to set.
- */
-static void mptar_memset(void* data, char value, mptar_size_t amount) {
+#if !defined(mptar_memset) && !defined(MPTAR_CUSTOM_MEMSET)
+__attribute__((no_builtin("memset")))
+void mptar_memset(void* data, char value, mptar_size_t amount) {
     if (!data || amount == 0) return;
     
     char* bytes = (char*)data;
@@ -936,20 +997,11 @@ static void mptar_memset(void* data, char value, mptar_size_t amount) {
         bytes[i] = value;
     }
 }
-#else
-extern void mptar_memset(void* data, char value, mptar_size_t amount);
 #endif
 
-#ifndef MPTAR_CUSTOM_MEMCMP
-/**
- * \brief Compares two blocks of memory.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_MEMCMP.
- * \param s1 Pointer to the first memory block.
- * \param s2 Pointer to the second memory block.
- * \param size Number of bytes to compare.
- * \return 0 if the blocks match, a negative value if \p s1 is less than \p s2, or a positive value if \p s1 is greater than \p s2.
- */
-static int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
+#if !defined(mptar_memcmp) && !defined(MPTAR_CUSTOM_MEMCMP)
+__attribute__((no_builtin("memcmp")))
+int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
     if (!s1 || !s2 || size == 0) return 0;
     
     const unsigned char* p1 = (const unsigned char*)s1;
@@ -964,8 +1016,6 @@ static int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
 
     return 0;
 }
-#else
-extern int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
 #endif
 
 #endif /* MPTAR_NO_STD */
@@ -977,12 +1027,12 @@ extern int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size);
     #define MPTAR_CUSTOM_I64TOA
 #endif
 
-#ifndef MPTAR_CUSTOM_U64TOA
+#if !defined(MPTAR_CUSTOM_U64TOA) && !defined(mptar_u64toa) 
 /**
  * \brief Converts an unsigned 64-bit integer into an octal string representation.
  * \details Formats the numeric value as an octal string and guarantees a null-terminated 
  *          output within the specified buffer size.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_U64TOA.
+ * \note This function can be overridden by defining \ref mptar_u64toa.
  * \param value The 64-bit unsigned integer to convert.
  * \param str Output buffer to store the resulting null-terminated octal string.
  * \param str_size Maximum capacity of the output buffer in bytes.
@@ -1028,19 +1078,16 @@ static char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, 
 
     return str;
 }
-
 #else
-
 extern char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, int *out_err);
-
 #endif
 
-#ifndef MPTAR_CUSTOM_I64TOA
+#if !defined(MPTAR_CUSTOM_I64TOA) && !defined(mptar_i64toa)
 /**
  * \brief Converts a signed 64-bit integer into a string representation.
  * \details Formats the numeric value as a decimal (or signed) string, including a negative sign 
  *          when applicable, and guarantees a null-terminated output within the specified buffer size.
- * \note This function can be overridden by defining \ref MPTAR_CUSTOM_I64TOA.
+ * \note This function can be overridden by defining \ref mptar_i64toa.
  * \param value The 64-bit signed integer to convert.
  * \param buf Output buffer to store the resulting null-terminated string.
  * \param buf_size Maximum capacity of the output buffer in bytes.
@@ -1074,19 +1121,16 @@ static char* mptar_i64toa(mptar_int64 value, char* buf, mptar_size_t buf_size, i
         return mptar_u64toa((mptar_uint64)value, buf, buf_size, out_err);
     }
 }
-
 #else
-
 extern char* mptar_i64toa(mptar_int64 value, char* buf, mptar_size_t buf_size, int *out_err);
-
 #endif
 
-#ifndef MPTAR_CUSTOM_STREAM_WRITE_ZEROES
+#ifndef mptar_stream_write_zeroes
 /**
  * \brief Writes a specified number of zero bytes to the underlying stream.
  * \details Iteratively writes zero-filled blocks to the output stream via the writer's 
  *          configured callback until the required amount is fully satisfied.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_STREAM_WRITE_ZEROES.
+ * \note This function can be overridden by defining \c mptar_stream_write_zeroes.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1116,13 +1160,13 @@ static int mptar_stream_write_zeroes(mptar_writer* ctx, mptar_size_t amount) {
 extern int mptar_stream_write_zeroes(mptar_writer* ctx, mptar_size_t padding_needed);
 #endif
 
-#ifndef MPTAR_CUSTOM_PAX_CALCULATE_RECORD_LEN
+#ifndef mptar_pax_calculate_record_len
 /**
  * \brief Calculates the exact encoded length of a PAX extended header record including its length prefix.
  * \details PAX records use a variable-length format where the record length prefix includes itself 
  *          in the byte count. This function computes the final length dynamically, accounting for 
  *          digit length boundary shifts.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_PAX_CALCULATE_RECORD_LEN.
+ * \note This function can be overridden by defining \c mptar_pax_calculate_record_len.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1162,12 +1206,12 @@ static mptar_uint32 mptar_pax_calculate_record_len(mptar_uint32 data_len) {
 extern mptar_uint32 mptar_pax_calculate_record_len(mptar_uint32 data_len);
 #endif
 
-#ifndef MPTAR_CUSTOM_PAX_FORMAT_TIME
+#ifndef mptar_pax_format_time
 /**
  * \brief Formats a timestamp with fractional nanoseconds into a PAX-compatible string representation.
  * \details Formats a seconds integer combined with optional nanoseconds into a standard fractional 
  *          seconds string format (e.g., seconds.nanoseconds), handling padding and trailing zero truncation.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_PAX_FORMAT_TIME.
+ * \note This function can be overridden by defining \c mptar_pax_format_time.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1237,12 +1281,12 @@ static char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str
 extern char* mptar_pax_format_time(mptar_int64 sec, mptar_uint32 nsec, char* str, mptar_size_t size, int *out_err);
 #endif
 
-#ifndef MPTAR_CUSTOM_PAX_STREAM_RECORD
+#ifndef mptar_pax_stream_record
 /**
  * \brief Streams a single PAX extended header record to the underlying output storage.
  * \details Formats and writes the variable-length PAX record components in sequence 
  *          (`[size] [space] [keyword] [=] [value] [\n]`) via the writer's I/O stream callback.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_PAX_STREAM_RECORD.
+ * \note This function can be overridden by defining \c mptar_pax_stream_record.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1272,13 +1316,13 @@ static int mptar_pax_stream_record(mptar_writer* ctx, mptar_uint32 record_size, 
 extern int mptar_pax_stream_record(mptar_writer* ctx, mptar_uint32 record_size, const char* keyword, const char* value, mptar_size_t value_len);
 #endif
 
-#ifndef MPTAR_CUSTOM_WRITE_OCTAL_FIELD
+#ifndef mptar_write_octal_field
 /**
  * \brief Formats and serializes an integer value into a USTAR/tar header field as an octal string or binary representation.
  * \details Safely converts a 64-bit integer into its standard octal string format (including null termination or padding). 
  *          If the value exceeds the maximum capacity of the available octal character width, it automatically falls back 
  *          to the standard tar binary encoding extension (setting the high-bit flag and a binary value in big endian).
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_WRITE_OCTAL_FIELD.
+ * \note This function can be overridden by defining \c mptar_write_octal_field.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1326,12 +1370,12 @@ static void mptar_write_octal_field(char* dst, mptar_uint64 value, mptar_size_t 
 extern void mptar_write_octal_field(char* dst, mptar_uint64 value, mptar_size_t size);
 #endif
 
-#ifndef MPTAR_CUSTOM_CALCULATE_HEADER_CHECKSUM
+#ifndef mptar_calculate_header_checksum
 /**
  * \brief Calculates the standard POSIX USTAR header checksum value.
  * \details Computes the sum of all bytes in the 512-byte tar header block, treating the checksum field 
  *          itself as if it were filled with space characters (ASCII 32) according to the USTAR standard specification.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_CALCULATE_HEADER_CHECKSUM.
+ * \note This function can be overridden by defining \c mptar_calculate_header_checksum.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1362,13 +1406,13 @@ static mptar_uint32 mptar_calculate_header_checksum(char* header_block){
 extern mptar_uint32 mptar_calculate_header_checksum(char* header_block);
 #endif
 
-#ifndef MPTAR_CUSTOM_WRITE_HEADER_CHECKSUM
+#ifndef mptar_write_header_checksum
 /**
  * \brief Computes and writes the standard POSIX USTAR header checksum into its designated block field.
  * \details Calculates the checksum using \ref mptar_calculate_header_checksum, serializes it into 
  *          an octal field format via \ref mptar_write_octal_field, and applies the trailing space/null terminator 
  *          padding mandated by the USTAR header specification.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_WRITE_HEADER_CHECKSUM.
+ * \note This function can be overridden by defining \c mptar_write_header_checksum.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1384,13 +1428,13 @@ static void mptar_write_header_checksum(char* header_block) {
 extern void mptar_write_header_checksum(char* header_block);
 #endif
 
-#ifndef MPTAR_CUSTOM_CAN_PATH_FIT_USTAR
+#ifndef mptar_can_path_fit_ustar
 /**
  * \brief Checks whether a given file path can fit into the standard POSIX USTAR header path and prefix fields.
  * \details Validates if the total path length fits within the standard name field, or if it can be 
  *          successfully split at a directory separator (`/`) into the USTAR prefix and name fields without 
  *          violating field length restrictions.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_CAN_PATH_FIT_USTAR.
+ * \note This function can be overridden by defining \c mptar_can_path_fit_ustar.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1430,14 +1474,14 @@ static bool mptar_can_path_fit_ustar(const char* path, mptar_size_t len) {
 extern bool mptar_can_path_fit_ustar(const char* path, mptar_size_t len);
 #endif
 
-#ifndef MPTAR_CUSTOM_WRITE_USTAR_PATH
+#ifndef mptar_write_ustar_path
 /**
  * \brief Writes and splits a file path into the standard POSIX USTAR header name and prefix fields.
  * \details Serializes a full file path into the USTAR header fields. If the path fits within the 
  *          standard name limits, it is written directly. If it exceeds standard name size but can be split 
  *          at a directory separator, it populates both the prefix and name fields. If it cannot fit within 
  *          USTAR boundaries at all, it truncates the name and signals that a PAX extended header is required.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_WRITE_USTAR_PATH.
+ * \note This function can be overridden by defining \c mptar_write_ustar_path.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1512,14 +1556,14 @@ static int mptar_write_ustar_path(char* header_name, char* header_prefix, const 
 extern int mptar_write_ustar_path(char* header_name, char* header_prefix, const char* full_path);
 #endif
 
-#ifndef MPTAR_CUSTOM_WRITE_USTAR_HEADER
+#ifndef mptar_write_ustar_header
 /**
  * \brief Populates and serializes a standard POSIX USTAR header block from file metadata.
  * \details Clears the header buffer, encodes the file path, link targets, ownership credentials, 
  *          permissions, major/minor device numbers, size, and modification timestamp into their 
  *          respective USTAR field formats. If any field exceeds standard USTAR boundaries (such as large file sizes 
  *          or long paths), it automatically marks the status to indicate that a PAX extended header is required.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_WRITE_USTAR_HEADER.
+ * \note This function can be overridden by defining \c mptar_write_ustar_header.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1596,13 +1640,13 @@ static int mptar_write_ustar_header(mptar_header* header, const mptar_metadata* 
 extern int mptar_write_ustar_header(mptar_header* header, const mptar_metadata* meta);
 #endif
 
-#ifndef MPTAR_CUSTOM_WRITE_PAX_HEADER
+#ifndef mptar_write_pax_header
 /**
  * \brief Constructs and streams a POSIX PAX extended header block (`typeflag 'x'`) to the output archive.
  * \details Allocates a temporary USTAR header block, populates it with PAX metadata attributes (including 
  *          a standard fallback path such as `PaxHeader/dump` and the exact payload size), writes it to the 
  *          underlying stream via the writer's I/O callback, and cleans up the allocated memory buffer.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_WRITE_PAX_HEADER.
+ * \note This function can be overridden by defining \c mptar_write_pax_header.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -1935,12 +1979,12 @@ int mptar_close_archive(mptar_writer *ctx)
     #define MPTAR_CUSTOM_ATOI64
 #endif
 
-#ifndef MPTAR_CUSTOM_ATOU64
+#if !defined(mptar_atou64) && !defined(MPTAR_CUSTOM_ATOU64)
 /**
  * \brief Parses a string slice into an unsigned 64-bit integer with explicit length and overflow protection.
  * \details Safely converts a bounded ASCII string representation of a number into an unsigned 64-bit integer, 
  *          handling arithmetic overflows and checking for malformed input.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_ATOU64.
+ * \note This function can be overridden by defining \c mptar_atou64.
  * \param str Pointer to the character string buffer to parse.
  * \param len Number of characters to inspect in the string.
  * \param[out] err Output status pointer receiving an error code on failure (e.g., \ref MPTAR_ERR_OVERFLOW, \ref MPTAR_ERR_MALFORMED, or \ref MPTAR_ERR_INVALID_ARG).
@@ -1986,19 +2030,16 @@ static mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err) {
 
     return val;
 }
-
 #else
-
 extern mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err);
-
 #endif
 
-#ifndef MPTAR_CUSTOM_ATOI64
+#if !defined(mptar_atoi64) && !defined(MPTAR_CUSTOM_ATOI64)
 /**
  * \brief Parses a string slice into a signed 64-bit integer with sign detection, length bounds, and overflow protection.
  * \details Safely converts a bounded ASCII string representation (optionally prefixed with '+' or '-') into a signed 64-bit integer, 
  *          handling arithmetic overflows and checking for malformed input.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_ATOI64.
+ * \note This function can be overridden by defining \c mptar_atoi64.
  * \param str Pointer to the character string buffer to parse.
  * \param len Number of characters to inspect in the string.
  * \param[out] err Output status pointer receiving an error code on failure (e.g., \ref MPTAR_ERR_OVERFLOW, \ref MPTAR_ERR_MALFORMED, or \ref MPTAR_ERR_INVALID_ARG).
@@ -2047,19 +2088,16 @@ static mptar_int64 mptar_atoi64(const char* str, mptar_size_t len, int* err) {
         return (mptar_int64)u_val;
     }
 }
-
 #else
-
 extern mptar_int64 mptar_atoi64(const char* str, mptar_size_t len, int* err);
-
 #endif
 
-#ifndef MPTAR_CUSTOM_CONSUME_STREAM
+#ifndef mptar_consume_stream
 /**
  * \brief Consumes and discards a specified number of bytes from the reader's input stream.
  * \details Reads chunks of data into a temporary stack buffer until the requested count 
  *          of bytes has been skipped or the underlying stream reaches EOF.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_CONSUME_STREAM.
+ * \note This function can be overridden by defining \c mptar_consume_stream.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2092,12 +2130,12 @@ static mptar_size_t mptar_consume_stream(mptar_reader* reader, mptar_size_t coun
 extern mptar_size_t mptar_consume_stream(mptar_reader* reader, mptar_size_t count);
 #endif
 
-#ifndef MPTAR_CUSTOM_ALIGN_STREAM_BY_DISCARD
+#ifndef mptar_align_stream_by_discard
 /**
  * \brief Aligns the reader stream to the next 512-byte block boundary by actively reading and discarding padding bytes.
  * \details Checks current block alignment via the reader offset and reads/discards any trailing block 
  *          padding bytes required to reach the start of the next tar block boundary.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_ALIGN_STREAM_BY_DISCARD.
+ * \note This function can be overridden by defining \c mptar_align_stream_by_discard.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2122,12 +2160,12 @@ static int mptar_align_stream_by_discard(mptar_reader* reader) {
 extern int mptar_align_stream_by_discard(mptar_reader* reader);
 #endif
 
-#ifndef MPTAR_CUSTOM_ALIGN_STREAM_BY_SKIP
+#ifndef mptar_align_stream_by_skip
 /**
  * \brief Aligns the reader stream to the next 512-byte block boundary by adjusting the tracking offset.
  * \details Adjusts the reader offset forward to account for block alignment padding without 
  *          performing physical read/discard operations on the underlying stream.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_ALIGN_STREAM_BY_SKIP.
+ * \note This function can be overridden by defining \c mptar_align_stream_by_skip.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2148,12 +2186,12 @@ static int mptar_align_stream_by_skip(mptar_reader* reader) {
 extern int mptar_align_stream_by_skip(mptar_reader* reader);
 #endif
 
-#ifndef MPTAR_CUSTOM_PARSE_OCTAL_FIELD
+#ifndef mptar_parse_octal_field
 /**
  * \brief Parses a numeric field from a tar header block, supporting standard octal text or binary formats.
  * \details Handles both traditional POSIX octal ASCII representation (with space/zero padding) and standard 
  *          binary-encoded extensions (indicated by the high-order bit set) into an unsigned 64-bit integer.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_PARSE_OCTAL_FIELD.
+ * \note This function can be overridden by defining \c mptar_parse_octal_field.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2233,13 +2271,13 @@ static mptar_uint64 mptar_parse_octal_field(const char* str, mptar_size_t str_si
 extern mptar_uint64 mptar_parse_octal_field(const char* str, mptar_size_t str_size, int* err);
 #endif
 
-#ifndef MPTAR_CUSTOM_VERIFY_HEADER_CHECKSUM
+#ifndef mptar_verify_header_checksum
 /**
  * \brief Verifies the checksum of a parsed POSIX tar archive header block.
  * \details Computes both unsigned and signed byte sums across the 512-byte header block (treating 
  *          the checksum field itself as spaces) and compares it against the stored octal checksum value. 
  *          Also detects the standard end-of-archive (EOA) zero-block marker.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_VERIFY_HEADER_CHECKSUM.
+ * \note This function can be overridden by defining \c mptar_verify_header_checksum.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2287,13 +2325,13 @@ static int mptar_verify_header_checksum(const mptar_header* header) {
 extern int mptar_verify_header_checksum(const mptar_header* header);
 #endif
 
-#ifndef MPTAR_CUSTOM_PARSE_PAX_TIME
+#ifndef mptar_parse_pax_time
 /**
  * \brief Parses a PAX extended timestamp string containing seconds and optional fractional nanoseconds.
  * \details Splits a PAX time string around the decimal point, parses the seconds portion into 
  *          signed 64-bit integers using \ref mptar_atoi64, and processes up to standard sub-second decimal precision 
  *          digits into nanoseconds.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_PARSE_PAX_TIME.
+ * \note This function can be overridden by defining \c mptar_parse_pax_time.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2356,12 +2394,12 @@ static int mptar_parse_pax_time(const char* val_str, mptar_size_t val_len, mptar
 extern int mptar_parse_pax_time(const char* val_str, mptar_size_t val_len, mptar_opt_time* out_time);
 #endif
 
-#ifndef MPTAR_CUSTOM_RECONSTRUCT_USTAR_PATH
+#ifndef mptar_reconstruct_ustar_path
 /**
  * \brief Reconstructs a full file path from a USTAR header's prefix and name fields.
  * \details Allocates memory using the reader's allocator to combine the optional directory prefix 
  *          and file name fields separated by a forward slash into a single null-terminated string path.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_RECONSTRUCT_USTAR_PATH.
+ * \note This function can be overridden by defining \c mptar_reconstruct_ustar_path.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2404,12 +2442,12 @@ static int mptar_reconstruct_ustar_path(mptar_reader* reader, const mptar_header
 extern int mptar_reconstruct_ustar_path(mptar_reader* reader, const mptar_header* header, mptar_metadata* out_meta);
 #endif
 
-#ifndef MPTAR_CUSTOM_ALLOC_PAX_STRING
+#ifndef mptar_alloc_pax_string
 /**
  * \brief Allocates and copies a null-terminated string buffer for PAX record values.
  * \details Uses the provided memory configuration allocator to allocate space for the source string 
  *          plus a null terminator, copies the content, and ensures safety against overflow.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_ALLOC_PAX_STRING.
+ * \note This function can be overridden by defining \c mptar_alloc_pax_string.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2435,12 +2473,12 @@ static const char* mptar_alloc_pax_string(mptar_memory_cfg* mem, const char* src
 extern const char* mptar_alloc_pax_string(mptar_memory_cfg* mem, const char* src, mptar_size_t len);
 #endif
 
-#ifndef MPTAR_CUSTOM_APPLY_PAX_STRING
+#ifndef mptar_apply_pax_string
 /**
  * \brief Applies a parsed PAX string attribute to a destination string pointer based on precedence rules.
  * \details Handles either 'last-wins' overwrites (freeing any prior allocated string) or 'first-wins' behavior 
  *          according to active macro compilation definitions, updating respective PAX flags.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_APPLY_PAX_STRING.
+ * \note This function can be overridden by defining \c mptar_apply_pax_string.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2473,12 +2511,12 @@ static void mptar_apply_pax_string(mptar_memory_cfg* mem, const char* val, mptar
 extern void mptar_apply_pax_string(mptar_memory_cfg* mem, const char* val, mptar_size_t val_len, const char** out_str, mptar_uint32* pax_flags, mptar_uint32 flag);
 #endif
 
-#ifndef MPTAR_CUSTOM_APPLY_PAX_U64
+#ifndef mptar_apply_pax_u64
 /**
  * \brief Parses and applies a 64-bit unsigned integer PAX attribute value.
  * \details Converts a string into an unsigned 64-bit integer using \ref mptar_atou64 and updates the target variable 
  *          and tracking flags according to precedence policy.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_APPLY_PAX_U64.
+ * \note This function can be overridden by defining \c mptar_apply_pax_u64.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2504,12 +2542,12 @@ static void mptar_apply_pax_u64(const char* val, mptar_size_t val_len, mptar_uin
 extern void mptar_apply_pax_u64(const char* val, mptar_size_t val_len, mptar_uint64* out_val, mptar_uint32* pax_flags, mptar_uint32 flag);
 #endif
 
-#ifndef MPTAR_CUSTOM_APPLY_PAX_TIME
+#ifndef mptar_apply_pax_time
 /**
  * \brief Parses and applies a PAX timestamp attribute value.
  * \details Parses timestamp strings via \ref mptar_parse_pax_time and updates the destination optional time structure 
  *          and tracking flags based on precedence policy.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_APPLY_PAX_TIME.
+ * \note This function can be overridden by defining \c mptar_apply_pax_time.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2533,12 +2571,12 @@ static void mptar_apply_pax_time(const char* val, mptar_size_t val_len, mptar_op
 extern void mptar_apply_pax_time(const char* val, mptar_size_t val_len, mptar_opt_time* out_time, mptar_uint32* pax_flags, mptar_uint32 flag);
 #endif
 
-#ifndef MPTAR_CUSTOM_APPLY_PAX_KV
+#ifndef mptar_apply_pax_kv
 /**
  * \brief Parses and applies a PAX extended header key-value pair to an entry's metadata structure.
  * \details Dispatches recognized PAX attribute keys (such as path, linkpath, size, uid, gid, mtime, 
  *          and optional extra timestamps) to their respective handlers, updating metadata fields and tracking flags.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_APPLY_PAX_KV.
+ * \note This function can be overridden by defining \c mptar_apply_pax_kv.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2594,13 +2632,13 @@ extern void mptar_apply_pax_kv(mptar_reader* reader, const char* key, mptar_size
     const char* val, mptar_size_t val_len, mptar_metadata* meta, mptar_uint32* pax_flags);
 #endif
 
-#ifndef MPTAR_CUSTOM_PARSE_PAX_BLOCK
+#ifndef mptar_parse_pax_block
 /**
  * \brief Parses a PAX extended header data block containing sequential key-value records.
  * \details Allocates memory to read the full PAX block payload from the input stream, 
  *          consumes any trailing block alignment padding, parses individual space-separated 
  *          length records (`len key=val\n`), and applies them via PAX attribute handlers.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_PARSE_PAX_BLOCK.
+ * \note This function can be overridden by defining \c mptar_parse_pax_block.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
@@ -2706,12 +2744,12 @@ error_cleanup:
 extern int mptar_parse_pax_block(mptar_reader* reader, mptar_uint64 total_pax_size, mptar_metadata* meta, mptar_uint32* pax_flags);
 #endif
 
-#ifndef MPTAR_CUSTOM_PARSE_USTAR_HEADER
+#ifndef mptar_parse_ustar_header
 /**
  * \brief Parses standard base USTAR archive header fields into an entry metadata structure.
  * \details Extracts and validates standard file attributes (such as size, typeflag, mode, user/group IDs, 
  *          modification time, and optional special device numbers) from a raw parsed header block.
- * \note This function can be overridden by defining \c MPTAR_CUSTOM_PARSE_USTAR_HEADER.
+ * \note This function can be overridden by defining \c mptar_parse_ustar_header.
  * \warning Overriding this function carries no stability guarantees; 
  *          it may be modified or removed entirely in future versions 
  *          without notice or deprecation.
