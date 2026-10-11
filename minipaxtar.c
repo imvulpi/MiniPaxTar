@@ -1,11 +1,11 @@
-#include "minipaxtar.h"
-
 /**
  * \file minipaxtar.c
  * \copyright Copyright (c) 2026 Vulpi
  * \author Vulpi <78976654+imvulpi@users.noreply.github.com>
  * SPDX-License-Identifier: MIT
  */
+
+#include "minipaxtar.h"
 
 #ifdef MPTAR_NO_STD
 #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)

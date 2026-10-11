@@ -1,10 +1,3 @@
-#ifndef MINIPAXTAR_H
-#define MINIPAXTAR_H
-
-#ifndef MPTAR_USE_STD
-    #define MPTAR_NO_STD
-#endif
-
 /**
  * \file minipaxtar.h
  * \brief Minimal PAX and USTAR TAR archive library.
@@ -30,6 +23,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  * SOFTWARE.
  */
+
+#ifndef MINIPAXTAR_H
+#define MINIPAXTAR_H
+
+#ifndef MPTAR_USE_STD
+    #define MPTAR_NO_STD
+#endif
 
 #ifdef MPTAR_NO_STD
     typedef unsigned char mptar_uint8;

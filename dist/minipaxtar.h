@@ -3,13 +3,6 @@
  * Generated automatically. Do not edit directly.
  */
 
-#ifndef MINIPAXTAR_H
-#define MINIPAXTAR_H
-
-#ifndef MPTAR_USE_STD
-    #define MPTAR_NO_STD
-#endif
-
 /**
  * \file minipaxtar.h
  * \brief Minimal PAX and USTAR TAR archive library.
@@ -35,6 +28,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  * SOFTWARE.
  */
+
+#ifndef MINIPAXTAR_H
+#define MINIPAXTAR_H
+
+#ifndef MPTAR_USE_STD
+    #define MPTAR_NO_STD
+#endif
 
 #ifdef MPTAR_NO_STD
     typedef unsigned char mptar_uint8;
@@ -919,13 +919,13 @@ int mptar_close_archive(mptar_writer *ctx);
 #endif /* MINIPAXTAR_H */
 
 #ifdef MINIPAXTAR_IMPLEMENTATION
-
 /**
  * \file minipaxtar.c
  * \copyright Copyright (c) 2026 Vulpi
  * \author Vulpi <78976654+imvulpi@users.noreply.github.com>
  * SPDX-License-Identifier: MIT
  */
+
 
 #ifdef MPTAR_NO_STD
 #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
