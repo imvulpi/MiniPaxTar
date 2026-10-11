@@ -69,10 +69,12 @@
     #define MPTAR_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
     #define MPTAR_UINT32_MAX (4294967295U)
 
-    #ifndef bool
-        typedef _Bool bool;
-        #define true  1
-        #define false 0
+    #ifndef __cplusplus
+        #ifndef bool
+            typedef _Bool bool;
+            #define true  1
+            #define false 0
+        #endif
     #endif
 #else
     #include <stdint.h>
