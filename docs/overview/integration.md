@@ -114,5 +114,5 @@ set(MPTAR_SUPPORT_SPECIAL OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/minipaxtar)
 ```
 
-> 📖 **Full Reference:** For a complete list of feature flags and default values , see the [Configuration Flags Guide](/minipaxtar/guides/config-defines).
+> 📖 **Full Reference:** For a complete list of feature flags and default values , see the [Configuration Flags Guide](../guides/config-defines.md).
 
