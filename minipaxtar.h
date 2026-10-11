@@ -894,45 +894,6 @@ int mptar_close_archive(mptar_writer *ctx);
 /** @} */
 #endif /* MPTAR_NO_WRITE */
 
-/**
- * \defgroup mptar_internal_diagnostics Internal Compiler
- * \brief Cross-compiler warning/diagnostics suppression and platform-abstraction macros.
- * @{
- */
-
-#if defined(__clang__)
-    /**
-     * \brief Push compiler diagnostic state and suppress `-Wcast-qual` warnings.
-     * \details Used when casting away `const` qualifiers in low-level buffer manipulation routines.
-     */
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
-        _Pragma("clang diagnostic push") \
-        _Pragma("clang diagnostic ignored \"-Wcast-qual\"")
-
-    /**
-     * \brief Restore previous compiler diagnostic state after casting operations.
-     */
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
-        _Pragma("clang diagnostic pop")
-
-#elif defined(__GNUC__) || defined(__GNUG__)
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
-        _Pragma("GCC diagnostic push") \
-        _Pragma("GCC diagnostic ignored \"-Wcast-qual\"")
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
-        _Pragma("GCC diagnostic pop")
-#elif defined(_MSC_VER)
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN \
-        __pragma(warning(push)) \
-        __pragma(warning(disable: 4197))
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END \
-        __pragma(warning(pop))
-#else
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN
-    #define MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
-#endif
-/** @} */
-
 #ifdef __cplusplus
 }
 #endif

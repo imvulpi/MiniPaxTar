@@ -2140,7 +2140,6 @@ void mptar_reader_free_metadata(mptar_reader *reader, mptar_metadata *meta)
 {
     if (!reader || !meta || !meta->internal_alloc) return;
 
-MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN /* Reason: metadata strings in reading api are allocated dynamically. */
     if (meta->path) {
         reader->memory.free(reader->memory.alloc_user_data, (void*)meta->path);
         meta->path = MPTAR_NULL;
@@ -2159,8 +2158,6 @@ MPTAR_SUPPRESS_WARNING_CAST_QUAL_BEGIN /* Reason: metadata strings in reading ap
     }
     
     meta->internal_alloc = false;
-
-MPTAR_SUPPRESS_WARNING_CAST_QUAL_END
 }
 
 #endif /* MPTAR_NO_READ */
