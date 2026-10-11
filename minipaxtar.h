@@ -254,10 +254,10 @@ extern "C" {
 
 /**
  * \brief Documentation for compile-time configuration macros.
- * \details The \c DOXYGEN_DOCS macro is used exclusively by documentation generators 
+ * \details The \ref DOXYGEN_DOCS macro is used exclusively by documentation generators 
  *          like Doxygen. Because minipaxtar enables reading and writing by default, 
- *          these option macros (such as \c MPTAR_NO_READ) are not normally defined in the 
- *          source code. Wrapping them in \c "#ifdef DOXYGEN_DOCS" allows Doxygen to index 
+ *          these option macros (such as \ref MPTAR_NO_READ) are not normally defined in the 
+ *          source code. Wrapping them in "#ifdef DOXYGEN_DOCS" allows Doxygen to index 
  *          and document them without altering actual build configurations.
  */
 #ifdef DOXYGEN_DOCS 
@@ -298,16 +298,16 @@ extern "C" {
 #define mptar_memset   /**< Override for memory block setting. */
 #define mptar_memcmp   /**< Override for memory block comparison. */
 
-#define MPTAR_CUSTOM_U64TOA         /**< Legacy override for unsigned 64-bit integer to string. \deprecated Use \c mptar_u64toa instead. */
-#define MPTAR_CUSTOM_I64TOA         /**< Legacy override for signed 64-bit integer to string. \deprecated Use \c mptar_i64toa instead. */
-#define MPTAR_CUSTOM_ATOU64         /**< Legacy override for string to unsigned 64-bit integer. \deprecated Use \c mptar_atou64 instead. */
-#define MPTAR_CUSTOM_ATOI64         /**< Legacy override for string to signed 64-bit integer. \deprecated Use \c mptar_atoi64 instead. */
-#define MPTAR_CUSTOM_STRLEN         /**< Legacy override for string length calculation. \deprecated Use \c mptar_strlen instead. */
-#define MPTAR_CUSTOM_STRNLEN        /**< Legacy override for bounded string length calculation. \deprecated Use \c mptar_strnlen instead. */
-#define MPTAR_CUSTOM_STRNCPY        /**< Legacy override for bounded string copying. \deprecated Use \c mptar_strncpy instead. */
-#define MPTAR_CUSTOM_MEMCPY         /**< Legacy override for memory block copying. \deprecated Use \c mptar_memcpy instead. */
-#define MPTAR_CUSTOM_MEMSET         /**< Legacy override for memory block setting. \deprecated Use \c mptar_memset instead. */
-#define MPTAR_CUSTOM_MEMCMP         /**< Legacy override for memory block comparison. \deprecated Use \c mptar_memcmp instead. */
+#define MPTAR_CUSTOM_U64TOA         /**< Legacy override for unsigned 64-bit integer to string. \deprecated Use \ref mptar_u64toa instead. */
+#define MPTAR_CUSTOM_I64TOA         /**< Legacy override for signed 64-bit integer to string. \deprecated Use \ref mptar_i64toa instead. */
+#define MPTAR_CUSTOM_ATOU64         /**< Legacy override for string to unsigned 64-bit integer. \deprecated Use \ref mptar_atou64 instead. */
+#define MPTAR_CUSTOM_ATOI64         /**< Legacy override for string to signed 64-bit integer. \deprecated Use \ref mptar_atoi64 instead. */
+#define MPTAR_CUSTOM_STRLEN         /**< Legacy override for string length calculation. \deprecated Use \ref mptar_strlen instead. */
+#define MPTAR_CUSTOM_STRNLEN        /**< Legacy override for bounded string length calculation. \deprecated Use \ref mptar_strnlen instead. */
+#define MPTAR_CUSTOM_STRNCPY        /**< Legacy override for bounded string copying. \deprecated Use \ref mptar_strncpy instead. */
+#define MPTAR_CUSTOM_MEMCPY         /**< Legacy override for memory block copying. \deprecated Use \ref mptar_memcpy instead. */
+#define MPTAR_CUSTOM_MEMSET         /**< Legacy override for memory block setting. \deprecated Use \ref mptar_memset instead. */
+#define MPTAR_CUSTOM_MEMCMP         /**< Legacy override for memory block comparison. \deprecated Use \ref mptar_memcmp instead. */
 
 /** \} */
 
@@ -351,7 +351,7 @@ extern "C" {
 /**
  * \brief Encountered a special file type flag (FIFO, Block, Char device).
  * \note Returning this error code usually indicates that special file support 
- *       was disabled at compile time via \c MPTAR_SUPPORT_SPECIAL.
+ *       was disabled at compile time via \ref MPTAR_SUPPORT_SPECIAL.
  */
 #define MPTAR_ERR_UNSUPPORTED_TYPE     -6
 #define MPTAR_ERR_RESERVED_LEGACY_1    -7   /**< Reserved / Legacy. Formerly used for write overflow prior to automatic payload clamping. */
@@ -580,16 +580,16 @@ typedef struct {
     /**
      * \brief File entry type flag.
      * \note Standard values include: 
-     *   - \c '0' or \c '\0': Regular file 
-     *   - \c '1': Hard link
-     *   - \c '2': Symbolic link
-     *   - \c '3': Character special file
-     *   - \c '4': Block special file
-     *   - \c '5': Directory
-     *   - \c '6': FIFO / pipe
-     *   - \c '7': Contiguous file
-     *   - \c 'x': PAX extended header
-     *   - \c 'g': PAX global extended header
+     *   - \c '0' or \c '\0': Regular file - \ref MPTAR_FILE and \ref MPTAR_FILE_LEGACY
+     *   - \c '1': Hard link - \ref MPTAR_HARD_LINK
+     *   - \c '2': Symbolic link - \ref MPTAR_SYMLINK 
+     *   - \c '3': Character special file - \ref MPTAR_CHAR_FILE
+     *   - \c '4': Block special file - \ref MPTAR_BLOCK_FILE
+     *   - \c '5': Directory - \ref MPTAR_DIRECTORY
+     *   - \c '6': FIFO / pipe - \ref MPTAR_PIPE
+     *   - \c '7': Contiguous file - \ref MPTAR_CONTINOUS_FILE
+     *   - \c 'x': PAX extended header - \ref MPTAR_PAX_EX_HEADER
+     *   - \c 'g': PAX global extended header - \ref MPTAR_PAX_GLOBAL_EX_HEADER
      * 
      * See \ref mptar_typeflags for defines of those.
      */
@@ -669,16 +669,16 @@ typedef struct {
     /**
      * \brief File entry type flag.
      * \note Standard values include: 
-     *   - \c '0' or \c '\0': Regular file 
-     *   - \c '1': Hard link
-     *   - \c '2': Symbolic link
-     *   - \c '3': Character special file
-     *   - \c '4': Block special file
-     *   - \c '5': Directory
-     *   - \c '6': FIFO / pipe
-     *   - \c '7': Contiguous file
-     *   - \c 'x': PAX extended header
-     *   - \c 'g': PAX global extended header
+     *   - \c '0' or \c '\0': Regular file - \ref MPTAR_FILE and \ref MPTAR_FILE_LEGACY
+     *   - \c '1': Hard link - \ref MPTAR_HARD_LINK
+     *   - \c '2': Symbolic link - \ref MPTAR_SYMLINK 
+     *   - \c '3': Character special file - \ref MPTAR_CHAR_FILE
+     *   - \c '4': Block special file - \ref MPTAR_BLOCK_FILE
+     *   - \c '5': Directory - \ref MPTAR_DIRECTORY
+     *   - \c '6': FIFO / pipe - \ref MPTAR_PIPE
+     *   - \c '7': Contiguous file - \ref MPTAR_CONTINOUS_FILE
+     *   - \c 'x': PAX extended header - \ref MPTAR_PAX_EX_HEADER
+     *   - \c 'g': PAX global extended header - \ref MPTAR_PAX_GLOBAL_EX_HEADER
      * 
      * See \ref mptar_typeflags for defines of those.
      */
