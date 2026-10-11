@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(minipaxtar C)
 
 # Default options
-option(MPTAR_SUPPORT_EXTRA_TIMES "Enable PAX atime and ctime support" ON)
-option(MPTAR_SUPPORT_SPECIAL     "Enable special device nodes (devmajor/devminor)" ON)
+option(MPTAR_SUPPORT_SPECIAL     "Enable special device nodes (devmajor/devminor)" OFF)
 
 # Set C standard
 set(CMAKE_C_STANDARD 89)
@@ -27,11 +26,6 @@ target_include_directories(minipaxtar PUBLIC
 if(MPTAR_SUPPORT_SPECIAL)
     target_compile_definitions(minipaxtar PUBLIC MPTAR_SUPPORT_SPECIAL)
     target_compile_definitions(minipaxtar_header INTERFACE MPTAR_SUPPORT_SPECIAL)
-endif()
-
-if(MPTAR_SUPPORT_EXTRA_TIMES)
-    target_compile_definitions(minipaxtar PUBLIC MPTAR_SUPPORT_EXTRA_TIMES)
-    target_compile_definitions(minipaxtar_header INTERFACE MPTAR_SUPPORT_EXTRA_TIMES)
 endif()
 
 # ALIASES for clean usage

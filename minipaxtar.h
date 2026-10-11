@@ -296,7 +296,7 @@ extern "C" {
 #define MPTAR_NO_READ               /**< Disable read support (-DMPTAR_NO_READ) to strip archive reading functionality and reduce binary size. */
 #define MPTAR_NO_WRITE              /**< Disable write support (-DMPTAR_NO_WRITE) to strip archive writing functionality and reduce binary size. */
 #define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
-#define MPTAR_SUPPORT_EXTRA_TIMES   /**< Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. */
+#define MPTAR_NO_EXTRA_TIMES        /**< Removes extra timestamp support (-DMPTAR_NO_EXTRA_TIMES) to save on binary size. */
 
 #define mptar_u64toa mptar_u64toa   /**< Override for unsigned 64-bit integer to string conversion. */
 #define mptar_i64toa mptar_i64toa   /**< Override for signed 64-bit integer to string conversion. */
@@ -662,7 +662,7 @@ typedef struct {
  */
 typedef struct {
     mptar_opt_time mtime;     /**< File modification time with optional sub-second precision. */
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES
     mptar_opt_time atime;     /**< File access time (used in a PAX extended header). */
     mptar_opt_time ctime;     /**< File metadata change time (used in a PAX extended header). */
 #endif

@@ -41,7 +41,7 @@ When writing an entry via `mptar_write_header()`, `minipaxtar` inspects the popu
 * `uname` or `gname` string length exceeds 32 bytes.
 * `mtime` timestamp exceeds 8,589,934,591 seconds [1].
 * Negative timestamps are present (dates prior to January 1, 1970).
-* Sub-second timestamp resolution or extended timestamps (`atime`, `ctime`) are present (when `MPTAR_SUPPORT_EXTRA_TIMES` is enabled).
+* Sub-second timestamp resolution or extended timestamps (`atime`, `ctime`) are present.
 
 > **[1] Binary Octal Encoding Exception:**
 > Standard USTAR octal fields can also store numbers using binary encoding, expanding their capacity to full signed 64-bit integers. By default, if a value fits inside a binary-encoded field, `minipaxtar` skips generating a PAX header. However, if the writer flag `MPTAR_CTX_ALLOW_PAX_FOR_OCTAL` is set, `minipaxtar` will emit both the PAX extended header and the binary-encoded USTAR field.
@@ -86,7 +86,7 @@ For example, a file with a 250-character path (that couldn't be split between `p
 
 If your platform has strict memory or binary size constraints and does not require extended metadata attributes, you can strip specific PAX features:
 
-* **`MPTAR_SUPPORT_EXTRA_TIMES`**: Disables `atime` and `ctime` PAX parsing/formatting.
+* **`MPTAR_NO_EXTRA_TIMES`**: Disables `atime` and `ctime` PAX parsing/formatting.
 * **`MPTAR_SUPPORT_SPECIAL`**: Disables PAX device number (`devmajor`/`devminor`) extended handling.
 
 *(See [Configuration & Compile-Time Flags](config-defines.md) for full definition details.)*

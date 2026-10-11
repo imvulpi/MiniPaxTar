@@ -805,7 +805,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         (meta->mtime.value.sec < 0 || meta->mtime.value.nsec > 0
         || (meta->mtime.value.sec > (mptar_int64)MPTAR_USTAR_MAX_OCTAL_12B && ((ctx->flags & MPTAR_CTX_ALLOW_PAX_FOR_OCTAL) != 0)));
     
-    #ifdef MPTAR_SUPPORT_EXTRA_TIMES
+    #ifndef MPTAR_NO_EXTRA_TIMES
         bool times_need_pax = mtime_needs_pax || meta->atime.has_value || meta->ctime.has_value;
     #else
         bool times_need_pax = mtime_needs_pax;
@@ -834,7 +834,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
         mptar_uint32 pax_uname_size = 0;
         mptar_uint32 pax_gname_size = 0;
 
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES
         mptar_uint32 pax_atime_size = 0;
         mptar_uint32 pax_ctime_size = 0;
         char atime_str_buf[MPTAR_TIMESPEC_STR_BUF_SIZE];
@@ -869,7 +869,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
             pax_header_size += pax_mtime_size;
         }
 
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES
         if (meta->atime.has_value) {
             mptar_pax_format_time(meta->atime.value.sec, meta->atime.value.nsec, atime_str_buf, sizeof(atime_str_buf), &res);
             if (res != MPTAR_OK) return res;
@@ -936,7 +936,7 @@ int mptar_write_header(mptar_writer* ctx, const mptar_metadata* meta){
             if (res != MPTAR_OK) return res;
         }
         
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES
         if (meta->atime.has_value) {
             res = mptar_pax_stream_record(ctx, pax_atime_size, "atime", atime_str_buf, atime_str_len);
             if (res != MPTAR_OK) return res;
@@ -1701,7 +1701,7 @@ static void mptar_apply_pax_kv(mptar_reader* reader, const char* key, mptar_size
     else if (key_len == 5 && mptar_memcmp(key, "mtime", 5) == 0) {
         mptar_apply_pax_time(val, val_len, &meta->mtime, pax_flags, MPTAR_PAX_HAS_MTIME);
     }
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES
     else if (key_len == 5 && mptar_memcmp(key, "atime", 5) == 0) {
         mptar_apply_pax_time(val, val_len, &meta->atime, pax_flags, MPTAR_PAX_HAS_ATIME);
     } 
@@ -1876,7 +1876,7 @@ static int mptar_parse_ustar_header(const mptar_header* header, mptar_metadata* 
     }
     out_meta->mtime.has_value = true;
 
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES
     out_meta->atime.has_value = false;
     out_meta->ctime.has_value = false;
 #endif
@@ -1981,7 +1981,7 @@ int mptar_read_header(mptar_reader *reader, mptar_metadata *out_meta) {
             out_meta->mtime = pax_staged.mtime; 
         }
 
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES
         if (pax_flags & MPTAR_PAX_HAS_ATIME) { out_meta->atime = pax_staged.atime; }
         if (pax_flags & MPTAR_PAX_HAS_CTIME) { out_meta->ctime = pax_staged.ctime; }
 #endif

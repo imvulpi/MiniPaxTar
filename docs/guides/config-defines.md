@@ -13,7 +13,7 @@ These macros control major API subsets and platform capability dependencies.
 | **`MPTAR_NO_READ`** | *Undefined* | Disables the reading and parsing API (`mptar_reader`, `mptar_read_header`, `mptar_read_data_chunk`, etc.). Reduces binary footprint when only writing archives. |
 | **`MPTAR_NO_WRITE`** | *Undefined* | Disables the archive creation API (`mptar_writer`, `mptar_write_header`, `mptar_write_data_chunk`, etc.). Reduces binary footprint when only extracting archives. |
 | **`MPTAR_SUPPORT_SPECIAL`** | *Undefined* / ON in CMake | Include support for special node metadata (`devmajor` and `devminor` device numbers). |
-| **`MPTAR_SUPPORT_EXTRA_TIMES`** | *Undefined* / ON in CMake | Include support for extended PAX timestamp attributes (`atime` access time and `ctime` change time). |
+| **`MPTAR_NO_EXTRA_TIMES`** | *Undefined* / ON in CMake | Removes support for extended PAX timestamp attributes (`atime` access time and `ctime` change time). Reduces binary footprint where such support is unneded. |
 
 ---
 
@@ -36,17 +36,17 @@ gcc -DMPTAR_NO_WRITE -c minipaxtar.c -o minipaxtar.o
 
 ### 2. Extended Metadata Features
 
-By default, `minipaxtar` doesn't define any compilation options, however it enables support on cmake for special device nodes and extended PAX timestamps. If your system does not require these metadata fields, you can omit them to simplify `mptar_metadata` structs and handling logic.
+By default, `minipaxtar` doesn't define any compilation options, however it enables support on cmake for special device nodes. If your system does not require these metadata fields, you can omit them to simplify `mptar_metadata` structs and handling logic. By default extra extended access time (`meta.atime`) and change time (`meta.ctime`) are included to remove it use `MPTAR_NO_EXTRA_TIMES`. It is included by default because the size difference in negligible for most users and yet it provides useful features. Special files support is not included by default because most users don't use it, you may enable the support by defining `MPTAR_SUPPORT_SPECIAL`
 
 * **`MPTAR_SUPPORT_SPECIAL`**: Includes device node fields (`meta.devmajor` and `meta.devminor`).
-* **`MPTAR_SUPPORT_EXTRA_TIMES`**: Includes extended access time (`meta.atime`) and change time (`meta.ctime`).
+* **`MPTAR_NO_EXTRA_TIMES`**: Removes extended access time (`meta.atime`) and change time (`meta.ctime`).
 
 ```c
 #ifdef MPTAR_SUPPORT_SPECIAL
     printf("Device major: %u, minor: %u\n", meta.devmajor, meta.devminor);
 #endif
 
-#ifdef MPTAR_SUPPORT_EXTRA_TIMES
+#ifndef MPTAR_NO_EXTRA_TIMES // Or assume it is turned on, like it is by default.
     printf("Access time: %llu, Change time: %llu\n", meta.atime, meta.ctime);
 #endif
 ```
