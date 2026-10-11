@@ -199,6 +199,8 @@ extern "C" {
 #else
     #include <string.h>
 
+    /** \cond INTERNAL_STDLIB_MAPPING */
+
     #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
     /**
      * \brief String length utility 
@@ -246,6 +248,8 @@ extern "C" {
      */
     #define mptar_memcmp memcmp
     #endif
+
+    /** \endcond */
 #endif
 
 /**
@@ -262,6 +266,15 @@ extern "C" {
  * \brief Stable configuration macros and custom conversion/string hooks.
  * \details These options, features, and custom conversion hooks are guaranteed stable 
  *          and will follow standard deprecation cycles if ever slated for modification or removal.
+ * 
+ * \par Default Implementations
+ *      When a stable function override is not explicitly defined, minipaxtar may
+ *      map it to the corresponding standard C library function when the library is
+ *      available and supported. For example, \ref mptar_strlen maps to \c strlen
+ *      when neither \ref mptar_strlen nor the legacy \ref MPTAR_CUSTOM_STRLEN is defined.
+ *      When \ref MPTAR_NO_STD is defined the functions are mapped to the built-in nostd 
+ *      replacements.
+ * 
  * \note Custom function hooks can now be provided directly by defining the exact 
  *       function name macro (e.g., #define mptar_strlen my_strlen). The legacy 
  *       \c MPTAR_CUSTOM_* macros are deprecated but remain supported for backward compatibility.
@@ -273,6 +286,17 @@ extern "C" {
 #define MPTAR_NO_WRITE              /**< Disable write support (-DMPTAR_NO_WRITE) to strip archive writing functionality and reduce binary size. */
 #define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
 #define MPTAR_SUPPORT_EXTRA_TIMES   /**< Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. */
+
+#define mptar_u64toa   /**< Override for unsigned 64-bit integer to string conversion. */
+#define mptar_i64toa   /**< Override for signed 64-bit integer to string conversion. */
+#define mptar_atou64   /**< Override for string to unsigned 64-bit integer conversion. */
+#define mptar_atoi64   /**< Override for string to signed 64-bit integer conversion. */
+#define mptar_strlen   /**< Override for string length calculation. */
+#define mptar_strnlen  /**< Override for bounded string length calculation. */
+#define mptar_strncpy  /**< Override for bounded string copying. */
+#define mptar_memcpy   /**< Override for memory block copying. */
+#define mptar_memset   /**< Override for memory block setting. */
+#define mptar_memcmp   /**< Override for memory block comparison. */
 
 #define MPTAR_CUSTOM_U64TOA         /**< Legacy override for unsigned 64-bit integer to string. \deprecated Use \c mptar_u64toa instead. */
 #define MPTAR_CUSTOM_I64TOA         /**< Legacy override for signed 64-bit integer to string. \deprecated Use \c mptar_i64toa instead. */

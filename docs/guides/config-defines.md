@@ -53,50 +53,66 @@ By default, `minipaxtar` doesn't define any compilation options, however it enab
 
 ---
 
-## Custom Number Conversion Hooks
+## Stable Function Overrides
 
-To prevent dependencies on Standard C library functions like `snprintf` or `strtoull`, `minipaxtar` ships with internal fallback functions for integer-to-string and string-to-integer conversions.
+`minipaxtar` allows selected internal and standard-library-compatible functions to be overridden at compile time. This includes string operations such as `strlen` and `strnlen`, memory operations such as `memcpy`, and other supported functions. See all functions that can be safely overriden in [stable config options](/MiniPaxTar/api/Modules/group__mptar__stable__config/)
 
-If your environment provides optimized, custom, or assembly-accelerated equivalents, define these macros to **omit built-in implementations** and delegate to external routines of the same name:
+To use a custom implementation, define the corresponding function-name macro to your implementation's name. This allows you to provide optimized, platform-specific, or assembly-accelerated implementations while keeping the rest of `minipaxtar` unchanged.
 
-| Flag | Omitted <br> Built-in | Required `extern` Function Signature |
-| --- | --- | --- |
-| **`MPTAR_CUSTOM_U64TOA`** | `mptar_u64toa` | `char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, int *out_err);` |
-| **`MPTAR_CUSTOM_I64TOA`** | `mptar_i64toa` | `char* mptar_i64toa(mptar_int64 value, char* buf, mptar_size_t buf_size, int *out_err);` |
-| **`MPTAR_CUSTOM_ATOU64`** | `mptar_atou64` | `mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err);` |
-| **`MPTAR_CUSTOM_ATOI64`** | `mptar_atoi64` | `mptar_int64 mptar_atoi64(const char* str, mptar_size_t len, int* err);` |
+For example, to override `strlen`, define `mptar_strlen` as `custom_strlen`. The built-in implementation will be omitted, and `minipaxtar` will use your custom function instead.
 
----
-
-### Example: Supplying Custom Conversion Hooks
-
-When defining any of the custom conversion flags, ensure your custom implementations are declared or linked in your binary:
+### Example: Overriding `strlen`
 
 ```c
-/* Enable custom unsigned 64-bit conversion hook */
-#define MPTAR_CUSTOM_ATOU64
+#include <stdio.h>
+#include <string.h>
 #include "minipaxtar.h"
 
-/* Supply the external function matching the exact name and signature */
-uint64_t mptar_atou64(const char* str, mptar_size_t len, int* err) {
-    /* Custom optimized conversion logic */
-    uint64_t result = 0;
-    /* ... */
-    if (err) *err = MPTAR_OK; /* or 0 */
-    return result;
+/* Custom implementation matching the expected signature */
+size_t custom_strlen(const char* str) {
+    printf("Custom strlen called\n");
+
+    const char* p = str;
+    while (*p) {
+        ++p;
+    }
+
+    return (size_t)(p - str);
 }
-
 ```
----
 
-## CMake Integration Example
+Compile with the override definition:
 
-If building via CMake, you can toggle these definitions cleanly using `target_compile_definitions()` or CMake `option()`s:
+```sh
+clang minipaxtar.c ... -Dmptar_strlen=custom_strlen
+```
+
+When `minipaxtar` calls `mptar_strlen`, the call resolves to `custom_strlen`, which prints a message before calculating the string length.
+
+Your custom implementation must be available at link time and match the expected function signature. It must not be `static` if it is defined in a separate translation unit and referenced externally by `minipaxtar`.
+
+### Legacy Overrides
+
+The legacy `MPTAR_CUSTOM_*` macros are still supported for backward compatibility but are deprecated. Unlike the newer function-name overrides, they do not allow you to specify a custom function name. Depending on the override, this can retain built-in symbols or increase the resulting binary size.
+
+### CMake Integration Example
+
+Use `target_compile_definitions()` to configure overrides for a specific target:
 
 ```cmake
-# Disable write support and use custom 64-bit parser
 target_compile_definitions(my_app PRIVATE
-    MPTAR_NO_WRITE
-    MPTAR_CUSTOM_ATOU64
+    mptar_strlen=custom_strlen
 )
 ```
+
+Ensure that `custom_strlen` is included in the target and linked into the final executable.
+
+## Experimental and Internal Overrides
+
+In addition to the stable overrides documented here, `minipaxtar` provides experimental and internal overrides for low-level customization, including internal functions.
+
+These overrides carry **no stability guarantees** and may change or be removed without notice. Use them at your own risk.
+
+See the [Experimental & Internal Overrides](/MiniPaxTar/api/Modules/group__mptar__experimental__config/) documentation for the complete list.
+
+Only overrides explicitly documented under [Stable Compile-Time Options](/MiniPaxTar/api/Modules/group__mptar__stable__config/) are covered by the project's stability guarantees.
