@@ -103,7 +103,7 @@ int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
 
 #endif /* MPTAR_NO_STD */
 
-#ifndef MPTAR_NO_WRITE
+#if !defined(MPTAR_NO_WRITE) || defined(DOXYGEN_DOCS)
 
 #if defined(MPTAR_CUSTOM_IU64TOA)
     #define MPTAR_CUSTOM_U64TOA
@@ -1055,7 +1055,7 @@ int mptar_close_archive(mptar_writer *ctx)
 
 #endif /* MPTAR_NO_WRITE */
 
-#ifndef MPTAR_NO_READ
+#if !defined(MPTAR_NO_READ) || defined(DOXYGEN_DOCS)
 
 #if defined(MPTAR_CUSTOM_ATOIU64)
     #define MPTAR_CUSTOM_ATOU64

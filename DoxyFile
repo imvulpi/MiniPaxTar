@@ -1,7 +1,7 @@
 PROJECT_NAME           = "minipaxtar"
 INPUT                  = minipaxtar.h minipaxtar.c
 OPTIMIZE_OUTPUT_FOR_C  = YES
-PREDEFINED = DOXYGEN_DOCS
+PREDEFINED = DOXYGEN_DOCS MPTAR_NO_STD
 
 # Force extract all symbols into XML
 EXTRACT_ALL            = YES

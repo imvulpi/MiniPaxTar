@@ -287,16 +287,16 @@ extern "C" {
 #define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
 #define MPTAR_SUPPORT_EXTRA_TIMES   /**< Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. */
 
-#define mptar_u64toa   /**< Override for unsigned 64-bit integer to string conversion. */
-#define mptar_i64toa   /**< Override for signed 64-bit integer to string conversion. */
-#define mptar_atou64   /**< Override for string to unsigned 64-bit integer conversion. */
-#define mptar_atoi64   /**< Override for string to signed 64-bit integer conversion. */
-#define mptar_strlen   /**< Override for string length calculation. */
-#define mptar_strnlen  /**< Override for bounded string length calculation. */
-#define mptar_strncpy  /**< Override for bounded string copying. */
-#define mptar_memcpy   /**< Override for memory block copying. */
-#define mptar_memset   /**< Override for memory block setting. */
-#define mptar_memcmp   /**< Override for memory block comparison. */
+#define mptar_u64toa mptar_u64toa   /**< Override for unsigned 64-bit integer to string conversion. */
+#define mptar_i64toa mptar_i64toa   /**< Override for signed 64-bit integer to string conversion. */
+#define mptar_atou64 mptar_atou64   /**< Override for string to unsigned 64-bit integer conversion. */
+#define mptar_atoi64 mptar_atoi64   /**< Override for string to signed 64-bit integer conversion. */
+#define mptar_strlen mptar_strlen   /**< Override for string length calculation. */
+#define mptar_strnlen mptar_strnlen  /**< Override for bounded string length calculation. */
+#define mptar_strncpy mptar_strncpy  /**< Override for bounded string copying. */
+#define mptar_memcpy mptar_memcpy   /**< Override for memory block copying. */
+#define mptar_memset mptar_memset   /**< Override for memory block setting. */
+#define mptar_memcmp mptar_memcmp   /**< Override for memory block comparison. */
 
 #define MPTAR_CUSTOM_U64TOA         /**< Legacy override for unsigned 64-bit integer to string. \deprecated Use \ref mptar_u64toa instead. */
 #define MPTAR_CUSTOM_I64TOA         /**< Legacy override for signed 64-bit integer to string. \deprecated Use \ref mptar_i64toa instead. */
