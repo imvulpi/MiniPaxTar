@@ -6,6 +6,10 @@
 #ifndef MINIPAXTAR_H
 #define MINIPAXTAR_H
 
+#ifndef MPTAR_USE_STD
+    #define MPTAR_NO_STD
+#endif
+
 /**
  * \file minipaxtar.h
  * \brief Minimal PAX and USTAR TAR archive library.
@@ -278,7 +282,7 @@ extern "C" {
  *      available and supported. For example, \ref mptar_strlen maps to \c strlen
  *      when neither \ref mptar_strlen nor the legacy \ref MPTAR_CUSTOM_STRLEN is defined.
  *      When \ref MPTAR_NO_STD is defined the functions are mapped to the built-in nostd 
- *      replacements.
+ *      replacements, by default it is defined unless \ref MPTAR_USE_STD is defined.
  * 
  * \note Custom function hooks can now be provided directly by defining the exact 
  *       function name macro (e.g., #define mptar_strlen my_strlen). The legacy 
@@ -286,7 +290,14 @@ extern "C" {
  * \{
  */
 
-#define MPTAR_NO_STD                /**< Disable standard library dependencies (-DMPTAR_NO_STD) for freestanding/bare-metal environments. */
+
+
+/** \brief Enables standard library dependencies, maps no-stdlib built-in functions to stdlib equivalents. 
+ *         It's recommended whenether using stdlib, could reduce size and improve performance. */
+#define MPTAR_USE_STD
+/** \brief Disable standard library dependencies (-DMPTAR_NO_STD) for freestanding/bare-metal environments. 
+ *        It's turned on by default, unless \ref MPTAR_USE_STD is defined. */
+#define MPTAR_NO_STD
 #define MPTAR_NO_READ               /**< Disable read support (-DMPTAR_NO_READ) to strip archive reading functionality and reduce binary size. */
 #define MPTAR_NO_WRITE              /**< Disable write support (-DMPTAR_NO_WRITE) to strip archive writing functionality and reduce binary size. */
 #define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
