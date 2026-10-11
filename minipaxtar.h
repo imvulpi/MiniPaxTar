@@ -294,7 +294,7 @@ extern "C" {
  *          Use them at your own risk.
  * \brief Unstable low-level hooks and internal customization switches.
  * \details Internal function overrides use direct function name defines (e.g. mptar_internal_foo) from 
- *          \c minipaxtar.c Unless explicitly listed under \ref mptar_stable_config, these custom functions 
+ *          \ref minipaxtar.c Unless explicitly listed under \ref mptar_stable_config, these custom functions 
  *          are considered internal and carry no stability guarantees.
  * \{
  */
