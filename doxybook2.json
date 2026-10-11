@@ -2,6 +2,7 @@
   "baseUrl": "/MiniPaxTar/api/",
   "linkLower": false,
   "indexInFolders": false,
+  "replaceUnderscoresInAnchors": false,
   "summaryAbbrevLength": 100,
   "files": {
     "summary": "SUMMARY.md",
