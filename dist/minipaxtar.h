@@ -279,16 +279,16 @@ extern "C" {
 #define MPTAR_SUPPORT_SPECIAL       /**< Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. */
 #define MPTAR_SUPPORT_EXTRA_TIMES   /**< Enable extra timestamp support (-DMPTAR_SUPPORT_EXTRA_TIMES) to parse additional granular file times. */
 
-#define MPTAR_CUSTOM_U64TOA         /**< \deprecated Legacy macro override. Use \c mptar_u64toa instead. */
-#define MPTAR_CUSTOM_I64TOA         /**< \deprecated Legacy macro override. Use \c mptar_i64toa instead. */
-#define MPTAR_CUSTOM_ATOU64         /**< \deprecated Legacy macro override. Use \c mptar_atou64 instead. */
-#define MPTAR_CUSTOM_ATOI64         /**< \deprecated Legacy macro override. Use \c mptar_atoi64 instead. */
-#define MPTAR_CUSTOM_STRLEN         /**< \deprecated Legacy macro override. Use \c mptar_strlen instead. */
-#define MPTAR_CUSTOM_STRNLEN        /**< \deprecated Legacy macro override. Use \c mptar_strnlen instead. */
-#define MPTAR_CUSTOM_STRNCPY        /**< \deprecated Legacy macro override. Use \c mptar_strncpy instead. */
-#define MPTAR_CUSTOM_MEMCPY         /**< \deprecated Legacy macro override. Use \c mptar_memcpy instead. */
-#define MPTAR_CUSTOM_MEMSET         /**< \deprecated Legacy macro override. Use \c mptar_memset instead. */
-#define MPTAR_CUSTOM_MEMCMP         /**< \deprecated Legacy macro override. Use \c mptar_memcmp instead. */
+#define MPTAR_CUSTOM_U64TOA         /**< Legacy override for unsigned 64-bit integer to string. \deprecated Use \c mptar_u64toa instead. */
+#define MPTAR_CUSTOM_I64TOA         /**< Legacy override for signed 64-bit integer to string. \deprecated Use \c mptar_i64toa instead. */
+#define MPTAR_CUSTOM_ATOU64         /**< Legacy override for string to unsigned 64-bit integer. \deprecated Use \c mptar_atou64 instead. */
+#define MPTAR_CUSTOM_ATOI64         /**< Legacy override for string to signed 64-bit integer. \deprecated Use \c mptar_atoi64 instead. */
+#define MPTAR_CUSTOM_STRLEN         /**< Legacy override for string length calculation. \deprecated Use \c mptar_strlen instead. */
+#define MPTAR_CUSTOM_STRNLEN        /**< Legacy override for bounded string length calculation. \deprecated Use \c mptar_strnlen instead. */
+#define MPTAR_CUSTOM_STRNCPY        /**< Legacy override for bounded string copying. \deprecated Use \c mptar_strncpy instead. */
+#define MPTAR_CUSTOM_MEMCPY         /**< Legacy override for memory block copying. \deprecated Use \c mptar_memcpy instead. */
+#define MPTAR_CUSTOM_MEMSET         /**< Legacy override for memory block setting. \deprecated Use \c mptar_memset instead. */
+#define MPTAR_CUSTOM_MEMCMP         /**< Legacy override for memory block comparison. \deprecated Use \c mptar_memcmp instead. */
 
 /** \} */
 
@@ -299,7 +299,7 @@ extern "C" {
  *          Use them at your own risk.
  * \brief Unstable low-level hooks and internal customization switches.
  * \details Internal function overrides use direct function name defines (e.g. mptar_internal_foo) from 
- *          \c minipaxtar.c Unless explicitly listed under \ref mptar_stable_config, these custom functions 
+ *          \ref minipaxtar.c Unless explicitly listed under \ref mptar_stable_config, these custom functions 
  *          are considered internal and carry no stability guarantees.
  * \{
  */
