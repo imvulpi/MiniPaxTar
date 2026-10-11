@@ -1058,12 +1058,12 @@ int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
 
 #if (!defined(MPTAR_CUSTOM_U64TOA) && !defined(mptar_u64toa)) || defined(DOXYGEN_DOCS)
 /**
- * \brief Converts an unsigned 64-bit integer into an octal string representation.
- * \details Formats the numeric value as an octal string and guarantees a null-terminated 
+ * \brief Converts an unsigned 64-bit integer into a null-terminated ASCII string.
+ * \details Formats the numeric value as a string and guarantees a null-terminated 
  *          output within the specified buffer size.
  * \note This function can be overridden by defining \ref mptar_u64toa.
  * \param value The 64-bit unsigned integer to convert.
- * \param str Output buffer to store the resulting null-terminated octal string.
+ * \param str Output buffer to store the resulting null-terminated string.
  * \param str_size Maximum capacity of the output buffer in bytes.
  * \param[out] out_err Output status pointer receiving an error code on failure (e.g., overflow if the buffer was too small).
  * \return Pointer to the resulting string buffer \p str on success, or \ref MPTAR_NULL on failure.
