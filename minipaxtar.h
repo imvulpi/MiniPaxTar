@@ -298,6 +298,11 @@ extern "C" {
 #define mptar_memset mptar_memset   /**< Override for memory block setting. */
 #define mptar_memcmp mptar_memcmp   /**< Override for memory block comparison. */
 
+#undef mptar_u64toa
+#undef mptar_i64toa
+#undef mptar_atou64
+#undef mptar_atoi64
+
 #define MPTAR_CUSTOM_U64TOA         /**< Legacy override for unsigned 64-bit integer to string. \deprecated Use \ref mptar_u64toa instead. */
 #define MPTAR_CUSTOM_I64TOA         /**< Legacy override for signed 64-bit integer to string. \deprecated Use \ref mptar_i64toa instead. */
 #define MPTAR_CUSTOM_ATOU64         /**< Legacy override for string to unsigned 64-bit integer. \deprecated Use \ref mptar_atou64 instead. */

@@ -303,6 +303,11 @@ extern "C" {
 #define mptar_memset mptar_memset   /**< Override for memory block setting. */
 #define mptar_memcmp mptar_memcmp   /**< Override for memory block comparison. */
 
+#undef mptar_u64toa
+#undef mptar_i64toa
+#undef mptar_atou64
+#undef mptar_atoi64
+
 #define MPTAR_CUSTOM_U64TOA         /**< Legacy override for unsigned 64-bit integer to string. \deprecated Use \ref mptar_u64toa instead. */
 #define MPTAR_CUSTOM_I64TOA         /**< Legacy override for signed 64-bit integer to string. \deprecated Use \ref mptar_i64toa instead. */
 #define MPTAR_CUSTOM_ATOU64         /**< Legacy override for string to unsigned 64-bit integer. \deprecated Use \ref mptar_atou64 instead. */
@@ -1051,7 +1056,7 @@ int mptar_memcmp(const void* s1, const void* s2, mptar_size_t size) {
     #define MPTAR_CUSTOM_I64TOA
 #endif
 
-#if !defined(MPTAR_CUSTOM_U64TOA) && !defined(mptar_u64toa) 
+#if (!defined(MPTAR_CUSTOM_U64TOA) && !defined(mptar_u64toa)) || defined(DOXYGEN_DOCS)
 /**
  * \brief Converts an unsigned 64-bit integer into an octal string representation.
  * \details Formats the numeric value as an octal string and guarantees a null-terminated 
@@ -1106,7 +1111,7 @@ static char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, 
 extern char* mptar_u64toa(mptar_uint64 value, char* str, mptar_size_t str_size, int *out_err);
 #endif
 
-#if !defined(MPTAR_CUSTOM_I64TOA) && !defined(mptar_i64toa)
+#if (!defined(MPTAR_CUSTOM_I64TOA) && !defined(mptar_i64toa)) || defined(DOXYGEN_DOCS)
 /**
  * \brief Converts a signed 64-bit integer into a string representation.
  * \details Formats the numeric value as a decimal (or signed) string, including a negative sign 
@@ -2003,7 +2008,7 @@ int mptar_close_archive(mptar_writer *ctx)
     #define MPTAR_CUSTOM_ATOI64
 #endif
 
-#if !defined(mptar_atou64) && !defined(MPTAR_CUSTOM_ATOU64)
+#if (!defined(mptar_atou64) && !defined(MPTAR_CUSTOM_ATOU64)) || defined(DOXYGEN_DOCS)
 /**
  * \brief Parses a string slice into an unsigned 64-bit integer with explicit length and overflow protection.
  * \details Safely converts a bounded ASCII string representation of a number into an unsigned 64-bit integer, 
@@ -2058,7 +2063,7 @@ static mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err) {
 extern mptar_uint64 mptar_atou64(const char* str, mptar_size_t len, int* err);
 #endif
 
-#if !defined(mptar_atoi64) && !defined(MPTAR_CUSTOM_ATOI64)
+#if (!defined(mptar_atoi64) && !defined(MPTAR_CUSTOM_ATOI64)) || defined(DOXYGEN_DOCS)
 /**
  * \brief Parses a string slice into a signed 64-bit integer with sign detection, length bounds, and overflow protection.
  * \details Safely converts a bounded ASCII string representation (optionally prefixed with '+' or '-') into a signed 64-bit integer, 
