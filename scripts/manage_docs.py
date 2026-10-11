@@ -46,9 +46,6 @@ def main():
             check=True
         )
 
-        print("\n---- RUNNING PYTHON ----\n")
-        subprocess.run(["python", str(ROOT / "scripts/adjust_doc_links.py")], check=True)
-
         print("\n---- RUNNING MKDOCS ----\n")
         subprocess.run(["mkdocs", "serve", "--config-file", str(ROOT / "mkdocs.yml")], check=True)
 

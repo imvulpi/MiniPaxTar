@@ -3,6 +3,7 @@
   "linkLower": false,
   "indexInFolders": false,
   "replaceUnderscoresInAnchors": false,
+  "linkSuffix": "/",
   "summaryAbbrevLength": 100,
   "files": {
     "summary": "SUMMARY.md",

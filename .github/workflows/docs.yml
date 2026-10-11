@@ -46,9 +46,6 @@ jobs:
       - name: Run Doxybook2
         run: |
           doxybook2 -i docs/xml -o docs/api -c doxybook2.json
-
-      - name: Run Python Link Adjuster
-        run: python scripts/adjust_doc_links.py
-
+          
       - name: Deploy MkDocs to GitHub Pages
         run: mkdocs gh-deploy --config-file mkdocs.yml --force
