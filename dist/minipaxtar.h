@@ -67,7 +67,11 @@
         typedef unsigned long mptar_size_t;
     #endif
 
-    #define MPTAR_NULL ((void*)0)
+    #ifdef __cplusplus
+        #define MPTAR_NULL nullptr
+    #else
+        #define MPTAR_NULL ((void*)0)
+    #endif
 
     #define MPTAR_INT64_MAX  (9223372036854775807LL)
     #define MPTAR_INT64_MIN  (-MPTAR_INT64_MAX - 1LL)
