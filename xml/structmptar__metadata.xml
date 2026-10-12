@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structmptar__metadata" kind="struct" language="C++" prot="public">
+    <compoundname>mptar_metadata</compoundname>
+    <includes refid="minipaxtar_8h" local="no">minipaxtar.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmptar__metadata_1a93e2dac0ec26064fbd1c1ff7ca1d8054" prot="public" static="no" mutable="no">
+        <type><ref refid="structmptar__opt__time" kindref="compound">mptar_opt_time</ref></type>
+        <definition>mptar_opt_time mptar_metadata::mtime</definition>
+        <argsstring></argsstring>
+        <name>mtime</name>
+        <qualifiedname>mptar_metadata::mtime</qualifiedname>
+        <briefdescription>
+<para>File modification time with optional sub-second precision. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="670" column="20" bodyfile="minipaxtar.h" bodystart="670" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a7396d75d9d15b2af69c1f78117be2715" prot="public" static="no" mutable="no">
+        <type><ref refid="minipaxtar_8h_1a2e58544b5c78d9e785113752856b7305" kindref="member">mptar_uint64</ref></type>
+        <definition>mptar_uint64 mptar_metadata::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <qualifiedname>mptar_metadata::size</qualifiedname>
+        <briefdescription>
+<para>Payload size in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="676" column="18" bodyfile="minipaxtar.h" bodystart="676" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1afc05e272d2f0ee31cd3710d742a3db4a" prot="public" static="no" mutable="no">
+        <type><ref refid="minipaxtar_8h_1a2e58544b5c78d9e785113752856b7305" kindref="member">mptar_uint64</ref></type>
+        <definition>mptar_uint64 mptar_metadata::uid</definition>
+        <argsstring></argsstring>
+        <name>uid</name>
+        <qualifiedname>mptar_metadata::uid</qualifiedname>
+        <briefdescription>
+<para>Owner user ID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="677" column="18" bodyfile="minipaxtar.h" bodystart="677" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a9ed66d5669dd05d11437210f6efea726" prot="public" static="no" mutable="no">
+        <type><ref refid="minipaxtar_8h_1a2e58544b5c78d9e785113752856b7305" kindref="member">mptar_uint64</ref></type>
+        <definition>mptar_uint64 mptar_metadata::gid</definition>
+        <argsstring></argsstring>
+        <name>gid</name>
+        <qualifiedname>mptar_metadata::gid</qualifiedname>
+        <briefdescription>
+<para>Owner group ID. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="678" column="18" bodyfile="minipaxtar.h" bodystart="678" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a097e1d4bcb5fff632f5baace2bd46eea" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* mptar_metadata::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <qualifiedname>mptar_metadata::path</qualifiedname>
+        <briefdescription>
+<para>Full file path string (null-terminated). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="680" column="16" bodyfile="minipaxtar.h" bodystart="680" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a3ff3d3b4a9fcf92b9d26c2b2831f94d8" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* mptar_metadata::link_target</definition>
+        <argsstring></argsstring>
+        <name>link_target</name>
+        <qualifiedname>mptar_metadata::link_target</qualifiedname>
+        <briefdescription>
+<para>Symlink/hardlink target path string (null-terminated). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="681" column="16" bodyfile="minipaxtar.h" bodystart="681" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a6c0d6338c5036be9457175eee4eb6ee1" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* mptar_metadata::uname</definition>
+        <argsstring></argsstring>
+        <name>uname</name>
+        <qualifiedname>mptar_metadata::uname</qualifiedname>
+        <briefdescription>
+<para>Owner user name string (null-terminated). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="682" column="16" bodyfile="minipaxtar.h" bodystart="682" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1ae2a30b68c2d7bebc94d5e88d47f93a48" prot="public" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* mptar_metadata::gname</definition>
+        <argsstring></argsstring>
+        <name>gname</name>
+        <qualifiedname>mptar_metadata::gname</qualifiedname>
+        <briefdescription>
+<para>Owner group name string (null-terminated). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="683" column="16" bodyfile="minipaxtar.h" bodystart="683" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a60e37aadfb4348254b5454415150d8dd" prot="public" static="no" mutable="no">
+        <type><ref refid="minipaxtar_8h_1a1facdb972aa08469116c07cde83681ea" kindref="member">mptar_uint32</ref></type>
+        <definition>mptar_uint32 mptar_metadata::mode</definition>
+        <argsstring></argsstring>
+        <name>mode</name>
+        <qualifiedname>mptar_metadata::mode</qualifiedname>
+        <briefdescription>
+<para>UNIX file permission bitmask. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="685" column="18" bodyfile="minipaxtar.h" bodystart="685" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a1491086a5ec3cabd5796a776c45f6267" prot="public" static="no" mutable="no">
+        <type><ref refid="minipaxtar_8h_1a1facdb972aa08469116c07cde83681ea" kindref="member">mptar_uint32</ref></type>
+        <definition>mptar_uint32 mptar_metadata::devminor</definition>
+        <argsstring></argsstring>
+        <name>devminor</name>
+        <qualifiedname>mptar_metadata::devminor</qualifiedname>
+        <briefdescription>
+<para>Minor device number for special files. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="687" column="18" bodyfile="minipaxtar.h" bodystart="687" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a014f0426c53dc49f16fee37eec004ca8" prot="public" static="no" mutable="no">
+        <type><ref refid="minipaxtar_8h_1a1facdb972aa08469116c07cde83681ea" kindref="member">mptar_uint32</ref></type>
+        <definition>mptar_uint32 mptar_metadata::devmajor</definition>
+        <argsstring></argsstring>
+        <name>devmajor</name>
+        <qualifiedname>mptar_metadata::devmajor</qualifiedname>
+        <briefdescription>
+<para>Major device number for special files. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="688" column="18" bodyfile="minipaxtar.h" bodystart="688" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a8d433a8ab1f6605151b05599549e2505" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mptar_metadata::typeflag</definition>
+        <argsstring></argsstring>
+        <name>typeflag</name>
+        <qualifiedname>mptar_metadata::typeflag</qualifiedname>
+        <briefdescription>
+<para>File entry type flag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Standard values include:<itemizedlist>
+<listitem><para><computeroutput>&apos;0&apos;</computeroutput> or <computeroutput>&apos;\0&apos;</computeroutput>: Regular file - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fadb433a2bf48828256e9ecacc16595b91" kindref="member">MPTAR_FILE</ref> and <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa93f9224d8c8654b372e73269c8821bc4" kindref="member">MPTAR_FILE_LEGACY</ref></para>
+</listitem><listitem><para><computeroutput>&apos;1&apos;</computeroutput>: Hard link - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa7ad9100be15b262e61e00880e1751116" kindref="member">MPTAR_HARD_LINK</ref></para>
+</listitem><listitem><para><computeroutput>&apos;2&apos;</computeroutput>: Symbolic link - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa04edda73cb96bc8c638811c0e14c6f3b" kindref="member">MPTAR_SYMLINK</ref></para>
+</listitem><listitem><para><computeroutput>&apos;3&apos;</computeroutput>: Character special file - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa1cae5942ec834eedadba012194532498" kindref="member">MPTAR_CHAR_FILE</ref></para>
+</listitem><listitem><para><computeroutput>&apos;4&apos;</computeroutput>: Block special file - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa6688d925c3ec370e5c5e901d716fe6d3" kindref="member">MPTAR_BLOCK_FILE</ref></para>
+</listitem><listitem><para><computeroutput>&apos;5&apos;</computeroutput>: Directory - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fac27611e80f93f28d6fd523770f472f79" kindref="member">MPTAR_DIRECTORY</ref></para>
+</listitem><listitem><para><computeroutput>&apos;6&apos;</computeroutput>: FIFO / pipe - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fa4a05562af8e80d2403c55c67cf6ecb4e" kindref="member">MPTAR_PIPE</ref></para>
+</listitem><listitem><para><computeroutput>&apos;7&apos;</computeroutput>: Contiguous file - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820facfe35ec16403353afd1b613243d9c052" kindref="member">MPTAR_CONTINOUS_FILE</ref></para>
+</listitem><listitem><para><computeroutput>&apos;x&apos;</computeroutput>: PAX extended header - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fabed31f90d02ee7a638b7d4fadb509eca" kindref="member">MPTAR_PAX_EX_HEADER</ref></para>
+</listitem><listitem><para><computeroutput>&apos;g&apos;</computeroutput>: PAX global extended header - <ref refid="group__mptar__typeflags_1gga26733dab5e45235a0d51d0ae2055820fadc0494cca7e70a5bc4051e78d772e7e0" kindref="member">MPTAR_PAX_GLOBAL_EX_HEADER</ref></para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+See <ref refid="group__mptar__typeflags" kindref="compound">File Type Flags</ref> for defines of those. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="707" column="10" bodyfile="minipaxtar.h" bodystart="707" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmptar__metadata_1a017b3f8c2aaa381315176599640f725e" prot="public" static="no" mutable="no">
+        <type><ref refid="minipaxtar_8h_1afaa87723b8417d40fcf45b7330261ef9" kindref="member">bool</ref></type>
+        <definition>bool mptar_metadata::internal_alloc</definition>
+        <argsstring></argsstring>
+        <name>internal_alloc</name>
+        <qualifiedname>mptar_metadata::internal_alloc</qualifiedname>
+        <briefdescription>
+<para>True if string fields were heap-allocated internally by reader. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="708" column="10" bodyfile="minipaxtar.h" bodystart="708" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Universal, high-level archive entry metadata. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>Unlike the fixed-size on-disk <ref refid="structmptar__header" kindref="compound">mptar_header</ref>, this structure uses spacious data types (such as 64-bit integers for IDs and sizes) and supports unbounded strings (like fully unconstrained paths and usernames). Time values like <ref refid="structmptar__metadata_1a93e2dac0ec26064fbd1c1ff7ca1d8054" kindref="member">mtime</ref> support sub-second nanosecond precision and negative epochs. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>mptar_metadata</label>
+        <link refid="structmptar__metadata"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mtime</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mptar_opt_time</label>
+        <link refid="structmptar__opt__time"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mptar_timespec</label>
+        <link refid="structmptar__timespec"/>
+      </node>
+    </collaborationgraph>
+    <location file="minipaxtar.h" line="669" column="1" bodyfile="minipaxtar.h" bodystart="669" bodyend="709"/>
+    <listofallmembers>
+      <member refid="structmptar__metadata_1a014f0426c53dc49f16fee37eec004ca8" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>devmajor</name></member>
+      <member refid="structmptar__metadata_1a1491086a5ec3cabd5796a776c45f6267" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>devminor</name></member>
+      <member refid="structmptar__metadata_1a9ed66d5669dd05d11437210f6efea726" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>gid</name></member>
+      <member refid="structmptar__metadata_1ae2a30b68c2d7bebc94d5e88d47f93a48" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>gname</name></member>
+      <member refid="structmptar__metadata_1a017b3f8c2aaa381315176599640f725e" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>internal_alloc</name></member>
+      <member refid="structmptar__metadata_1a3ff3d3b4a9fcf92b9d26c2b2831f94d8" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>link_target</name></member>
+      <member refid="structmptar__metadata_1a60e37aadfb4348254b5454415150d8dd" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>mode</name></member>
+      <member refid="structmptar__metadata_1a93e2dac0ec26064fbd1c1ff7ca1d8054" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>mtime</name></member>
+      <member refid="structmptar__metadata_1a097e1d4bcb5fff632f5baace2bd46eea" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>path</name></member>
+      <member refid="structmptar__metadata_1a7396d75d9d15b2af69c1f78117be2715" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>size</name></member>
+      <member refid="structmptar__metadata_1a8d433a8ab1f6605151b05599549e2505" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>typeflag</name></member>
+      <member refid="structmptar__metadata_1afc05e272d2f0ee31cd3710d742a3db4a" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>uid</name></member>
+      <member refid="structmptar__metadata_1a6c0d6338c5036be9457175eee4eb6ee1" prot="public" virt="non-virtual"><scope>mptar_metadata</scope><name>uname</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

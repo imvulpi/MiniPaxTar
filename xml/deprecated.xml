@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="deprecated" kind="page">
+    <compoundname>deprecated</compoundname>
+    <title>Deprecated List</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><variablelist>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga78d95248a7158a331d9f28feef23a9f9" kindref="member">MPTAR_CUSTOM_ATOI64</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000004"/>Use <ref refid="group__mptar__stable__config_1ga6398f9bb4b5b42bac75560a5e8fa4f42" kindref="member">mptar_atoi64</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1gac0b213bb335a36b21a7d475692c80299" kindref="member">MPTAR_CUSTOM_ATOU64</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000003"/>Use <ref refid="group__mptar__stable__config_1gaae3f059ec1ddbe766257be8fc45f7c5e" kindref="member">mptar_atou64</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga05f3ead8b3c38b1fbcfa5be07a68fa39" kindref="member">MPTAR_CUSTOM_I64TOA</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000002"/>Use <ref refid="group__mptar__stable__config_1ga48e4878a62be9b59a094b92f0571d0c9" kindref="member">mptar_i64toa</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga2365b90c433513a9bd76ac8d3d2bbbbe" kindref="member">MPTAR_CUSTOM_MEMCMP</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000010"/>Use <ref refid="group__mptar__stable__config_1ga51acbbe0fea5fe57542bef958c0bea43" kindref="member">mptar_memcmp</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga98254e7f270b3697e5746580f2410dff" kindref="member">MPTAR_CUSTOM_MEMCPY</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000008"/>Use <ref refid="group__mptar__stable__config_1gaa47ee7557d2b76f9ae8408ef350d6746" kindref="member">mptar_memcpy</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga8a346a5278e136ae3a70c1b1edf809b7" kindref="member">MPTAR_CUSTOM_MEMSET</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000009"/>Use <ref refid="group__mptar__stable__config_1ga172aae787d84a5d8ff36a1653e40c3a5" kindref="member">mptar_memset</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga8f59b4a2c5cfd6fcc0d5436c0f94d2ae" kindref="member">MPTAR_CUSTOM_STRLEN</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000005"/>Use <ref refid="group__mptar__stable__config_1ga111bc8b972f65d7b004e696d2675c19c" kindref="member">mptar_strlen</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga50df22694661b0ed6e4a943d544a5ef5" kindref="member">MPTAR_CUSTOM_STRNCPY</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000007"/>Use <ref refid="group__mptar__stable__config_1ga37072ec945b159a2fe4b1c44394df7f7" kindref="member">mptar_strncpy</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1ga59059ed9cbea07d80e7e7ea7cfa50f31" kindref="member">MPTAR_CUSTOM_STRNLEN</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000006"/>Use <ref refid="group__mptar__stable__config_1ga3f8c713baa85f53cd5e7971f589edc26" kindref="member">mptar_strnlen</ref> instead.  </para>
+</listitem>
+<varlistentry><term>Global <ref refid="group__mptar__stable__config_1gaad35354fe9aa548eceec5b1f60821046" kindref="member">MPTAR_CUSTOM_U64TOA</ref>  </term></varlistentry>
+<listitem><para><anchor id="deprecated_1_deprecated000001"/>Use <ref refid="group__mptar__stable__config_1gaeee7de5ee5eda75d10a8fce155c4acf1" kindref="member">mptar_u64toa</ref> instead. </para>
+</listitem>
+</variablelist>
+</para>
+    </detaileddescription>
+    <location file="deprecated"/>
+  </compounddef>
+</doxygen>

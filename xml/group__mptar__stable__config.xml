@@ -1,0 +1,352 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="group__mptar__stable__config" kind="group">
+    <compoundname>mptar_stable_config</compoundname>
+    <title>Stable Compile-Time Options</title>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__mptar__stable__config_1ga6f1f06dee6bb98cd553e1edb542d710e" prot="public" static="no">
+        <name>MPTAR_USE_STD</name>
+        <briefdescription>
+<para>Enables standard library dependencies, maps no-stdlib built-in functions to stdlib equivalents. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It&apos;s recommended whenether using stdlib, could reduce size and improve performance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="298" column="9" bodyfile="minipaxtar.h" bodystart="298" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga4c45a5dd495ad2a7ebd5f51c2e7effe5" prot="public" static="no">
+        <name>MPTAR_NO_STD</name>
+        <briefdescription>
+<para>Disable standard library dependencies (-DMPTAR_NO_STD) for freestanding/bare-metal environments. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It&apos;s turned on by default, unless <ref refid="group__mptar__stable__config_1ga6f1f06dee6bb98cd553e1edb542d710e" kindref="member">MPTAR_USE_STD</ref> is defined. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="31" column="13" bodyfile="minipaxtar.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga4c45a5dd495ad2a7ebd5f51c2e7effe5" prot="public" static="no">
+        <name>MPTAR_NO_STD</name>
+        <briefdescription>
+<para>Disable standard library dependencies (-DMPTAR_NO_STD) for freestanding/bare-metal environments. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It&apos;s turned on by default, unless <ref refid="group__mptar__stable__config_1ga6f1f06dee6bb98cd553e1edb542d710e" kindref="member">MPTAR_USE_STD</ref> is defined. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="301" column="9" bodyfile="minipaxtar.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gac16c82dbd512401c9f34972f46f78729" prot="public" static="no">
+        <name>MPTAR_NO_READ</name>
+        <briefdescription>
+<para>Disable read support (-DMPTAR_NO_READ) to strip archive reading functionality and reduce binary size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="302" column="9" bodyfile="minipaxtar.h" bodystart="302" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga0f3ae96bea44c94cc38c3402e670e23c" prot="public" static="no">
+        <name>MPTAR_NO_WRITE</name>
+        <briefdescription>
+<para>Disable write support (-DMPTAR_NO_WRITE) to strip archive writing functionality and reduce binary size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="303" column="9" bodyfile="minipaxtar.h" bodystart="303" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga57544922222b318859ba6d915af0fb2c" prot="public" static="no">
+        <name>MPTAR_SUPPORT_SPECIAL</name>
+        <briefdescription>
+<para>Enable support for special TAR entry types (-DMPTAR_SUPPORT_SPECIAL) like long links, PAX headers, and sparse files. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="304" column="9" bodyfile="minipaxtar.h" bodystart="304" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gaef67fd3ce16b2df8de54adae94593f63" prot="public" static="no">
+        <name>MPTAR_NO_EXTRA_TIMES</name>
+        <briefdescription>
+<para>Removes extra timestamp support (-DMPTAR_NO_EXTRA_TIMES) to save on binary size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="305" column="9" bodyfile="minipaxtar.h" bodystart="305" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gaeee7de5ee5eda75d10a8fce155c4acf1" prot="public" static="no">
+        <name>mptar_u64toa</name>
+        <initializer>mptar_u64toa</initializer>
+        <briefdescription>
+<para>Override for unsigned 64-bit integer to string conversion. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="307" column="9" bodyfile="minipaxtar.h" bodystart="307" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga48e4878a62be9b59a094b92f0571d0c9" prot="public" static="no">
+        <name>mptar_i64toa</name>
+        <initializer>mptar_i64toa</initializer>
+        <briefdescription>
+<para>Override for signed 64-bit integer to string conversion. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="308" column="9" bodyfile="minipaxtar.h" bodystart="308" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gaae3f059ec1ddbe766257be8fc45f7c5e" prot="public" static="no">
+        <name>mptar_atou64</name>
+        <initializer>mptar_atou64</initializer>
+        <briefdescription>
+<para>Override for string to unsigned 64-bit integer conversion. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="309" column="9" bodyfile="minipaxtar.h" bodystart="309" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga6398f9bb4b5b42bac75560a5e8fa4f42" prot="public" static="no">
+        <name>mptar_atoi64</name>
+        <initializer>mptar_atoi64</initializer>
+        <briefdescription>
+<para>Override for string to signed 64-bit integer conversion. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="310" column="9" bodyfile="minipaxtar.h" bodystart="310" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga111bc8b972f65d7b004e696d2675c19c" prot="public" static="no">
+        <name>mptar_strlen</name>
+        <initializer>mptar_strlen</initializer>
+        <briefdescription>
+<para>Override for string length calculation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="311" column="9" bodyfile="minipaxtar.h" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga3f8c713baa85f53cd5e7971f589edc26" prot="public" static="no">
+        <name>mptar_strnlen</name>
+        <initializer>mptar_strnlen</initializer>
+        <briefdescription>
+<para>Override for bounded string length calculation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="312" column="9" bodyfile="minipaxtar.h" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga37072ec945b159a2fe4b1c44394df7f7" prot="public" static="no">
+        <name>mptar_strncpy</name>
+        <initializer>mptar_strncpy</initializer>
+        <briefdescription>
+<para>Override for bounded string copying. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="313" column="9" bodyfile="minipaxtar.h" bodystart="313" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gaa47ee7557d2b76f9ae8408ef350d6746" prot="public" static="no">
+        <name>mptar_memcpy</name>
+        <initializer>mptar_memcpy</initializer>
+        <briefdescription>
+<para>Override for memory block copying. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="314" column="9" bodyfile="minipaxtar.h" bodystart="314" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga172aae787d84a5d8ff36a1653e40c3a5" prot="public" static="no">
+        <name>mptar_memset</name>
+        <initializer>mptar_memset</initializer>
+        <briefdescription>
+<para>Override for memory block setting. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="315" column="9" bodyfile="minipaxtar.h" bodystart="315" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga51acbbe0fea5fe57542bef958c0bea43" prot="public" static="no">
+        <name>mptar_memcmp</name>
+        <initializer>mptar_memcmp</initializer>
+        <briefdescription>
+<para>Override for memory block comparison. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="316" column="9" bodyfile="minipaxtar.h" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gaad35354fe9aa548eceec5b1f60821046" prot="public" static="no">
+        <name>MPTAR_CUSTOM_U64TOA</name>
+        <briefdescription>
+<para>Legacy override for unsigned 64-bit integer to string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000001"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1gaeee7de5ee5eda75d10a8fce155c4acf1" kindref="member">mptar_u64toa</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="323" column="9" bodyfile="minipaxtar.h" bodystart="323" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga05f3ead8b3c38b1fbcfa5be07a68fa39" prot="public" static="no">
+        <name>MPTAR_CUSTOM_I64TOA</name>
+        <briefdescription>
+<para>Legacy override for signed 64-bit integer to string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000002"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1ga48e4878a62be9b59a094b92f0571d0c9" kindref="member">mptar_i64toa</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="324" column="9" bodyfile="minipaxtar.h" bodystart="324" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1gac0b213bb335a36b21a7d475692c80299" prot="public" static="no">
+        <name>MPTAR_CUSTOM_ATOU64</name>
+        <briefdescription>
+<para>Legacy override for string to unsigned 64-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000003"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1gaae3f059ec1ddbe766257be8fc45f7c5e" kindref="member">mptar_atou64</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="325" column="9" bodyfile="minipaxtar.h" bodystart="325" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga78d95248a7158a331d9f28feef23a9f9" prot="public" static="no">
+        <name>MPTAR_CUSTOM_ATOI64</name>
+        <briefdescription>
+<para>Legacy override for string to signed 64-bit integer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000004"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1ga6398f9bb4b5b42bac75560a5e8fa4f42" kindref="member">mptar_atoi64</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="326" column="9" bodyfile="minipaxtar.h" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga8f59b4a2c5cfd6fcc0d5436c0f94d2ae" prot="public" static="no">
+        <name>MPTAR_CUSTOM_STRLEN</name>
+        <briefdescription>
+<para>Legacy override for string length calculation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000005"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1ga111bc8b972f65d7b004e696d2675c19c" kindref="member">mptar_strlen</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="327" column="9" bodyfile="minipaxtar.h" bodystart="327" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga59059ed9cbea07d80e7e7ea7cfa50f31" prot="public" static="no">
+        <name>MPTAR_CUSTOM_STRNLEN</name>
+        <briefdescription>
+<para>Legacy override for bounded string length calculation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000006"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1ga3f8c713baa85f53cd5e7971f589edc26" kindref="member">mptar_strnlen</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="328" column="9" bodyfile="minipaxtar.h" bodystart="328" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga50df22694661b0ed6e4a943d544a5ef5" prot="public" static="no">
+        <name>MPTAR_CUSTOM_STRNCPY</name>
+        <briefdescription>
+<para>Legacy override for bounded string copying. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000007"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1ga37072ec945b159a2fe4b1c44394df7f7" kindref="member">mptar_strncpy</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="329" column="9" bodyfile="minipaxtar.h" bodystart="329" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga98254e7f270b3697e5746580f2410dff" prot="public" static="no">
+        <name>MPTAR_CUSTOM_MEMCPY</name>
+        <briefdescription>
+<para>Legacy override for memory block copying. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000008"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1gaa47ee7557d2b76f9ae8408ef350d6746" kindref="member">mptar_memcpy</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="330" column="9" bodyfile="minipaxtar.h" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga8a346a5278e136ae3a70c1b1edf809b7" prot="public" static="no">
+        <name>MPTAR_CUSTOM_MEMSET</name>
+        <briefdescription>
+<para>Legacy override for memory block setting. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000009"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1ga172aae787d84a5d8ff36a1653e40c3a5" kindref="member">mptar_memset</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="331" column="9" bodyfile="minipaxtar.h" bodystart="331" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__mptar__stable__config_1ga2365b90c433513a9bd76ac8d3d2bbbbe" prot="public" static="no">
+        <name>MPTAR_CUSTOM_MEMCMP</name>
+        <briefdescription>
+<para>Legacy override for memory block comparison. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="deprecated_1_deprecated000010"><xreftitle>Deprecated</xreftitle><xrefdescription><para>Use <ref refid="group__mptar__stable__config_1ga51acbbe0fea5fe57542bef958c0bea43" kindref="member">mptar_memcmp</ref> instead. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="minipaxtar.h" line="332" column="9" bodyfile="minipaxtar.h" bodystart="332" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Documentation for compile-time configuration macros. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The DOXYGEN_DOCS macro is used exclusively by documentation generators like Doxygen. Because minipaxtar enables reading and writing by default, these option macros (such as <ref refid="group__mptar__stable__config_1gac16c82dbd512401c9f34972f46f78729" kindref="member">MPTAR_NO_READ</ref>) are not normally defined in the source code. Wrapping them in &quot;#ifdef DOXYGEN_DOCS&quot; allows Doxygen to index and document them without altering actual build configurations.</para>
+<para>Stable configuration macros and custom conversion/string hooks.</para>
+<para>These options, features, and custom conversion hooks are guaranteed stable and will follow standard deprecation cycles if ever slated for modification or removal.</para>
+<para><simplesect kind="par"><title>Default Implementations</title><para>When a stable function override is not explicitly defined, minipaxtar may map it to the corresponding standard C library function when the library is available and supported. For example, <ref refid="group__mptar__stable__config_1ga111bc8b972f65d7b004e696d2675c19c" kindref="member">mptar_strlen</ref> maps to <computeroutput>strlen</computeroutput> when neither <ref refid="group__mptar__stable__config_1ga111bc8b972f65d7b004e696d2675c19c" kindref="member">mptar_strlen</ref> nor the legacy <ref refid="group__mptar__stable__config_1ga8f59b4a2c5cfd6fcc0d5436c0f94d2ae" kindref="member">MPTAR_CUSTOM_STRLEN</ref> is defined. When <ref refid="group__mptar__stable__config_1ga4c45a5dd495ad2a7ebd5f51c2e7effe5" kindref="member">MPTAR_NO_STD</ref> is defined the functions are mapped to the built-in nostd replacements, by default it is defined unless <ref refid="group__mptar__stable__config_1ga6f1f06dee6bb98cd553e1edb542d710e" kindref="member">MPTAR_USE_STD</ref> is defined.</para>
+</simplesect>
+<simplesect kind="note"><para>Custom function hooks can now be provided directly by defining the exact function name macro (e.g., #define mptar_strlen my_strlen). The legacy <computeroutput>MPTAR_CUSTOM_*</computeroutput> macros are deprecated but remain supported for backward compatibility. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

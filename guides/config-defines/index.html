@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+    
+    <meta name="description" content="Lightweight, single-header C TAR library"> 
+     
+    
+    <link rel="canonical" href="https://imvulpi.github.io/MiniPaxTar/guides/config-defines/"><link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>Configuration Flags - MiniPaxTar</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- dark color palette -->
+<link href="../../css/palettes/dark.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" rel="stylesheet"> 
+    <link href="../../stylesheets/terminal-custom.css" rel="stylesheet">  
+    
+    
+
+    
+    <!-- search css support -->
+<link href="../../css/search/bootstrap-modal.css" rel="stylesheet">
+<!-- search scripts -->
+<script>
+    var base_url = "../..",
+    shortcuts = "{}";
+</script>
+<script src="../../js/jquery/jquery-1.10.1.min.js" defer></script>
+<script src="../../js/bootstrap/bootstrap.min.js" defer></script>
+<script src="../../js/mkdocs/base.js" defer></script>
+    
+    
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.css"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    
+    <script src="../../javascripts/init-hljs.js"></script>
+    
+    <script src="../../search/main.js"></script>
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="https://imvulpi.github.io/MiniPaxTar/" class="no-style">MiniPaxTar</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                    
+                    
+
+
+<li property="itemListElement" typeof="ListItem">
+    <a href="#" class="menu-item" data-toggle="modal" data-target="#mkdocs_search_modal" property="item" typeof="SearchAction">
+        <i aria-hidden="true" class="fa fa-search"></i> <span property="name">Search</span>
+    </a>
+    <meta property="position" content="0">
+</li>
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Overview</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">Getting Started</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/quickstart/">Quickstart Guide</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/reading/">Reading Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/writing/">Writing Archives</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/extracting/">Extracting Files</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../overview/integration/">Integrating it</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Features & Guides</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../pax-format/">PAX vs USTAR Format</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">Configuration Flags</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../status-codes/">Status/Error Codes</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../error-handling/">Error Handling</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">API Reference</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_groups/">Groups</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_classes/">Structures</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../api/index_files/">Files</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Source files</span>
+        
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="https://github.com/imvulpi/MiniPaxTar">Github</a>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#configuration-compile-time-flags">Configuration &amp; Compile-Time Flags</a></li>
+        <li><a href="#high-level-feature-switches">High-Level Feature Switches</a></li><li><a href="#detailed-switch-usage">Detailed Switch Usage</a></li><li><a href="#stable-function-overrides">Stable Function Overrides</a></li><li><a href="#experimental-and-internal-overrides">Experimental and Internal Overrides</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="configuration-compile-time-flags">Configuration &amp; Compile-Time Flags</h1>
+<p><code>minipaxtar</code> is designed to be lean and adaptable for embedded environments, bare-metal kernels, and resource-constrained platforms. You can tailor its feature set, binary footprint, and dependencies using preprocessor definitions.</p>
+<hr />
+<h2 id="high-level-feature-switches">High-Level Feature Switches</h2>
+<p>These macros control major API subsets and platform capability dependencies.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Preprocessor Flag</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_NO_READ</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em></td>
+<td style="text-align: left;">Disables the reading and parsing API (<code>mptar_reader</code>, <code>mptar_read_header</code>, <code>mptar_read_data_chunk</code>, etc.). Reduces binary footprint when only writing archives.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_NO_WRITE</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em></td>
+<td style="text-align: left;">Disables the archive creation API (<code>mptar_writer</code>, <code>mptar_write_header</code>, <code>mptar_write_data_chunk</code>, etc.). Reduces binary footprint when only extracting archives.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_SUPPORT_SPECIAL</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em> / ON in CMake</td>
+<td style="text-align: left;">Include support for special node metadata (<code>devmajor</code> and <code>devminor</code> device numbers).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>MPTAR_NO_EXTRA_TIMES</code></strong></td>
+<td style="text-align: left;"><em>Undefined</em> / ON in CMake</td>
+<td style="text-align: left;">Removes support for extended PAX timestamp attributes (<code>atime</code> access time and <code>ctime</code> change time). Reduces binary footprint where such support is unneded.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="detailed-switch-usage">Detailed Switch Usage</h2>
+<h3 id="1-stripping-read-or-write-api">1. Stripping Read or Write API</h3>
+<p>If your application only needs to unpack archives or only needs to create them, you can strip the unused logic entirely:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define MPTAR_NO_READ</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"minipaxtar.h"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>gcc<span class="w"> </span>-DMPTAR_NO_WRITE<span class="w"> </span>-c<span class="w"> </span>minipaxtar.c<span class="w"> </span>-o<span class="w"> </span>minipaxtar.o
+</code></pre></div>
+<hr />
+<h3 id="2-extended-metadata-features">2. Extended Metadata Features</h3>
+<p>By default, <code>minipaxtar</code> doesn't define any compilation options, however it enables support on cmake for special device nodes. If your system does not require these metadata fields, you can omit them to simplify <code>mptar_metadata</code> structs and handling logic. By default extra extended access time (<code>meta.atime</code>) and change time (<code>meta.ctime</code>) are included to remove it use <code>MPTAR_NO_EXTRA_TIMES</code>. It is included by default because the size difference in negligible for most users and yet it provides useful features. Special files support is not included by default because most users don't use it, you may enable the support by defining <code>MPTAR_SUPPORT_SPECIAL</code></p>
+<ul>
+<li><strong><code>MPTAR_SUPPORT_SPECIAL</code></strong>: Includes device node fields (<code>meta.devmajor</code> and <code>meta.devminor</code>).</li>
+<li><strong><code>MPTAR_NO_EXTRA_TIMES</code></strong>: Removes extended access time (<code>meta.atime</code>) and change time (<code>meta.ctime</code>).</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="cp">#ifdef MPTAR_SUPPORT_SPECIAL</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Device major: %u, minor: %u</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">devmajor</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">devminor</span><span class="p">);</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifndef MPTAR_NO_EXTRA_TIMES </span><span class="c1">// Or assume it is turned on, like it is by default.</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Access time: %llu, Change time: %llu</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">atime</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">ctime</span><span class="p">);</span>
+<span class="cp">#endif</span>
+</code></pre></div>
+<hr />
+<h2 id="stable-function-overrides">Stable Function Overrides</h2>
+<p><code>minipaxtar</code> allows selected internal and standard-library-compatible functions to be overridden at compile time. This includes string operations such as <code>strlen</code> and <code>strnlen</code>, memory operations such as <code>memcpy</code>, and other supported functions. See all functions that can be safely overriden in <a href="/MiniPaxTar/api/Modules/group__mptar__stable__config/">stable config options</a></p>
+<p>To use a custom implementation, define the corresponding function-name macro to your implementation's name. This allows you to provide optimized, platform-specific, or assembly-accelerated implementations while keeping the rest of <code>minipaxtar</code> unchanged.</p>
+<p>For example, to override <code>strlen</code>, define <code>mptar_strlen</code> as <code>custom_strlen</code>. The built-in implementation will be omitted, and <code>minipaxtar</code> will use your custom function instead.</p>
+<h3 id="example-overriding-strlen">Example: Overriding <code>strlen</code></h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"minipaxtar.h"</span>
+
+<span class="cm">/* Custom implementation matching the expected signature */</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="nf">custom_strlen</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Custom strlen called</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="o">++</span><span class="n">p</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="p">)(</span><span class="n">p</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Compile with the override definition:</p>
+<div class="highlight"><pre><span></span><code>clang<span class="w"> </span>minipaxtar.c<span class="w"> </span>...<span class="w"> </span>-Dmptar_strlen<span class="o">=</span>custom_strlen
+</code></pre></div>
+<p>When <code>minipaxtar</code> calls <code>mptar_strlen</code>, the call resolves to <code>custom_strlen</code>, which prints a message before calculating the string length.</p>
+<p>Your custom implementation must be available at link time and match the expected function signature. It must not be <code>static</code> if it is defined in a separate translation unit and referenced externally by <code>minipaxtar</code>.</p>
+<h3 id="legacy-overrides">Legacy Overrides</h3>
+<p>The legacy <code>MPTAR_CUSTOM_*</code> macros are still supported for backward compatibility but are deprecated. Unlike the newer function-name overrides, they do not allow you to specify a custom function name. Depending on the override, this can retain built-in symbols or increase the resulting binary size.</p>
+<h3 id="cmake-integration-example">CMake Integration Example</h3>
+<p>Use <code>target_compile_definitions()</code> to configure overrides for a specific target:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">target_compile_definitions</span><span class="p">(</span><span class="s">my_app</span><span class="w"> </span><span class="s">PRIVATE</span>
+<span class="w">    </span><span class="s">mptar_strlen=custom_strlen</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Ensure that <code>custom_strlen</code> is included in the target and linked into the final executable.</p>
+<h2 id="experimental-and-internal-overrides">Experimental and Internal Overrides</h2>
+<p>In addition to the stable overrides documented here, <code>minipaxtar</code> provides experimental and internal overrides for low-level customization, including internal functions.</p>
+<p>These overrides carry <strong>no stability guarantees</strong> and may change or be removed without notice. Use them at your own risk.</p>
+<p>See the <a href="/MiniPaxTar/api/Modules/group__mptar__experimental__config/">Experimental &amp; Internal Overrides</a> documentation for the complete list.</p>
+<p>Only overrides explicitly documented under <a href="/MiniPaxTar/api/Modules/group__mptar__stable__config/">Stable Compile-Time Options</a> are covered by the project's stability guarantees.</p>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="alertdialog" aria-modal="true" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog modal-lg" role="search">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                <button type="button" class="close btn btn-default btn-ghost" data-dismiss="modal" aria-label="Close">x</button>
+            </div>
+            <div class="modal-body">
+                <p id="searchInputLabel">Type to start searching</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" aria-labelledby="searchInputLabel" placeholder="" id="mkdocs-search-query" title="Please enter search terms here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No document matches found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</body>
+
+</html>
