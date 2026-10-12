@@ -930,6 +930,12 @@ int mptar_close_archive(mptar_writer *ctx);
  * SPDX-License-Identifier: MIT
  */
 
+#ifdef __cplusplus
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
+
 
 #ifdef MPTAR_NO_STD
 #if !defined(mptar_strlen) && !defined(MPTAR_CUSTOM_STRLEN)
@@ -3083,6 +3089,10 @@ void mptar_reader_free_metadata(mptar_reader *reader, mptar_metadata *meta)
     
     meta->internal_alloc = false;
 }
+
+#ifdef __cplusplus
+#pragma GCC diagnostic pop
+#endif
 
 #endif /* MPTAR_NO_READ */
 

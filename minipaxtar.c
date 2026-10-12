@@ -5,6 +5,12 @@
  * SPDX-License-Identifier: MIT
  */
 
+#ifdef __cplusplus
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
+
 #include "minipaxtar.h"
 
 #ifdef MPTAR_NO_STD
@@ -2159,5 +2165,9 @@ void mptar_reader_free_metadata(mptar_reader *reader, mptar_metadata *meta)
     
     meta->internal_alloc = false;
 }
+
+#ifdef __cplusplus
+#pragma GCC diagnostic pop
+#endif
 
 #endif /* MPTAR_NO_READ */
