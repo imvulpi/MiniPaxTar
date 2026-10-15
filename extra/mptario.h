@@ -29,6 +29,31 @@ void* mptario_alloc(mptar_size_t size);
  */
 void mptario_free(void* pointer);
 
+/**
+ * \name Default Memory Allocation Wrappers
+ * \brief Standard allocation wrappers matching the \ref mptar_alloc_fn and \ref mptar_free_fn signatures.
+ * \details These wrappers allow standard allocation functions to plug directly into \ref mptar_memory_cfg,
+ *          safely handling the unused user data context.
+ * @{
+ */
+
+/**
+ * \brief Allocation wrapper function matching \ref mptar_alloc_fn.
+ * \param user_data Opaque user pointer (ignored by this default wrapper).
+ * \param size Number of bytes to allocate.
+ * \return Pointer to the allocated memory block, or NULL on failure.
+ */
+void* mptario_alloc_wrapper(void* user_data, mptar_size_t size);
+
+/**
+ * \brief Deallocation wrapper function matching \ref mptar_free_fn.
+ * \param user_data Opaque user pointer (ignored by this default wrapper).
+ * \param ptr Pointer to the memory block to free.
+ */
+void mptario_free_wrapper(void* user_data, void* ptr);
+
+/** @} */
+
 #endif
 
 /**
