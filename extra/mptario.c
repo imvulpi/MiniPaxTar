@@ -236,3 +236,158 @@ void mptario_dir_close(mptario_dir *dir) {
     }
 #endif
 }
+
+int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem) {
+    if (!path || !out_info) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+#if defined(_WIN32)
+    int required_chars = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
+    if (required_chars <= 0) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    wchar_t stack_wpath[MPTARIO_STACK_WPATH_LEN];
+    wchar_t *wpath = NULL;
+    bool is_heap_allocated = false;
+
+    if(required_chars <= MPTARIO_STACK_WPATH_LEN){
+        wpath = stack_wpath;
+    }
+    else if (mem && mem->alloc) {
+        wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_chars * sizeof(wchar_t));
+        if (!wpath) return MPTAR_ERR_OUT_OF_MEMORY;
+        is_heap_allocated = true;
+    } else {
+        return MPTAR_ERR_BUFFER_TOO_SMALL; // Path exceeds stack limit and no custom allocator provided
+    }
+
+    int len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_chars);
+    if (len <= 0) {
+        if (is_heap_allocated) {
+            mem->free(mem->alloc_user_data, wpath);
+        }
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    WIN32_FILE_ATTRIBUTE_DATA attr_data;
+    if (!GetFileAttributesExW(wpath, GetFileExInfoStandard, &attr_data)) {
+        DWORD err = GetLastError();
+
+        if (is_heap_allocated) {
+            mem->free(mem->alloc_user_data, wpath);
+        }
+
+        if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
+            out_info->type = -1; // Unknown
+            out_info->size = 0;
+            out_info->hardlink_count = 0;
+            out_info->attributes = 0;
+            return MPTARIO_OK;
+        }
+
+        if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
+        if (err == ERROR_FILE_CORRUPT || err == ERROR_DISK_CORRUPT) return MPTARIO_ERR_CORRUPTED;
+
+        return MPTARIO_ERR_IO;
+    }
+
+    out_info->attributes = (mptar_int32)attr_data.dwFileAttributes;
+    out_info->size = ((mptar_uint64)attr_data.nFileSizeHigh << 32) | attr_data.nFileSizeLow;
+
+    if (attr_data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) {
+        out_info->type = MPTAR_TYPE_SYMLINK;
+    } else if (attr_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+        out_info->type = MPTAR_TYPE_DIRECTORY;
+    } else {
+        out_info->type = MPTAR_TYPE_FILE;
+    }
+
+    HANDLE hFile = CreateFileW(
+        wpath,
+        0,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        NULL,
+        OPEN_EXISTING,
+        FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
+        NULL
+    );
+
+    if (hFile != INVALID_HANDLE_VALUE) {
+        BY_HANDLE_FILE_INFORMATION handle_info;
+        if (GetFileInformationByHandle(hFile, &handle_info)) {
+            out_info->hardlink_count = (mptar_int32)handle_info.nNumberOfLinks;
+        } else {
+            out_info->hardlink_count = 1;
+        }
+        CloseHandle(hFile);
+    } else {
+        DWORD err = GetLastError();
+
+        if (is_heap_allocated) {
+            mem->free(mem->alloc_user_data, wpath);
+        }
+
+        if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
+            out_info->type = -1; // Unknown
+            out_info->size = 0;
+            out_info->hardlink_count = 0;
+            return MPTARIO_OK;
+        }
+
+        if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
+        if (err == ERROR_FILE_CORRUPT || err == ERROR_DISK_CORRUPT) return MPTARIO_ERR_CORRUPTED;
+
+        out_info->hardlink_count = 1;
+    }
+
+    if (is_heap_allocated) {
+        mem->free(mem->alloc_user_data, wpath);
+    }
+
+    return MPTARIO_OK;
+
+#else
+    (void)mem;
+    struct stat st;
+    if (lstat(path, &st) != 0) {
+        if (errno == ENOENT || errno == ENOTDIR) {
+            out_info->type = -1; // Unknown
+            out_info->size = 0;
+            out_info->hardlink_count = 0;
+            out_info->attributes = 0;
+            return MPTARIO_OK;
+        }
+
+        if (errno == EACCES || errno == EPERM) return MPTARIO_ERR_ACCESS_DENIED;
+        if (errno == EIO) return MPTARIO_ERR_CORRUPTED;
+
+        return MPTARIO_ERR_IO;
+    }
+
+    if (S_ISREG(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_FILE;
+    } else if (S_ISDIR(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_DIRECTORY;
+    } else if (S_ISLNK(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_SYMLINK;
+    } else if (S_ISFIFO(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_FIFO;
+    } else if (S_ISSOCK(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_SOCKET;
+    } else if (S_ISCHR(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_CHR;
+    } else if (S_ISBLK(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_BLK;
+    } else {
+        out_info->type = -1; // Unknown
+    }
+
+    out_info->size = (mptar_uint64)st.st_size;
+    out_info->hardlink_count = (mptar_int32)st.st_nlink;
+    out_info->attributes = (mptar_int32)st.st_mode;
+
+    return MPTARIO_OK;
+#endif
+}
