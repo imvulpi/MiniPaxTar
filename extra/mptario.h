@@ -2,14 +2,60 @@
 #define MPTARIO_H
 
 #include "minipaxtar.h"
+#if defined(_WIN32)
+    #define WIN32_LEAN_AND_MEAN
+    #define MPTARIO_MAX_NAME 1024 // Accommodates Windows MAX_PATH (260 WCHARs) expanded to UTF-8
+    #include <windows.h>
+#else
+    #define MPTARIO_MAX_NAME 255  // POSIX NAME_MAX limit is strictly 255 bytes
+    #include <dirent.h>
+    #include <errno.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define MPTARIO_OK                    1   /**< Operation completed successfully. */
+#define MPTARIO_OK                    0   /**< Operation completed successfully. */
 #define MPTARIO_ERR_INVALID_ARG      -1   /**< Arguments passed were incorrect (NULL pointers, not enough space, etc.) */
 #define MPTARIO_ERR_BUFFER_TOO_SMALL -2   /**< Output or destination buffer lacked sufficient capacity to hold some data. */
+/**
+ * \name Directory Iteration Error Codes
+ * \brief Standard error codes returned by MPTARIO operations.
+ * @{
+ */
+#define MPTARIO_ERR_NOT_FOUND       -3 /**< Requested file or directory does not exist. */
+#define MPTARIO_ERR_ACCESS_DENIED   -4 /**< Permission denied for the file or directory. */
+#define MPTARIO_ERR_IO              -5 /**< Low-level I/O or system operation failure. */
+#define MPTAR_ERR_OUT_OF_MEMORY     -6 /**< Memory allocation failed. */
+/** @} */
+
+/**
+ * \brief Extra character length needed to append the directory search wildcard ("&#47;*").
+ */
+#define MPTARIO_SEARCH_SUFFIX_LEN 2 
+
+#define MPTARIO_STACK_WPATH_LEN 520 /**<  Generous stack buffer (covers standard Windows MAX_PATH + wildcard) */
+
+/**
+ * \brief Opaque state structure for directory iteration without heap allocations.
+ */
+typedef struct {
+#if defined(_WIN32)
+    HANDLE handle;          /**< Win32 directory search handle. */
+    WIN32_FIND_DATAW fdata; /**< Win32 file search data buffer. */
+    int is_first;           /**< Flag indicating if the first entry is pending evaluation. */
+#else
+    DIR *dir_ptr;           /**< POSIX stream pointer for directory entry reading. */
+#endif
+} mptario_dir;
+
+/**
+ * \brief Minimal directory entry representation containing only the child name.
+ */
+typedef struct {
+    char name[MPTARIO_MAX_NAME]; /**< Null-terminated UTF-8 entry name relative to parent directory. */
+} mptario_dirent;
 
 #ifdef MPTARIO_CUSTOM_ALLOC
 
@@ -72,6 +118,51 @@ void mptario_free_wrapper(void* user_data, void* ptr);
  * \return \c MPTARIO_ERR_BUFFER_TOO_SMALL if \p out_buf is too small to hold the joined path. 
  */
 int mptario_path_join(const char *path1, const char *path2, char *out_buf, mptar_size_t buf_size);
+
+/**
+ * \brief Opens a directory stream for entry iteration.
+ *
+ * On Windows, prepares wildcards and invokes \c FindFirstFileW. On POSIX, opens 
+ * a stream using \c opendir.
+ *
+ * \param[in]  path Null-terminated UTF-8 path to the directory.
+ * \param[out] dir  Pointer to caller-allocated \ref mptario_dir structure.
+ *
+ * \return \c MPTARIO_OK on success.
+ * \return \c MPTARIO_ERR_INVALID_PARAM if \p path or \p dir is NULL.
+ * \return \c MPTARIO_ERR_NOT_FOUND if directory path does not exist.
+ * \return \c MPTARIO_ERR_ACCESS_DENIED if lacking read permissions.
+ * \return \c MPTAR_ERR_OUT_OF_MEMORY if OS ran out of memory allocating wpath.
+ * \return \c MPTARIO_ERR_IO on general OS filesystem errors.
+ */
+int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem);
+
+/**
+ * \brief Reads the next entry from an open directory stream.
+ *
+ * Automatically filters out the '.' and '..' pseudo-directory entries. Decodes
+ * entry names to UTF-8 on Windows. This function does not query or populate 
+ * detailed entry file types/attributes; use \ref mptario_get_fileinfo on 
+ * concatenated paths when metadata is needed.
+ *
+ * \param[in]  dir     Pointer to an initialized \ref mptario_dir instance.
+ * \param[out] out_ent Pointer to caller-allocated \ref mptario_dirent structure receiving entry name.
+ *
+ * \return \c MPTARIO_OK when an entry is successfully read.
+ * \return \c MPTARIO_ERR_NOT_FOUND when all directory entries have been enumerated.
+ * \return \c MPTARIO_ERR_INVALID_PARAM if \p dir or \p out_ent is NULL.
+ */
+int mptario_dir_next(mptario_dir *dir, mptario_dirent *out_ent);
+
+/**
+ * \brief Closes an open directory stream and releases OS handle resources.
+ *
+ * Safely closes \c HANDLE on Windows or releases \c DIR pointer on POSIX systems.
+ * Safe to call on NULL or uninitialized directory structures.
+ *
+ * \param[in,out] dir Pointer to the \ref mptario_dir instance to close.
+ */
+void mptario_dir_close(mptario_dir *dir);
 
 #ifdef __cplusplus
 }

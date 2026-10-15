@@ -76,3 +76,163 @@ int mptario_path_join(const char *path1, const char *path2, char *out_path, mpta
 
     return MPTARIO_OK;
 }
+
+int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) {
+    if (!path || !dir) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+#if defined(_WIN32)
+    int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
+    if (required_len <= 0) return MPTARIO_ERR_INVALID_ARG;
+
+    size_t alloc_chars = (size_t)required_len + MPTARIO_SEARCH_SUFFIX_LEN;
+    wchar_t stack_wpath[MPTARIO_STACK_WPATH_LEN];
+    wchar_t *wpath = NULL;
+    bool is_heap_allocated = false;
+
+    if (alloc_chars <= MPTARIO_STACK_WPATH_LEN) {
+        wpath = stack_wpath;
+    } else {
+        if (!mem || !mem->alloc) {
+            return MPTARIO_ERR_BUFFER_TOO_SMALL; // Path too long for stack and no allocator provided
+        }
+        wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, alloc_chars * sizeof(wchar_t));
+        if (!wpath) return MPTAR_ERR_OUT_OF_MEMORY;
+        is_heap_allocated = true;
+    }
+
+    int len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_len);
+    if (len <= 0) {
+        if (is_heap_allocated) {
+            mem->free(mem->alloc_user_data, wpath);
+        }
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    int actual_len = len - 1; // Index of the original null terminator
+    bool has_trailing_sep = (actual_len > 0) && (wpath[actual_len - 1] == L'\\' || wpath[actual_len - 1] == L'/');
+
+    if (has_trailing_sep) {
+        wpath[actual_len]     = L'*';
+        wpath[actual_len + 1] = L'\0';
+    } else {
+        wpath[actual_len]     = L'/';
+        wpath[actual_len + 1] = L'*';
+        wpath[actual_len + 2] = L'\0';
+    }
+
+    HANDLE hFind = FindFirstFileW(wpath, &dir->fdata);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        if (is_heap_allocated) {
+            mem->free(mem->alloc_user_data, wpath);
+        }
+        DWORD err = GetLastError();
+        if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) return MPTARIO_ERR_NOT_FOUND;
+        if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
+        return MPTARIO_ERR_IO;
+    }
+
+    dir->handle = hFind;
+    dir->is_first = 1;
+    
+    if (is_heap_allocated) {
+        mem->free(mem->alloc_user_data, wpath);
+    }
+    return MPTARIO_OK;
+#else
+    (void)mem; // Unused on POSIX
+    
+    DIR *d = opendir(path);
+    if (!d) {
+        if (errno == ENOENT || errno == ENOTDIR) return MPTARIO_ERR_NOT_FOUND;
+        if (errno == EACCES || errno == EPERM) return MPTARIO_ERR_ACCESS_DENIED;
+        return MPTARIO_ERR_IO;
+    }
+
+    dir->dir_ptr = d;
+    return MPTARIO_OK;
+#endif
+}
+
+int mptario_dir_next(mptario_dir *dir, mptario_dirent *out_ent) {
+    if (!dir || !out_ent) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+#if defined(_WIN32)
+    while (1) {
+        if (dir->is_first) {
+            dir->is_first = 0;
+        } else {
+            if (!FindNextFileW(dir->handle, &dir->fdata)) {
+                DWORD err = GetLastError();
+                if (err == ERROR_NO_MORE_FILES) return MPTARIO_ERR_NOT_FOUND;
+                return MPTARIO_ERR_IO;
+            }
+        }
+
+        /* Skip '.' and '..' */
+        if (dir->fdata.cFileName[0] == L'.' && 
+           (dir->fdata.cFileName[1] == L'\0' || (dir->fdata.cFileName[1] == L'.' && dir->fdata.cFileName[2] == L'\0'))) {
+            continue;
+        }
+
+        int converted = WideCharToMultiByte(
+            CP_UTF8, 0, 
+            dir->fdata.cFileName, -1, 
+            out_ent->name, sizeof(out_ent->name), 
+            NULL, NULL
+        );
+
+        if (converted <= 0) {
+            // If it failed because the buffer was too small
+            if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+                return MPTAR_ERR_BUFFER_TOO_SMALL;
+            }
+            continue;
+        }
+
+        return MPTARIO_OK;
+    }
+
+#else
+    struct dirent *entry;
+
+    while ((entry = readdir(dir->dir_ptr)) != NULL) {
+        /* Skip '.' and '..' */
+        if (entry->d_name[0] == '.' && 
+           (entry->d_name[1] == '\0' || (entry->d_name[1] == '.' && entry->d_name[2] == '\0'))) {
+            continue;
+        }
+
+        size_t name_len = mptar_strnlen(entry->d_name, sizeof(out_ent->name));
+        
+        if (name_len >= sizeof(out_ent->name)) {
+            return MPTAR_ERR_BUFFER_TOO_SMALL;
+        }
+
+        mptar_memcpy(out_ent->name, entry->d_name, name_len + 1); // Copies name + null terminator
+
+        return MPTARIO_OK;
+    }
+
+    return MPTARIO_ERR_NOT_FOUND;
+#endif
+}
+
+void mptario_dir_close(mptario_dir *dir) {
+    if (!dir) return;
+
+#if defined(_WIN32)
+    if (dir->handle && dir->handle != INVALID_HANDLE_VALUE) {
+        FindClose(dir->handle);
+        dir->handle = INVALID_HANDLE_VALUE;
+    }
+#else
+    if (dir->dir_ptr) {
+        closedir(dir->dir_ptr);
+        dir->dir_ptr = NULL;
+    }
+#endif
+}
