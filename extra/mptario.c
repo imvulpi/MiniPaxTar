@@ -31,6 +31,18 @@ void mptario_free(void* pointer) {
 #endif
 }
 
+void *mptario_alloc_wrapper(void *user_data, mptar_size_t size)
+{
+    (void)user_data;
+    return mptario_alloc(size);
+}
+
+void mptario_free_wrapper(void *user_data, void *ptr)
+{
+    (void)user_data;
+    return mptario_free(ptr);
+}
+
 #endif
 
 int mptario_path_join(const char *path1, const char *path2, char *out_path, mptar_size_t buf_size){
