@@ -29,6 +29,7 @@ extern "C" {
 #define MPTARIO_ERR_IO              -5 /**< Low-level I/O or system operation failure. */
 #define MPTAR_ERR_OUT_OF_MEMORY     -6 /**< Memory allocation failed. */
 /** @} */
+#define MPTARIO_ERR_CORRUPTED       -7
 
 /**
  * \brief Extra character length needed to append the directory search wildcard ("&#47;*").
@@ -36,6 +37,16 @@ extern "C" {
 #define MPTARIO_SEARCH_SUFFIX_LEN 2 
 
 #define MPTARIO_STACK_WPATH_LEN 520 /**<  Generous stack buffer (covers standard Windows MAX_PATH + wildcard) */
+
+/**
+ * Holds metadata attributes for a single file system node.
+ */
+typedef struct {
+    mptar_typeflags type;         /**< Broad classification of the file system entry. */
+    mptar_uint64 size;            /**< Total size in bytes; zero or unassigned for directories. */
+    mptar_int32 hardlink_count;   /**< Number of hard links referencing this file node. */
+    mptar_int32 attributes;       /**< Platform-specific bitmask of raw attribute flags. */
+} mptario_fileinfo;
 
 /**
  * \brief Opaque state structure for directory iteration without heap allocations.
@@ -163,6 +174,17 @@ int mptario_dir_next(mptario_dir *dir, mptario_dirent *out_ent);
  * \param[in,out] dir Pointer to the \ref mptario_dir instance to close.
  */
 void mptario_dir_close(mptario_dir *dir);
+
+/**
+ * Retrieves metadata and classification information for a specified file system entry.
+ *
+ * \param path Pointer to a null-terminated UTF-16 encoded path string.
+ * \param out_info Pointer to a destination structure that receives the entry's metadata.
+ *
+ * \return Returns 0 on success, or a non-zero error code on failure.
+ */
+int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem);
+
 
 #ifdef __cplusplus
 }
