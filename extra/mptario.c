@@ -471,3 +471,299 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     return MPTARIO_OK;
 #endif
 }
+
+static int mptario_write_entry(mptario_fileinfo *info, const char *path, const char *relpath, mptario_context *ctx) {
+    if (!info || !relpath || !ctx || info->type == -1) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    mptar_memory_cfg *mem = &(ctx->writer->memory);
+    mptar_metadata meta = {0};
+    meta.path = relpath;
+    if (info->type == MPTAR_TYPE_FILE) {
+        meta.size = info->size;
+    } else {
+        meta.size = 0; 
+    }
+    meta.mode = info->mode;
+    meta.mtime = info->mtime;
+    meta.typeflag = info->type;
+#ifndef MPTAR_NO_EXTRA_TIMES
+    meta.atime = info->atime;
+    meta.ctime = info->ctime;
+#endif
+
+    int status = mptar_write_header(ctx->writer, &meta);
+    if (status < 0) {
+        return status;
+    }
+
+    if (info->type == MPTAR_TYPE_FILE && info->size > 0) {
+#if defined(_WIN32)
+        int required_chars = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
+        if (required_chars <= 0) {
+            return MPTARIO_ERR_INVALID_ARG;
+        }
+
+        wchar_t *wpath = NULL;
+        int is_heap = 0;
+
+#ifndef MPTARIO_NO_STACK
+        wchar_t stack_wpath[MPTARIO_STACK_WPATH_LEN];
+        if (required_chars <= MPTARIO_STACK_WPATH_LEN) {
+            wpath = stack_wpath;
+        } else 
+#endif
+        {
+            if (!mem || !mem->alloc) return MPTARIO_ERR_BUFFER_TOO_SMALL;
+            wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_chars * sizeof(wchar_t));
+            if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
+            is_heap = 1;
+        }
+
+        MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_chars);
+
+        HANDLE hFile = CreateFileW(
+            wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+            FILE_ATTRIBUTE_NORMAL, NULL
+        );
+
+        if (is_heap) mem->free(mem->alloc_user_data, wpath);
+        if (hFile == INVALID_HANDLE_VALUE) {
+            return MPTARIO_ERR_IO;
+        }
+
+        DWORD bytes_read = 0;
+        mptar_uint64 remaining = info->size;
+        while (remaining > 0) {
+            DWORD to_read = (remaining < ctx->buf_size) ? (DWORD)remaining : ctx->buf_size;
+            if (!ReadFile(hFile, ctx->chunk_buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
+                CloseHandle(hFile);
+                return MPTARIO_ERR_IO;
+            }
+
+            int chunk_err = 0;
+            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->chunk_buf, (mptar_size_t)bytes_read, &chunk_err);
+            if (chunk_err != 0 || written != bytes_read) {
+                CloseHandle(hFile);
+                return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
+            }
+
+            remaining -= bytes_read;
+        }
+
+        CloseHandle(hFile);
+
+#else
+        (void)mem;
+        int fd = open(path, O_RDONLY);
+        if (fd < 0) {
+            return MPTARIO_ERR_IO;
+        }
+
+        mptar_uint64 remaining = info->size;
+        while (remaining > 0) {
+            mptar_size_t to_read = (remaining < ctx->buf_size) ? (mptar_size_t)remaining : ctx->buf_size;
+            ssize_t bytes_read = read(fd, ctx->chunk_buf, to_read);
+            if (bytes_read <= 0) {
+                close(fd);
+                return MPTARIO_ERR_IO;
+            }
+
+            int chunk_err = 0;
+            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->chunk_buf, (mptar_size_t)bytes_read, &chunk_err);
+            if (chunk_err != 0 || written != (mptar_size_t)bytes_read) {
+                close(fd);
+                return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
+            }
+
+            remaining -= (mptar_uint64)bytes_read;
+        }
+
+        close(fd);
+#endif
+    }
+
+    int finalize_err = mptar_write_finalize(ctx->writer, &meta);
+    if (finalize_err != 0) {
+        return finalize_err;
+    }
+
+    return MPTARIO_OK;
+}
+
+/**
+ * \brief Recursively traverses a directory path and writes its entries into the archive.
+ * 
+ * This internal helper function walks through directories and files starting from the 
+ * given path, maintaining base length offsets to ensure that paths stored in the archive 
+ * are relative rather than absolute.
+ * 
+ * \note **Important Path Requirement:** The input string passed to `path` must be properly 
+ * formatted and terminated (expecting trailing slash so that initial offset calculations 
+ * remain reliable across recursion levels.
+ * 
+ * \param path             The current absolute or relative directory path being traversed.
+ * \param base_len         The string length of the current base prefix used for relative path stripping.
+ * \param initial_base_len The original, unchanging base length captured at the root of the archive operation.
+ *                         Should be the length counting '/', but not counting \0.
+ * \param writer           A pointer to the active \ref mptar_writer stream configuration and callback structure.
+ * 
+ * \return Returns \ref MPTARIO_OK on successful traversal and writing, or a negative error code 
+ *         if an I/O, traversal, or header generation failure occurs.
+ */
+static int mptario_write_recursive(const char *path, mptar_size_t base_len, mptar_size_t initial_base_len, mptario_context *ctx) {
+    mptar_memory_cfg* mem = &(ctx->writer->memory);
+    mptario_dir dir;
+    int err = mptario_dir_open(path, &dir, mem);
+    if (err != 0) return err;
+
+    mptario_dirent ent;
+    while ((err = mptario_dir_next(&dir, &ent)) == 0) {
+        mptar_size_t name_len = mptar_strlen(ent.name);
+        mptar_size_t path_needed = base_len + name_len + 2; // for: \0 and //
+        char *full_path = NULL;
+        bool path_is_heap = 0;
+
+#ifndef MPTARIO_NO_STACK
+        char stack_path[MPTARIO_STACK_PATH_LEN];
+        if (path_needed <= MPTARIO_STACK_PATH_LEN) {
+            full_path = stack_path;
+        } else 
+#endif 
+        {
+            if (!mem || !mem->alloc) {
+                mptario_dir_close(&dir);
+                return MPTARIO_ERR_BUFFER_TOO_SMALL;
+            }
+
+            full_path = (char*)mem->alloc(mem->alloc_user_data, path_needed);
+            if (!full_path) {
+                mptario_dir_close(&dir);
+                return MPTARIO_ERR_OUT_OF_MEMORY;
+            }
+
+            path_is_heap = true;
+        }
+
+        mptar_memcpy(full_path, path, base_len);
+        mptar_memcpy(full_path + base_len, ent.name, name_len + 1);
+        const char *relative_path = full_path + initial_base_len;
+
+        mptario_fileinfo info;
+        int info_err = mptario_get_fileinfo(full_path, &info, mem);
+
+        if (info_err == 0) {
+            mptario_write_entry(&info, full_path, relative_path, ctx);
+            if (info.type == MPTAR_TYPE_DIRECTORY) {
+                mptar_size_t sub_len = base_len + name_len;
+                full_path[sub_len] = '/';
+                full_path[sub_len + 1] = '\0';
+
+                err = mptario_write_recursive(full_path, sub_len + 1, initial_base_len, ctx);
+                if (err != 0 && err != MPTARIO_ERR_NOT_FOUND) {
+                    if (path_is_heap) mem->free(mem->alloc_user_data, full_path);
+                    mptario_dir_close(&dir);
+                    return err;
+                }
+            }
+        }
+
+        if (path_is_heap) {
+            mem->free(mem->alloc_user_data, full_path);
+        }
+    }
+
+    mptario_dir_close(&dir);
+    return (err == MPTARIO_ERR_NOT_FOUND) ? 0 : err; // End of enumeration is a normal completion.
+}
+
+int mptario_pack_stream(mptario_context *ctx, const char *path)
+{
+    // Alloc/Free can be unset - it fallbacks to stack if enabled.
+    if (ctx == MPTAR_NULL || ctx->writer == MPTAR_NULL || ctx->writer->write == MPTAR_NULL || path == MPTAR_NULL) 
+    {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    mptar_memory_cfg* mem = &(ctx->writer->memory);
+    mptar_size_t len = mptar_strlen(path);
+    int needs_slash = (len > 0 && path[len - 1] != '/' && path[len - 1] != '\\');
+    mptar_size_t needed = len + (needs_slash ? 2 : 1);
+    char *base_path = NULL;
+    bool base_is_heap = false;
+    bool needs_buf_free = false; 
+    mptar_size_t target_size = (ctx->buf_size > 0) ? ctx->buf_size : MPTARIO_DEFAULT_CHUNK_SIZE;
+
+#ifndef MPTARIO_DISABLE_CHUNK_STACK_FALLBACK
+    char fallback_chunk_buf[MPTARIO_DEFAULT_CHUNK_SIZE]; 
+#endif
+
+    if (ctx->chunk_buf == MPTAR_NULL) {
+        if (mem && mem->alloc) {
+            ctx->chunk_buf = (char*)mem->alloc(mem->alloc_user_data, target_size);
+            if (!ctx->chunk_buf) return MPTARIO_ERR_OUT_OF_MEMORY;
+            ctx->buf_size = target_size;
+            needs_buf_free = true;
+        } else {
+#ifndef MPTARIO_DISABLE_CHUNK_STACK_FALLBACK
+            if (target_size > sizeof(fallback_chunk_buf)) {
+                return MPTARIO_ERR_BUFFER_TOO_SMALL;
+            }
+            ctx->chunk_buf = fallback_chunk_buf;
+            ctx->buf_size = target_size;
+            needs_buf_free = false;
+#else
+            return MPTARIO_ERR_INVALID_ARG;
+#endif
+        }
+    }
+
+    bool use_stack = false;
+#ifndef MPTARIO_NO_STACK
+    char stack_base[MPTARIO_STACK_PATH_LEN];
+    if (needed <= MPTARIO_STACK_PATH_LEN) use_stack = true;
+#endif
+
+    if (use_stack) {
+#ifndef MPTARIO_NO_STACK
+        base_path = stack_base;
+#endif
+    } else {
+        if (!mem || !mem->alloc) {
+            if (needs_buf_free) {
+                mem->free(mem->alloc_user_data, ctx->chunk_buf);
+                ctx->chunk_buf = MPTAR_NULL;
+            }
+            return MPTARIO_ERR_BUFFER_TOO_SMALL;
+        }
+        base_path = (char*)mem->alloc(mem->alloc_user_data, needed);
+        if (!base_path) {
+            if (needs_buf_free) {
+                mem->free(mem->alloc_user_data, ctx->chunk_buf);
+                ctx->chunk_buf = MPTAR_NULL;
+            }
+            return MPTARIO_ERR_OUT_OF_MEMORY;
+        }
+        base_is_heap = true;
+    }
+
+    for (mptar_size_t i = 0; i < len; i++) base_path[i] = (path[i] == '\\') ? '/' : path[i];
+    base_path[len] = '\0';
+    if (needs_slash) {
+        base_path[len] = '/';
+        base_path[len + 1] = '\0';
+        len++;
+    }
+
+    int res = mptario_write_recursive(base_path, len, len, ctx);
+    
+    if (base_is_heap && mem && mem->free) mem->free(mem->alloc_user_data, base_path);
+    if (needs_buf_free && mem && mem->free) {
+        mem->free(mem->alloc_user_data, ctx->chunk_buf);
+        ctx->chunk_buf = MPTAR_NULL;
+    }
+
+    if (res < 0) return res;
+    return mptar_close_archive(ctx->writer);
+}
