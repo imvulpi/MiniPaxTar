@@ -251,6 +251,32 @@ void mptario_dir_close(mptario_dir *dir) {
 #endif
 }
 
+#if defined(_WIN32)
+/**
+ * \brief Converts a Windows FILETIME to a mptar_timespec.
+ * 
+ * Transforms a Windows file time (100-nanosecond ticks since January 1, 1601) 
+ * into Unix time represented in seconds and nanoseconds since January 1, 1970. 
+ * Timestamps predating the Unix epoch are clamped to zero.
+ * 
+ * \param ft Pointer to the source Windows FILETIME structure.
+ * \param ts Pointer to the destination mptar_timespec structure.
+ */
+static void mptar_filetime_to_timespec(const FILETIME *ft, mptar_timespec *ts) {
+    unsigned long long intervals = ((unsigned long long)ft->dwHighDateTime << 32) | ft->dwLowDateTime;
+    if (intervals < UNIX_EPOCH_INTERVALS) {
+        ts->sec = 0;
+        ts->nsec = 0;
+        return;
+    }
+
+    unsigned long long unix_intervals = intervals - UNIX_EPOCH_INTERVALS;
+    
+    ts->sec = (mptar_int64)(unix_intervals / 10000000ULL);
+    ts->nsec = (mptar_uint32)((unix_intervals % 10000000ULL) * 100);
+}
+#endif
+
 int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem) {
     if (!path || !out_info) {
         return MPTARIO_ERR_INVALID_ARG;
@@ -360,6 +386,17 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
         mem->free(mem->alloc_user_data, wpath);
     }
 
+    mptar_filetime_to_timespec(&attr_data.ftLastWriteTime, &out_info->mtime.value);
+    out_info->mtime.has_value = true;
+
+    #ifndef MPTAR_NO_EXTRA_TIMES
+    mptar_filetime_to_timespec(&attr_data.ftLastAccessTime, &out_info->atime.value);
+    out_info->atime.has_value = true;
+
+    mptar_filetime_to_timespec(&attr_data.ftCreationTime, &out_info->ctime.value);
+    out_info->ctime.has_value = true;
+    #endif
+
     return MPTARIO_OK;
 
 #else
@@ -399,6 +436,32 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     out_info->size = (mptar_uint64)st.st_size;
     out_info->hardlink_count = (mptar_int32)st.st_nlink;
     out_info->attributes = (mptar_int32)st.st_mode;
+
+    #if defined(__APPLE__)
+        out_info->mtime.value.sec = (mptar_int64)st.st_mtimespec.tv_sec;
+        out_info->mtime.value.nsec = (mptar_uint32)st.st_mtimespec.tv_nsec;
+        #ifndef MPTAR_NO_EXTRA_TIMES
+        out_info->atime.value.sec = (mptar_int64)st.st_atimespec.tv_sec;
+        out_info->atime.value.nsec = (mptar_uint32)st.st_atimespec.tv_nsec;
+        out_info->ctime.value.sec = (mptar_int64)st.st_ctimespec.tv_sec;
+        out_info->ctime.value.nsec = (mptar_uint32)st.st_ctimespec.tv_nsec;
+        #endif
+    #else
+        out_info->mtime.value.sec = (mptar_int64)st.st_mtim.tv_sec;
+        out_info->mtime.value.nsec = (mptar_uint32)st.st_mtim.tv_nsec;
+        #ifndef MPTAR_NO_EXTRA_TIMES
+        out_info->atime.value.sec = (mptar_int64)st.st_atim.tv_sec;
+        out_info->atime.value.nsec = (mptar_uint32)st.st_atim.tv_nsec;
+        out_info->ctime.value.sec = (mptar_int64)st.st_ctim.tv_sec;
+        out_info->ctime.value.nsec = (mptar_uint32)st.st_ctim.tv_nsec;
+        #endif
+    #endif
+
+    out_info->mtime.has_value = true;
+    #ifndef MPTAR_NO_EXTRA_TIMES
+        out_info->atime.has_value = true;
+        out_info->ctime.has_value = true;
+    #endif
 
     return MPTARIO_OK;
 #endif

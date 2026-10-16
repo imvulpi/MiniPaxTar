@@ -45,6 +45,12 @@ extern "C" {
  */
 #define MPTARIO_UNKNOWN_TYPE -1
 
+
+/**
+ * \brief Represents the timestamp of the Unix Epoch (January 1, 1970) in Windows FILETIME units (100-ns ticks since January 1, 1601).  
+ */
+#define UNIX_EPOCH_INTERVALS   116444736000000000ULL
+
 /**
  * Holds metadata attributes for a single file system node.
  */
@@ -53,6 +59,12 @@ typedef struct {
     mptar_uint64 size;            /**< Total size in bytes; zero or unassigned for directories. */
     mptar_int32 hardlink_count;   /**< Number of hard links referencing this file node. */
     mptar_int32 attributes;       /**< Platform-specific bitmask of raw attribute flags. */
+    mptar_opt_time mtime;         /**< Modification time. */
+#ifndef MPTAR_NO_EXTRA_TIMES
+    mptar_opt_time atime;         /**< Access time. */
+    mptar_opt_time ctime;         /**< Metadata change time / creation time. */
+#endif
+    mptar_uint32 mode;            /**< UNIX file permissions / mode. */
 } mptario_fileinfo;
 
 /**
@@ -192,6 +204,13 @@ void mptario_dir_close(mptario_dir *dir);
  */
 int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem);
 
+/**
+ * \brief Recursively packs a filesystem directory stream using an initialized mptar_writer.
+ * \param writer Active archive writer context configured with write callback and user data.
+ * \param path Path to the source directory to read from the host system.
+ * \return MPTAR_OK on success, or an error code on failure.
+ */
+int mptario_pack_stream(mptar_writer* writer, const char* path);
 
 #ifdef __cplusplus
 }
