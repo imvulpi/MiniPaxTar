@@ -100,14 +100,17 @@ int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) 
     int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
     if (required_len <= 0) return MPTARIO_ERR_INVALID_ARG;
 
-    size_t alloc_chars = (size_t)required_len + MPTARIO_SEARCH_SUFFIX_LEN;
-    wchar_t stack_wpath[MPTARIO_STACK_WPATH_LEN];
+    mptar_size_t alloc_chars = (mptar_size_t)required_len + MPTARIO_SEARCH_SUFFIX_LEN;
     wchar_t *wpath = NULL;
     bool is_heap_allocated = false;
 
+#ifndef MPTARIO_NO_STACK
+    wchar_t stack_wpath[MPTARIO_STACK_WPATH_LEN];
     if (alloc_chars <= MPTARIO_STACK_WPATH_LEN) {
         wpath = stack_wpath;
-    } else {
+    } else 
+#endif
+    {
         if (!mem || !mem->alloc) {
             return MPTARIO_ERR_BUFFER_TOO_SMALL;
         }
@@ -220,7 +223,7 @@ int mptario_dir_next(mptario_dir *dir, mptario_dirent *out_ent) {
             continue;
         }
 
-        size_t name_len = mptar_strnlen(entry->d_name, sizeof(out_ent->name));
+        mptar_size_t name_len = mptar_strnlen(entry->d_name, sizeof(out_ent->name));
         
         if (name_len >= sizeof(out_ent->name)) {
             return MPTARIO_ERR_BUFFER_TOO_SMALL;
@@ -288,14 +291,16 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
         return MPTARIO_ERR_INVALID_ARG;
     }
 
-    wchar_t stack_wpath[MPTARIO_STACK_WPATH_LEN];
     wchar_t *wpath = NULL;
     bool is_heap_allocated = false;
 
-    if(required_chars <= MPTARIO_STACK_WPATH_LEN){
+#ifndef MPTARIO_NO_STACK
+    wchar_t stack_wpath[MPTARIO_STACK_WPATH_LEN];
+    if (required_chars <= MPTARIO_STACK_WPATH_LEN) {
         wpath = stack_wpath;
-    }
-    else if (mem && mem->alloc) {
+    } else 
+#endif
+    if (mem && mem->alloc) {
         wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_chars * sizeof(wchar_t));
         if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
         is_heap_allocated = true;
