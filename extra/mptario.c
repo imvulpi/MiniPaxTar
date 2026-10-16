@@ -294,7 +294,7 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
         }
 
         if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
-            out_info->type = -1; // Unknown
+            out_info->type = MPTARIO_UNKNOWN_TYPE;
             out_info->size = 0;
             out_info->hardlink_count = 0;
             out_info->attributes = 0;
@@ -344,7 +344,7 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
         }
 
         if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
-            out_info->type = -1; // Unknown
+            out_info->type = MPTARIO_UNKNOWN_TYPE;
             out_info->size = 0;
             out_info->hardlink_count = 0;
             return MPTARIO_OK;
