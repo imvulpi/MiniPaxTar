@@ -472,6 +472,18 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 #endif
 }
 
+/**
+ * \brief Writes a tar archive entry using the minipaxtar library.
+ *
+ * Populates header metadata from the provided \p info and \p relpath, 
+ * If file, it reads data from the given absolute \p path and writes it with \p ctx->writer
+ *
+ * \param info Pointer to the entry info structure with metadata to write.
+ * \param path Absolute filesystem path used for reading the entry data.
+ * \param relpath Relative path assigned within the archive structure.
+ * \param ctx Pointer to the working context holding the buffer and writer instance.
+ * \return Zero on success, or a negative error code on failure.
+ */
 static int mptario_write_entry(mptario_fileinfo *info, const char *path, const char *relpath, mptario_context *ctx) {
     if (!info || !relpath || !ctx || info->type == -1) {
         return MPTARIO_ERR_INVALID_ARG;
@@ -585,7 +597,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
     }
 
     int finalize_err = mptar_write_finalize(ctx->writer, &meta);
-    if (finalize_err != 0) {
+    if (finalize_err < 0) {
         return finalize_err;
     }
 
