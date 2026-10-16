@@ -109,10 +109,10 @@ int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) 
         wpath = stack_wpath;
     } else {
         if (!mem || !mem->alloc) {
-            return MPTARIO_ERR_BUFFER_TOO_SMALL; // Path too long for stack and no allocator provided
+            return MPTARIO_ERR_BUFFER_TOO_SMALL;
         }
         wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, alloc_chars * sizeof(wchar_t));
-        if (!wpath) return MPTAR_ERR_OUT_OF_MEMORY;
+        if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
         is_heap_allocated = true;
     }
 
@@ -202,7 +202,7 @@ int mptario_dir_next(mptario_dir *dir, mptario_dirent *out_ent) {
         if (converted <= 0) {
             // If it failed because the buffer was too small
             if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-                return MPTAR_ERR_BUFFER_TOO_SMALL;
+                return MPTARIO_ERR_BUFFER_TOO_SMALL;
             }
             continue;
         }
@@ -223,7 +223,7 @@ int mptario_dir_next(mptario_dir *dir, mptario_dirent *out_ent) {
         size_t name_len = mptar_strnlen(entry->d_name, sizeof(out_ent->name));
         
         if (name_len >= sizeof(out_ent->name)) {
-            return MPTAR_ERR_BUFFER_TOO_SMALL;
+            return MPTARIO_ERR_BUFFER_TOO_SMALL;
         }
 
         mptar_memcpy(out_ent->name, entry->d_name, name_len + 1); // Copies name + null terminator
@@ -297,10 +297,10 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     }
     else if (mem && mem->alloc) {
         wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_chars * sizeof(wchar_t));
-        if (!wpath) return MPTAR_ERR_OUT_OF_MEMORY;
+        if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
         is_heap_allocated = true;
     } else {
-        return MPTAR_ERR_BUFFER_TOO_SMALL; // Path exceeds stack limit and no custom allocator provided
+        return MPTARIO_ERR_BUFFER_TOO_SMALL;
     }
 
     int len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_chars);

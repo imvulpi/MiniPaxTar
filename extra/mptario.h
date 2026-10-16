@@ -16,27 +16,39 @@
 extern "C" {
 #endif
 
-#define MPTARIO_OK                    0   /**< Operation completed successfully. */
-#define MPTARIO_ERR_INVALID_ARG      -1   /**< Arguments passed were incorrect (NULL pointers, not enough space, etc.) */
-#define MPTARIO_ERR_BUFFER_TOO_SMALL -2   /**< Output or destination buffer lacked sufficient capacity to hold some data. */
 /**
- * \name Directory Iteration Error Codes
- * \brief Standard error codes returned by MPTARIO operations.
+ * \defgroup mptario_status_codes MPTARIO Status Codes
+ * \brief Non-negative success and condition codes for mptario operations.
  * @{
  */
-#define MPTARIO_ERR_NOT_FOUND       -3 /**< Requested file or directory does not exist. */
-#define MPTARIO_ERR_ACCESS_DENIED   -4 /**< Permission denied for the file or directory. */
-#define MPTARIO_ERR_IO              -5 /**< Low-level I/O or system operation failure. */
-#define MPTAR_ERR_OUT_OF_MEMORY     -6 /**< Memory allocation failed. */
+#define MPTARIO_OK                  0   /**< Operation completed successfully. */
 /** @} */
-#define MPTARIO_ERR_CORRUPTED       -7
+
+/**
+ * \defgroup mptario_error_codes MPTARIO Error Codes
+ * \brief Negative error codes returned by mptario high-level archiving operations.
+ * 
+ * \note Mptario-specific error codes start at -100 to provide a safety buffer 
+ *       against underlying minipaxtar error codes (-1 to -13).
+ * @{
+ */
+/* Reused directly from minipaxtar for seamless interoperability */
+#define MPTARIO_ERR_INVALID_ARG         MPTAR_ERR_INVALID_ARG        /**< Invalid argument or null pointer passed (-1). */
+#define MPTARIO_ERR_BUFFER_TOO_SMALL    MPTAR_ERR_BUFFER_TOO_SMALL  /**< Output buffer lacked sufficient capacity (-13). */
+#define MPTARIO_ERR_OUT_OF_MEMORY       MPTAR_ERR_ALLOC              /**< Memory allocation failed (-2). */
+
+/* High-level Mptario-specific filesystem and engine errors */
+#define MPTARIO_ERR_NOT_FOUND       -100 /**< Requested file or directory does not exist during iteration. */
+#define MPTARIO_ERR_ACCESS_DENIED   -101 /**< Permission denied when accessing a file or directory. */
+#define MPTARIO_ERR_IO              -102 /**< High-level system I/O or directory traversal failure. */
+#define MPTARIO_ERR_CORRUPTED       -103 /**< Archive structure or metadata corruption detected by engine. */
+/** @} */
 
 /**
  * \brief Extra character length needed to append the directory search wildcard ("&#47;*").
  */
 #define MPTARIO_SEARCH_SUFFIX_LEN 2 
 
-#define MPTARIO_STACK_WPATH_LEN 520 /**<  Generous stack buffer (covers standard Windows MAX_PATH + wildcard) */
 /**
  * \brief Represents an uninitialized, invalid, or unknown file entry type.
  * 
@@ -45,6 +57,22 @@ extern "C" {
  */
 #define MPTARIO_UNKNOWN_TYPE -1
 
+/**
+ * \brief Maximum stack-allocated buffer length for UTF-8 / ANSI paths.
+ * 
+ * Set to 1024 bytes to accommodate typical deep file paths on both Windows 
+ * and POSIX systems without triggering heap allocations. If a path exceeds 
+ * this length, mptario gracefully falls back to the configured heap allocator.
+ */
+#define MPTARIO_STACK_PATH_LEN 1024
+
+/**
+ * \brief Maximum stack-allocated buffer length for Windows wide-character paths (`wchar_t`).
+ * 
+ * Set to 520 characters (equivalent to double MAX_PATH / Windows long path safety margin) 
+ * to handle `CreateFileW` path conversions on the stack safely and efficiently.
+ */
+#define MPTARIO_STACK_WPATH_LEN 520
 
 /**
  * \brief Represents the timestamp of the Unix Epoch (January 1, 1970) in Windows FILETIME units (100-ns ticks since January 1, 1601).  
