@@ -1,4 +1,18 @@
 #include "mptario.h"
+#if !defined(_WIN32)
+#include <fcntl.h>
+#include <unistd.h>
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE /* Required for MAP_ANONYMOUS */
+#endif
+#ifndef MAP_ANONYMOUS
+#define MAP_ANONYMOUS MAP_ANON /* For older POSIX where MAP_ANONYMOUS is unavailable */
+#endif
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
 
 #ifdef MPTARIO_CUSTOM_ALLOC
 
@@ -353,7 +367,7 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     struct stat st;
     if (lstat(path, &st) != 0) {
         if (errno == ENOENT || errno == ENOTDIR) {
-            out_info->type = -1; // Unknown
+            out_info->type = MPTARIO_UNKNOWN_TYPE;
             out_info->size = 0;
             out_info->hardlink_count = 0;
             out_info->attributes = 0;
@@ -373,16 +387,14 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     } else if (S_ISLNK(st.st_mode)) {
         out_info->type = MPTAR_TYPE_SYMLINK;
     } else if (S_ISFIFO(st.st_mode)) {
-        out_info->type = MPTAR_TYPE_FIFO;
-    } else if (S_ISSOCK(st.st_mode)) {
-        out_info->type = MPTAR_TYPE_SOCKET;
-    } else if (S_ISCHR(st.st_mode)) {
-        out_info->type = MPTAR_TYPE_CHR;
+        out_info->type = MPTAR_TYPE_PIPE;
+    }else if (S_ISCHR(st.st_mode)) {
+        out_info->type = MPTAR_TYPE_SPECIAL_CHARACTER_FILE;
     } else if (S_ISBLK(st.st_mode)) {
-        out_info->type = MPTAR_TYPE_BLK;
+        out_info->type = MPTAR_TYPE_SPECIAL_BLOCK_FILE;
     } else {
-        out_info->type = -1; // Unknown
-    }
+        out_info->type = MPTARIO_UNKNOWN_TYPE;
+    } // Sockets not handled.
 
     out_info->size = (mptar_uint64)st.st_size;
     out_info->hardlink_count = (mptar_int32)st.st_nlink;
