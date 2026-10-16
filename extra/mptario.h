@@ -37,6 +37,13 @@ extern "C" {
 #define MPTARIO_SEARCH_SUFFIX_LEN 2 
 
 #define MPTARIO_STACK_WPATH_LEN 520 /**<  Generous stack buffer (covers standard Windows MAX_PATH + wildcard) */
+/**
+ * \brief Represents an uninitialized, invalid, or unknown file entry type.
+ * 
+ * Used during file info extraction and validation to ensure malformed 
+ * or unrecognized directory entries are safely skipped or rejected.
+ */
+#define MPTARIO_UNKNOWN_TYPE -1
 
 /**
  * Holds metadata attributes for a single file system node.
