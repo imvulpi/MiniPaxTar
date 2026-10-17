@@ -153,16 +153,16 @@ typedef struct {
 } mptario_fileinfo;
 
 /**
- * @brief Archive operation context.
+ * \brief Archive operation context.
  * 
  * Bundles the underlying `minipaxtar` writer configuration with a reusable 
  * streaming chunk buffer to optimize throughput and eliminate per-file allocations.
  */
 typedef struct {
     mptar_writer *writer; /**< Pointer to the underlying minipaxtar stream writer configuration. */
-    char *chunk_buf;      /**< Optional pre-allocated or engine-managed I/O chunk buffer. */
+    char *buf;            /**< Optional pre-allocated or engine-managed I/O chunk buffer. */
     size_t buf_size;      /**< Size of the chunk buffer in bytes. */
-} mptario_context;
+} mptario_write_context;
 
 /**
  * \brief Opaque state structure for directory iteration without heap allocations.
@@ -303,11 +303,11 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 
 /**
  * \brief Recursively packs a filesystem directory stream using an initialized mptar_writer.
- * \param writer Active archive writer context configured with write callback and user data.
+ * \param ctx Active archive writer context configured with write callback and user data.
  * \param path Path to the source directory to read from the host system.
  * \return MPTAR_OK on success, or an error code on failure.
  */
-int mptario_pack_stream(mptario_context* writer, const char* path);
+int mptario_pack_stream(mptario_write_context* ctx, const char* path);
 
 #ifdef __cplusplus
 }
