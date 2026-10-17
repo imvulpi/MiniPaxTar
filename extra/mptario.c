@@ -484,7 +484,7 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
  * \param ctx Pointer to the working context holding the buffer and writer instance.
  * \return Zero on success, or a negative error code on failure.
  */
-static int mptario_write_entry(mptario_fileinfo *info, const char *path, const char *relpath, mptario_context *ctx) {
+static int mptario_write_entry(mptario_fileinfo *info, const char *path, const char *relpath, mptario_write_context *ctx) {
     if (!info || !relpath || !ctx || info->type == -1) {
         return MPTARIO_ERR_INVALID_ARG;
     }
@@ -549,13 +549,13 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
         mptar_uint64 remaining = info->size;
         while (remaining > 0) {
             DWORD to_read = (remaining < ctx->buf_size) ? (DWORD)remaining : ctx->buf_size;
-            if (!ReadFile(hFile, ctx->chunk_buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
+            if (!ReadFile(hFile, ctx->buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
                 CloseHandle(hFile);
                 return MPTARIO_ERR_IO;
             }
 
             int chunk_err = 0;
-            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->chunk_buf, (mptar_size_t)bytes_read, &chunk_err);
+            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
             if (chunk_err != 0 || written != bytes_read) {
                 CloseHandle(hFile);
                 return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
@@ -576,14 +576,14 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
         mptar_uint64 remaining = info->size;
         while (remaining > 0) {
             mptar_size_t to_read = (remaining < ctx->buf_size) ? (mptar_size_t)remaining : ctx->buf_size;
-            ssize_t bytes_read = read(fd, ctx->chunk_buf, to_read);
+            ssize_t bytes_read = read(fd, ctx->buf, to_read);
             if (bytes_read <= 0) {
                 close(fd);
                 return MPTARIO_ERR_IO;
             }
 
             int chunk_err = 0;
-            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->chunk_buf, (mptar_size_t)bytes_read, &chunk_err);
+            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
             if (chunk_err != 0 || written != (mptar_size_t)bytes_read) {
                 close(fd);
                 return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
@@ -624,7 +624,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
  * \return Returns \ref MPTARIO_OK on successful traversal and writing, or a negative error code 
  *         if an I/O, traversal, or header generation failure occurs.
  */
-static int mptario_write_recursive(const char *path, mptar_size_t base_len, mptar_size_t initial_base_len, mptario_context *ctx) {
+static int mptario_write_recursive(const char *path, mptar_size_t base_len, mptar_size_t initial_base_len, mptario_write_context *ctx) {
     mptar_memory_cfg* mem = &(ctx->writer->memory);
     mptario_dir dir;
     int err = mptario_dir_open(path, &dir, mem);
@@ -690,7 +690,7 @@ static int mptario_write_recursive(const char *path, mptar_size_t base_len, mpta
     return (err == MPTARIO_ERR_NOT_FOUND) ? 0 : err; // End of enumeration is a normal completion.
 }
 
-int mptario_pack_stream(mptario_context *ctx, const char *path)
+int mptario_pack_stream(mptario_write_context *ctx, const char *path)
 {
     // Alloc/Free can be unset - it fallbacks to stack if enabled.
     if (ctx == MPTAR_NULL || ctx->writer == MPTAR_NULL || ctx->writer->write == MPTAR_NULL || path == MPTAR_NULL) 
@@ -711,10 +711,10 @@ int mptario_pack_stream(mptario_context *ctx, const char *path)
     char fallback_chunk_buf[MPTARIO_DEFAULT_CHUNK_SIZE]; 
 #endif
 
-    if (ctx->chunk_buf == MPTAR_NULL) {
+    if (ctx->buf == MPTAR_NULL) {
         if (mem && mem->alloc) {
-            ctx->chunk_buf = (char*)mem->alloc(mem->alloc_user_data, target_size);
-            if (!ctx->chunk_buf) return MPTARIO_ERR_OUT_OF_MEMORY;
+            ctx->buf = (char*)mem->alloc(mem->alloc_user_data, target_size);
+            if (!ctx->buf) return MPTARIO_ERR_OUT_OF_MEMORY;
             ctx->buf_size = target_size;
             needs_buf_free = true;
         } else {
@@ -722,7 +722,7 @@ int mptario_pack_stream(mptario_context *ctx, const char *path)
             if (target_size > sizeof(fallback_chunk_buf)) {
                 return MPTARIO_ERR_BUFFER_TOO_SMALL;
             }
-            ctx->chunk_buf = fallback_chunk_buf;
+            ctx->buf = fallback_chunk_buf;
             ctx->buf_size = target_size;
             needs_buf_free = false;
 #else
@@ -744,16 +744,16 @@ int mptario_pack_stream(mptario_context *ctx, const char *path)
     } else {
         if (!mem || !mem->alloc) {
             if (needs_buf_free) {
-                mem->free(mem->alloc_user_data, ctx->chunk_buf);
-                ctx->chunk_buf = MPTAR_NULL;
+                mem->free(mem->alloc_user_data, ctx->buf);
+                ctx->buf = MPTAR_NULL;
             }
             return MPTARIO_ERR_BUFFER_TOO_SMALL;
         }
         base_path = (char*)mem->alloc(mem->alloc_user_data, needed);
         if (!base_path) {
             if (needs_buf_free) {
-                mem->free(mem->alloc_user_data, ctx->chunk_buf);
-                ctx->chunk_buf = MPTAR_NULL;
+                mem->free(mem->alloc_user_data, ctx->buf);
+                ctx->buf = MPTAR_NULL;
             }
             return MPTARIO_ERR_OUT_OF_MEMORY;
         }
@@ -772,8 +772,8 @@ int mptario_pack_stream(mptario_context *ctx, const char *path)
     
     if (base_is_heap && mem && mem->free) mem->free(mem->alloc_user_data, base_path);
     if (needs_buf_free && mem && mem->free) {
-        mem->free(mem->alloc_user_data, ctx->chunk_buf);
-        ctx->chunk_buf = MPTAR_NULL;
+        mem->free(mem->alloc_user_data, ctx->buf);
+        ctx->buf = MPTAR_NULL;
     }
 
     if (res < 0) return res;
