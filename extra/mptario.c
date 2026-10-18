@@ -259,15 +259,15 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     if (!path || !out_info || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
 #if defined(_WIN32)
-    int required_chars = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
-    if (required_chars <= 0) {
+    int required_wpath_c = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
+    if (required_wpath_c <= 0) {
         return MPTARIO_ERR_INVALID_ARG;
     }
 
-    wchar_t *wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, required_chars * sizeof(wchar_t));
+    wchar_t *wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, required_wpath_c * sizeof(wchar_t));
     if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
 
-    int path_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_chars);
+    int path_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_wpath_c);
     if (path_len <= 0) {
         if(mem->free) mem->free(mem->alloc_user_data, wpath);
         return MPTARIO_ERR_INVALID_ARG;
@@ -421,6 +421,189 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 #endif
 }
 
+static int mptario_get_symlink(const wchar_t* wpath, mptar_memory_cfg* mem, char** symlink_target, mptar_size_t* symlink_target_len){
+    HANDLE hFile = CreateFileW(wpath, 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, MPTAR_NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, MPTAR_NULL);
+    if(!hFile) return (int)GetLastError();
+
+    DWORD required_wchar_len = GetFinalPathNameByHandleW(hFile, MPTAR_NULL, 0, 0);
+    if(required_wchar_len <= 0) {
+        CloseHandle(hFile);
+        return (int)GetLastError();
+    } 
+    
+    wchar_t* symlink_wchar = (wchar_t*)mem->alloc(mem->alloc_user_data, required_wchar_len * sizeof(wchar_t));
+    if(!symlink_wchar) {
+        CloseHandle(hFile);
+        return MPTARIO_ERR_OUT_OF_MEMORY;
+    }
+
+    DWORD symlink_wchar_len = GetFinalPathNameByHandleW(hFile, symlink_wchar, required_wchar_len, 0);
+    if(symlink_wchar_len <= 0) {
+        if(mem->free) mem->free(mem->alloc_user_data, symlink_wchar);
+        CloseHandle(hFile);
+        return (int)GetLastError();
+    }
+
+    BY_HANDLE_FILE_INFORMATION info;
+    WINBOOL infoRes = GetFileInformationByHandle(hFile, &info);
+    if(!infoRes){
+        if(mem->free) mem->free(mem->alloc_user_data, symlink_wchar);
+        CloseHandle(hFile);
+        return (int)GetLastError();
+    }
+
+    CloseHandle(hFile);
+
+    bool is_directory = (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    int additional_space = (is_directory && (symlink_wchar[symlink_wchar_len-1] != L'\\' && symlink_wchar[symlink_wchar_len-1] != L'/')) ? 1 : 0;
+    int required_utf8_len = WideCharToMultiByte(CP_UTF8, 0, symlink_wchar, -1, MPTAR_NULL, 0, MPTAR_NULL, MPTAR_NULL);
+    if(required_utf8_len <= 0) {
+        return (int)GetLastError();
+    }
+
+    char* symlink_utf8 = mem->alloc(mem->alloc_user_data, (mptar_size_t)required_utf8_len + additional_space);
+    if(!symlink_utf8) return MPTARIO_ERR_OUT_OF_MEMORY;
+
+    int symlink_utf8_len = WideCharToMultiByte(
+        CP_UTF8, 0,
+        symlink_wchar, -1,
+        symlink_utf8, required_utf8_len,
+        MPTAR_NULL, MPTAR_NULL
+    );
+    if(symlink_utf8_len <= 0) {
+        if(mem->free) mem->free(mem->alloc_user_data, symlink_utf8);
+        return GetLastError();
+    }
+
+    symlink_utf8_len += additional_space;
+    if(additional_space > 0) {
+        symlink_utf8[symlink_utf8_len-2] = '/';
+        symlink_utf8[symlink_utf8_len-1] = '\0';
+    }
+
+    *symlink_target = symlink_utf8;
+    *symlink_target_len = symlink_utf8_len;
+    
+    return MPTARIO_OK;
+}
+
+// This assumes relpath is a part of path (so path has relpath thus it being absolute path it also means removing relpath gives abs.)
+static int mptario_prepare_symlink(mptar_metadata *meta, const char *path, const char *relpath, const wchar_t* wpath, mptar_memory_cfg* mem) {
+#if defined(_WIN32)
+    char* symlink_target = MPTAR_NULL;
+    mptar_size_t symlink_target_len = 0;
+    int result = mptario_get_symlink(wpath, mem, &symlink_target, &symlink_target_len);
+    if(result != MPTARIO_OK) return result;
+
+    // Checks for extended paths, sets an offest to skip the extended path prefix.
+    mptar_size_t path_len = mptar_strlen(path);
+    mptar_size_t relpath_len = mptar_strlen(relpath);
+    mptar_size_t absolute_path_len = path_len - relpath_len;
+    int symlink_extended_path = mptar_memcmp(symlink_target, "\\\\?\\", 4); // "\\\\?\\" is prefix for extended paths on Windows (max 2^15 chars).
+    int path_extended = mptar_memcmp(path, "\\\\?\\", 4);
+    mptar_size_t symlink_offset = (symlink_extended_path == 0 && path_extended != 0) ? 4 : 0;
+
+    for (mptar_size_t i = symlink_offset; i < symlink_target_len; i++) {
+        if(symlink_target[i] == '\\') symlink_target[i] = '/';
+    }
+
+    // If relative, truncates the path to only keep the relative path to the target.
+    if(mptar_memcmp(symlink_target + symlink_offset, path, absolute_path_len) == 0){ // Target is Relative
+        mptar_size_t relative_symlink_len = (mptar_size_t)symlink_target_len - absolute_path_len - symlink_offset;
+        if(relative_symlink_len <= 0) {
+            if(mem->free) mem->free(mem->alloc_user_data, symlink_target);
+            return MPTARIO_ERR_INVALID_ARG;
+        }
+
+        char* relative_symlink_target = mem->alloc(mem->alloc_user_data, relative_symlink_len+1); // +1 for \0
+        if(!relative_symlink_target){ 
+            if(mem->free) mem->free(mem->alloc_user_data, symlink_target);
+            return MPTARIO_ERR_OUT_OF_MEMORY;
+        }
+        
+        mptar_size_t relative_target_offset = absolute_path_len + symlink_offset;
+        mptar_memcpy(relative_symlink_target, symlink_target + relative_target_offset, symlink_target_len - relative_target_offset);
+        relative_symlink_target[relative_symlink_len] = '\0';
+
+        if(mem->free) mem->free(mem->alloc_user_data, symlink_target); // We only need the relative one.
+
+        meta->link_target = relative_symlink_target;
+    }else{ // Target is Absolute
+        // TODO(safety): Allow disabling absolute symlinks (By default should disable them).
+        meta->link_target = symlink_target;
+    }
+
+    return result;
+#else
+
+#endif
+}
+
+#if defined(_WIN32)
+static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx){
+    HANDLE hFile = CreateFileW(
+        wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL, NULL
+    );
+    if (hFile == INVALID_HANDLE_VALUE) return MPTARIO_ERR_IO;
+
+    DWORD bytes_read = 0;
+    mptar_uint64 remaining = size;
+    while (remaining > 0) {
+        DWORD to_read = (remaining < ctx->buf_size) ? (DWORD)remaining : ctx->buf_size;
+        if (!ReadFile(hFile, ctx->buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
+            CloseHandle(hFile);
+            return MPTARIO_ERR_IO;
+        }
+
+        int chunk_err = 0;
+        mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
+        if (chunk_err != 0 || written != bytes_read) {
+            CloseHandle(hFile);
+            return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
+        }
+
+        remaining -= bytes_read;
+    }
+    
+    CloseHandle(hFile);
+
+    return MPTARIO_OK;
+}
+#endif
+
+#if !defined(_WIN32)
+static int mptario_write_file_posix(char* path, mptar_uint64 size, mptario_write_context *ctx){
+    int fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        return MPTARIO_ERR_IO;
+    }
+
+    mptar_uint64 remaining = size;
+    while (remaining > 0) {
+        mptar_size_t to_read = (remaining < ctx->buf_size) ? (mptar_size_t)remaining : ctx->buf_size;
+        ssize_t bytes_read = read(fd, ctx->buf, to_read);
+        if (bytes_read <= 0) {
+            close(fd);
+            return MPTARIO_ERR_IO;
+        }
+
+        int chunk_err = 0;
+        mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
+        if (chunk_err != 0 || written != (mptar_size_t)bytes_read) {
+            close(fd);
+            return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
+        }
+
+        remaining -= (mptar_uint64)bytes_read;
+    }
+
+    close(fd);
+
+    return MPTARIO_OK;
+}
+#endif
+
 /**
  * \brief Writes a tar archive entry using the minipaxtar library.
  *
@@ -429,18 +612,18 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
  *
  * \param info Pointer to the entry info structure with metadata to write.
  * \param path Absolute filesystem path used for reading the entry data.
- * \param relpath Relative path assigned within the archive structure.
+ * \param relpath Relative path assigned within the archive structure, relative to path without relpath
  * \param ctx Pointer to the working context holding the buffer and writer instance.
  * \return Zero on success, or a negative error code on failure.
  */
 static int mptario_write_entry(mptario_fileinfo *info, const char *path, const char *relpath, mptario_write_context *ctx) {
     if (!info || !relpath || !ctx || info->type == -1 || !ctx->writer || !ctx->writer->memory.alloc) return MPTARIO_ERR_INVALID_ARG;
 
+    bool is_file = info->type == MPTAR_TYPE_FILE || info->type == MPTAR_TYPE_FILE_LEGACY;
     mptar_memory_cfg *mem = &(ctx->writer->memory);
     mptar_metadata meta = {0};
     meta.path = relpath;
-    if (info->type == MPTAR_TYPE_FILE) meta.size = info->size;
-    else meta.size = 0; 
+    meta.size = is_file ? info->size : 0;
     meta.mode = info->mode;
     meta.mtime = info->mtime;
     meta.typeflag = info->type;
@@ -449,78 +632,42 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
     meta.ctime = info->ctime;
 #endif
 
-    int status = mptar_write_header(ctx->writer, &meta);
-    if (status < 0) return status;
-
-    if (info->type == MPTAR_TYPE_FILE && info->size > 0) {
+    bool needs_data_written = (is_file && info->size > 0);
+    bool needs_wpath = needs_data_written || info->type == MPTAR_TYPE_SYMLINK;
+    if (needs_wpath) {
 #if defined(_WIN32)
-        int required_chars = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
-        if (required_chars <= 0) return MPTARIO_ERR_INVALID_ARG;
+        int required_wpath_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
+        if (required_wpath_len <= 0) return GetLastError();
 
-        wchar_t *wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_chars * sizeof(wchar_t));
+        wchar_t *wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_wpath_len * sizeof(wchar_t));
         if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
 
-        int path_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_chars);
-        if (path_len <= 0) {
+        int wpath_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_wpath_len);
+        if (wpath_len <= 0) {
             if(mem->free) mem->free(mem->alloc_user_data, wpath);
-            return MPTARIO_ERR_INVALID_ARG;
+            return GetLastError();
         }
-
-        HANDLE hFile = CreateFileW(
-            wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
-            FILE_ATTRIBUTE_NORMAL, NULL
-        );
-
-        if (hFile == INVALID_HANDLE_VALUE) return MPTARIO_ERR_IO;
-        DWORD bytes_read = 0;
-        mptar_uint64 remaining = info->size;
-        while (remaining > 0) {
-            DWORD to_read = (remaining < ctx->buf_size) ? (DWORD)remaining : ctx->buf_size;
-            if (!ReadFile(hFile, ctx->buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
-                CloseHandle(hFile);
-                return MPTARIO_ERR_IO;
-            }
-
-            int chunk_err = 0;
-            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
-            if (chunk_err != 0 || written != bytes_read) {
-                CloseHandle(hFile);
-                return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
-            }
-
-            remaining -= bytes_read;
-        }
-
-        CloseHandle(hFile);
-
-#else
-        (void)mem;
-        int fd = open(path, O_RDONLY);
-        if (fd < 0) {
-            return MPTARIO_ERR_IO;
-        }
-
-        mptar_uint64 remaining = info->size;
-        while (remaining > 0) {
-            mptar_size_t to_read = (remaining < ctx->buf_size) ? (mptar_size_t)remaining : ctx->buf_size;
-            ssize_t bytes_read = read(fd, ctx->buf, to_read);
-            if (bytes_read <= 0) {
-                close(fd);
-                return MPTARIO_ERR_IO;
-            }
-
-            int chunk_err = 0;
-            mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
-            if (chunk_err != 0 || written != (mptar_size_t)bytes_read) {
-                close(fd);
-                return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
-            }
-
-            remaining -= (mptar_uint64)bytes_read;
-        }
-
-        close(fd);
 #endif
+
+        if(info->type == MPTAR_TYPE_SYMLINK){
+            mptario_prepare_symlink(&meta, path, relpath, wpath, mem);
+            int status = mptar_write_header(ctx->writer, &meta);
+            if (status < 0) return status;
+            if(mem->free && meta.link_target) mem->free(mem->alloc_user_data, (void*)meta.link_target);
+        } else {
+            int status = mptar_write_header(ctx->writer, &meta);
+            if (status < 0) return status;
+
+            #if defined(_WIN32)
+                mptario_write_file_win(wpath, info->size, ctx);
+            #else
+                mptario_write_file_posix(path, info->size, ctx);
+            #endif
+        }
+
+    }else{
+        int status = mptar_write_header(ctx->writer, &meta);
+        if (status < 0) return status;
     }
 
     int finalize_err = mptar_write_finalize(ctx->writer, &meta);
