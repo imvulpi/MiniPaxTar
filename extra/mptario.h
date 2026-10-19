@@ -145,8 +145,19 @@ typedef struct {
 #endif
 } mptario_file_id;
 
+/**
+ * \brief Registry entry tracking hard links for deduplication.
  */
+typedef struct {
+    mptario_file_id file_id; /**< Unique file identifier for cross-referencing. */
+    char    *archive_path;   /**< Path of the file already recorded in the archive. */
+} mptario_hardlink_entry;
 
+typedef struct {
+    mptario_hardlink_entry *entries;    // Pointer to the dynamic array / hash table buffer
+    mptar_size_t            capacity;   // Total allocated slots
+    mptar_size_t            count;      // Number of currently tracked files
+} mptario_hardlink_registry;
 
 /**
  * Holds metadata attributes for a single file system node.
@@ -172,9 +183,10 @@ typedef struct {
  * streaming chunk buffer to optimize throughput and eliminate per-file allocations.
  */
 typedef struct {
-    mptar_writer *writer; /**< Pointer to the underlying minipaxtar stream writer configuration. */
-    char *buf;            /**< Optional pre-allocated or engine-managed I/O chunk buffer. */
-    size_t buf_size;      /**< Size of the chunk buffer in bytes. */
+    mptar_writer *writer;   /**< Pointer to the underlying minipaxtar stream writer configuration. */
+    char *buf;              /**< Optional pre-allocated or engine-managed I/O chunk buffer. */
+    mptar_size_t buf_size;  /**< Size of the chunk buffer in bytes. */
+    mptario_hardlink_registry* hardlink_registry; /**< Registry for hardlink tracking. Initialize this to NULL. */
 } mptario_write_context;
 
 /**
@@ -240,6 +252,25 @@ void mptario_free_wrapper(void* user_data, void* ptr);
 
 /** @} */
 
+#endif
+
+#if defined(_WIN32) && !defined(MPTARIO_NO_REFS)
+/**
+ * \brief Initializes runtime function pointers for 128-bit ReFS support on Windows.
+ *
+ * Resolves `GetFileInformationByHandleEx` dynamically via `GetProcAddress` 
+ * to enable 128-bit file ID retrieval on ReFS volumes while preserving runtime 
+ * compatibility with older Windows versions (XP and 7).
+ */
+void mptario_init_refs(void);
+#else
+/**
+ * \brief No-op macro for platforms or build configurations without ReFS support.
+ *
+ * Evaluates to `((void)0)` on POSIX systems or when `MPTARIO_NO_REFS` is defined, 
+ * eliminating runtime overhead and dead code.
+ */
+#define mptario_init_refs() ((void)0)
 #endif
 
 /**
@@ -316,6 +347,13 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 
 /**
  * \brief Recursively packs a filesystem directory stream using an initialized mptar_writer.
+ *
+ * If the I/O buffer within the provided write context is set to `MPTAR_NULL`, 
+ * this function automatically allocates a temporary buffer of size `MPTARIO_DEFAULT_CHUNK_SIZE` 
+ * for streaming data, and ensures it is safely freed before returning. If a pre-allocated 
+ * buffer is already provided in the context, it will be used directly without any additional allocation 
+ * and will not be freed by this function.
+ *
  * \param ctx Active archive writer context configured with write callback and user data.
  * \param path Path to the source directory to read from the host system.
  * \return MPTAR_OK on success, or an error code on failure.

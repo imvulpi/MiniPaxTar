@@ -721,6 +721,52 @@ static int mptario_write_file_posix(const char* path, mptar_uint64 size, mptario
 }
 #endif
 
+static int mptario_get_hardlink_entry(mptario_fileinfo *info, mptario_write_context *ctx, mptario_hardlink_entry** out_entry){
+    mptar_memory_cfg *mem = &(ctx->writer->memory);
+    if (!ctx->hardlink_registry) {
+        ctx->hardlink_registry = mem->alloc(mem->alloc_user_data, sizeof(mptario_hardlink_registry));
+        if (!ctx->hardlink_registry) return MPTARIO_ERR_OUT_OF_MEMORY;
+        
+        ctx->hardlink_registry->entries = MPTAR_NULL;
+        ctx->hardlink_registry->count = 0;
+        ctx->hardlink_registry->capacity = 0;
+    }
+
+    // ARRAY IMPLEMENTATION
+    *out_entry = MPTAR_NULL;
+    bool has_entry = false;
+    for(int i = 0; i < ctx->hardlink_registry->count; i++){
+        mptario_hardlink_entry* entry = &ctx->hardlink_registry->entries[i];
+        int comparison = mptario_file_id_compare(&info->file_id, &entry->file_id);
+        if(comparison == 0){
+            *out_entry = entry;
+            has_entry = true;
+        }
+    }
+
+    if (!has_entry) {
+        if (ctx->hardlink_registry->capacity <= ctx->hardlink_registry->count) {
+            mptar_size_t old_capacity = ctx->hardlink_registry->capacity;
+            mptar_size_t new_capacity = (old_capacity == 0) ? 16 : old_capacity * 2;
+            
+            void *new_entries = mem->alloc(mem->alloc_user_data, new_capacity * sizeof(mptario_hardlink_entry));
+            if (!new_entries) return MPTARIO_ERR_OUT_OF_MEMORY;
+        
+            if (old_capacity > 0) {
+                mptar_memcpy(new_entries, ctx->hardlink_registry->entries, sizeof(mptario_hardlink_entry) * ctx->hardlink_registry->count);
+                if (mem->free) {
+                    mem->free(mem->alloc_user_data, ctx->hardlink_registry->entries);
+                }
+            }
+        
+            ctx->hardlink_registry->entries = new_entries;
+            ctx->hardlink_registry->capacity = new_capacity;
+        }
+    }
+
+    return MPTARIO_OK;
+}
+
 /**
  * \brief Writes a tar archive entry using the minipaxtar library.
  *
@@ -776,16 +822,50 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
             if (status < 0) return status;
             if(mem->free && meta.link_target) mem->free(mem->alloc_user_data, (void*)meta.link_target);
         } else {
+            bool has_hardlink_entry = false;
+            if(info->hardlink_count > 1){
+                mptario_hardlink_entry* entry;
+                int res = mptario_get_hardlink_entry(info, ctx, &entry);
+                if(res < 0) return res; // alloc error
+
+                if(entry != MPTAR_NULL){
+                    has_hardlink_entry = true;
+                    meta.link_target = entry->archive_path;
+                    meta.typeflag = MPTAR_HARD_LINK;
+                    meta.size = 0; // Hardlinks are all initially written as files.
+                }
+            }
+
             int status = mptar_write_header(ctx->writer, &meta);
             if (status < 0) return status;
 
-            #if defined(_WIN32)
-                mptario_write_file_win(wpath, info->size, ctx);
-            #else
-                mptario_write_file_posix(path, info->size, ctx);
-            #endif
-        }
+            if(!has_hardlink_entry){
+                #if defined(_WIN32)
+                    mptario_write_file_win(wpath, info->size, ctx);
+                #else
+                    mptario_write_file_posix(path, info->size, ctx);
+                #endif
+                
+                if(info->hardlink_count > 1){
+                    mptar_size_t relpath_len = mptar_strlen(relpath);
+                    char* new_relpath = (char*)mem->alloc(mem->alloc_user_data, relpath_len + 1);
+                    if(!new_relpath){
+                        return MPTARIO_ERR_OUT_OF_MEMORY;    
+                    }
 
+                    mptar_memcpy(new_relpath, relpath, relpath_len);
+                    new_relpath[relpath_len] = '\0';
+
+                    mptario_hardlink_entry entry = {
+                        .file_id = info->file_id,
+                        .archive_path = new_relpath
+                    };
+                    
+                    ctx->hardlink_registry->entries[ctx->hardlink_registry->count] = entry;
+                    ctx->hardlink_registry->count += 1;
+                }
+            }
+        }
     }else{
         int status = mptar_write_header(ctx->writer, &meta);
         if (status < 0) return status;
