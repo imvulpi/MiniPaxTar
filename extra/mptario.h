@@ -79,62 +79,16 @@ extern "C" {
  */
 #define UNIX_EPOCH_INTERVALS   116444736000000000ULL
 
-#ifdef MPTARIO_NO_STACK
-    #ifndef MPTARIO_NO_BIG_STACK
-    #define MPTARIO_NO_BIG_STACK
-    #endif
-
-    #ifndef MPTARIO_DISABLE_CHUNK_STACK_FALLBACK
-    #define MPTARIO_DISABLE_CHUNK_STACK_FALLBACK
-    #endif
-#endif
-
-#if defined(MPTARIO_NO_BIG_STACK) && !defined(MPTARIO_DEFAULT_CHUNK_SIZE)
-    #define MPTARIO_DEFAULT_CHUNK_SIZE 1024
-#elif !defined(MPTARIO_DEFAULT_CHUNK_SIZE)
-    #define MPTARIO_DEFAULT_CHUNK_SIZE 65536
-#endif
-
-#ifdef MPTARIO_NO_BIG_STACK
-    #if MPTARIO_DEFAULT_CHUNK_SIZE > 1024
-        #define MPTARIO_DISABLE_CHUNK_STACK_FALLBACK
-    #endif
-#endif
-
 /**
- * \brief Documentation for compile-time configuration macros.
- * \details The \ref DOXYGEN_DOCS macro is used exclusively by documentation generators 
- *          like Doxygen. Because those are not normally defined in the 
- *          source code. Wrapping them in "#ifdef DOXYGEN_DOCS" allows Doxygen to index 
- *          and document them without altering actual build configurations.
  */
-#ifdef DOXYGEN_DOCS
 
-/** 
- * \brief Disables all stack-based buffers globally (including path buffers), 
- * forcing all temporary allocations to route through the custom heap allocator.
  */
-#define MPTARIO_NO_STACK
 
-/** 
- * \brief Disables large stack-based chunk buffers (such as the 64KB streaming buffer) 
- * to protect memory-constrained and multi-threaded embedded environments from stack overflow.
+
  */
-#define MPTARIO_NO_BIG_STACK
 
-/** 
- * \brief Internal flag automatically set when chunk stack fallbacks are disabled 
- * due to stringent memory constraints.
  */
-#define MPTARIO_DISABLE_CHUNK_STACK_FALLBACK
 
-/** 
- * \brief Default size (in bytes) of the streaming I/O chunk buffer. 
- * Defaults to 65536 bytes, or automatically clamps to 1024 bytes if \ref MPTARIO_NO_BIG_STACK is active.
- */
-#define MPTARIO_DEFAULT_CHUNK_SIZE 65536
-
-#endif
 
 /**
  * Holds metadata attributes for a single file system node.
