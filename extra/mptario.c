@@ -421,7 +421,8 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 #endif
 }
 
-static int mptario_get_symlink(const wchar_t* wpath, mptar_memory_cfg* mem, char** symlink_target, mptar_size_t* symlink_target_len){
+#if defined(_WIN32)
+static int mptario_get_symlink_target_win(const wchar_t* wpath, mptar_memory_cfg* mem, char** symlink_target, mptar_size_t* symlink_target_len){
     HANDLE hFile = CreateFileW(wpath, 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, MPTAR_NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, MPTAR_NULL);
     if(!hFile) return (int)GetLastError();
 
@@ -488,11 +489,10 @@ static int mptario_get_symlink(const wchar_t* wpath, mptar_memory_cfg* mem, char
 }
 
 // This assumes relpath is a part of path (so path has relpath thus it being absolute path it also means removing relpath gives abs.)
-static int mptario_prepare_symlink(mptar_metadata *meta, const char *path, const char *relpath, const wchar_t* wpath, mptar_memory_cfg* mem) {
-#if defined(_WIN32)
+static int mptario_write_symlink_win(mptar_metadata *meta, const char *path, const char *relpath, const wchar_t* wpath, mptar_memory_cfg* mem) {
     char* symlink_target = MPTAR_NULL;
     mptar_size_t symlink_target_len = 0;
-    int result = mptario_get_symlink(wpath, mem, &symlink_target, &symlink_target_len);
+    int result = mptario_get_symlink_target_win(wpath, mem, &symlink_target, &symlink_target_len);
     if(result != MPTARIO_OK) return result;
 
     // Checks for extended paths, sets an offest to skip the extended path prefix.
@@ -534,10 +534,53 @@ static int mptario_prepare_symlink(mptar_metadata *meta, const char *path, const
     }
 
     return result;
-#else
-
-#endif
 }
+#else 
+static int mptario_write_symlink_posix(mptar_metadata *meta, mptario_fileinfo *info, const char *path, const char *relpath, mptar_memory_cfg* mem) {
+    size_t buf_size = (info->size > 0) ? info->size + 1 : 1024;
+    char* symlink_target = (char*)mem->alloc(mem->alloc_user_data, buf_size);
+    if (!symlink_target) return MPTARIO_ERR_OUT_OF_MEMORY;
+
+    ssize_t symlink_target_len = readlink(path, symlink_target, buf_size);
+    if (symlink_target_len < 0) {
+        if(mem->free) mem->free(mem->alloc_user_data, symlink_target);
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+    
+    symlink_target[symlink_target_len] = '\0';
+
+    mptar_size_t path_len = mptar_strlen(path);
+    mptar_size_t relpath_len = mptar_strlen(relpath);
+    mptar_size_t absolute_path_len = path_len - relpath_len;
+
+    // If relative, truncates the path to only keep the relative path to the target.
+    if(mptar_memcmp(symlink_target, path, absolute_path_len) == 0){ // Target is Relative
+        mptar_size_t relative_symlink_len = (mptar_size_t)symlink_target_len - absolute_path_len;
+        if(relative_symlink_len <= 0) {
+            if(mem->free) mem->free(mem->alloc_user_data, symlink_target);
+            return MPTARIO_ERR_INVALID_ARG;
+        }
+
+        char* relative_symlink_target = mem->alloc(mem->alloc_user_data, relative_symlink_len+1); // +1 for \0
+        if(!relative_symlink_target){ 
+            if(mem->free) mem->free(mem->alloc_user_data, symlink_target);
+            return MPTARIO_ERR_OUT_OF_MEMORY;
+        }
+        
+        mptar_memcpy(relative_symlink_target, symlink_target + absolute_path_len, symlink_target_len - absolute_path_len);
+        relative_symlink_target[relative_symlink_len] = '\0';
+
+        if(mem->free) mem->free(mem->alloc_user_data, symlink_target); // We only need the relative one.
+
+        meta->link_target = relative_symlink_target;
+    }else{ // Target is Absolute
+        // TODO(safety): Allow disabling absolute symlinks (By default should disable them).
+        meta->link_target = symlink_target;
+    }
+
+    return MPTARIO_OK;
+}
+#endif
 
 #if defined(_WIN32)
 static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx){
@@ -570,10 +613,8 @@ static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_wri
 
     return MPTARIO_OK;
 }
-#endif
-
-#if !defined(_WIN32)
-static int mptario_write_file_posix(char* path, mptar_uint64 size, mptario_write_context *ctx){
+#else
+static int mptario_write_file_posix(const char* path, mptar_uint64 size, mptario_write_context *ctx){
     int fd = open(path, O_RDONLY);
     if (fd < 0) {
         return MPTARIO_ERR_IO;
@@ -650,7 +691,11 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
 #endif
 
         if(info->type == MPTAR_TYPE_SYMLINK){
-            mptario_prepare_symlink(&meta, path, relpath, wpath, mem);
+#if defined(_WIN32)
+            mptario_write_symlink_win(&meta, path, relpath, wpath, mem);
+#else
+            mptario_write_symlink_posix(&meta, info, path, relpath, mem);
+#endif
             int status = mptar_write_header(ctx->writer, &meta);
             if (status < 0) return status;
             if(mem->free && meta.link_target) mem->free(mem->alloc_user_data, (void*)meta.link_target);
