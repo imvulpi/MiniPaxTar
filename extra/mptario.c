@@ -59,38 +59,6 @@ void mptario_free_wrapper(void *user_data, void *ptr)
 
 #endif
 
-int mptario_path_join(const char *path1, const char *path2, char *out_path, mptar_size_t buf_size){
-    if(!path1 || !path2 || !out_path || buf_size <= 1) return MPTARIO_ERR_INVALID_ARG;
-
-    mptar_size_t path1_len = mptar_strlen(path1);
-    mptar_size_t path2_len = mptar_strlen(path2);
-    if(path1_len >= buf_size || path2_len >= buf_size) return MPTARIO_ERR_BUFFER_TOO_SMALL;
-
-    bool ending_separator = (path1_len > 0) && (path1[path1_len-1] == '\\' || path1[path1_len-1] == '/');
-    mptar_size_t total_len = path1_len + (ending_separator ? 0 : 1) + path2_len;
-
-    if(total_len >= buf_size) return MPTARIO_ERR_BUFFER_TOO_SMALL;
-    
-    mptar_memcpy(out_path, path1, path1_len);
-    mptar_size_t offset = path1_len;
-
-    if(!ending_separator && path1_len > 0){
-        out_path[offset++] = '/';
-    }
-
-    mptar_memcpy(out_path + offset, path2, path2_len);
-    offset += path2_len;
-    out_path[offset] = '\0';
-
-    for(mptar_size_t i = 0; i < offset; i++){
-        if(out_path[i] == '\\') {
-            out_path[i] = '/';
-        }
-    }
-
-    return MPTARIO_OK;
-}
-
 int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) {
     if (!path || !dir || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
