@@ -255,6 +255,21 @@ static void mptar_filetime_to_timespec(const FILETIME *ft, mptar_timespec *ts) {
 }
 #endif
 
+#if defined(_WIN32) && !defined(MPTARIO_NO_REFS)
+static PFN_GetFileInformationByHandleEx s_pfnGetFileInformationByHandleEx = NULL;
+static int s_checked_getfileinfo_ex = 0;
+
+void mptario_init_refs(void) {
+    if (!s_checked_getfileinfo_ex) {
+        HMODULE hKernel32 = GetModuleHandleW(L"kernel32.dll");
+        if (hKernel32) {
+            s_pfnGetFileInformationByHandleEx = (PFN_GetFileInformationByHandleEx)
+                GetProcAddress(hKernel32, "GetFileInformationByHandleEx");
+        }
+        s_checked_getfileinfo_ex = 1;
+    }
+}
+#endif
 int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem) {
     if (!path || !out_info || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 

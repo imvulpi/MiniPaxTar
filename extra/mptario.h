@@ -80,10 +80,50 @@ extern "C" {
 #define UNIX_EPOCH_INTERVALS   116444736000000000ULL
 
 /**
+ * \brief Default chunk/buffer size used for file read and write operations.
+ *
+ * Used internally when allocating a temporary I/O buffer if none is provided 
+ * in the active write context (i.e., when the context buffer is set to `MPTAR_NULL`).
  */
+#define MPTARIO_DEFAULT_CHUNK_SIZE 65536
 
+/**
+ * \defgroup win_refs_compat Windows ReFS and Compatibility Fallbacks
+ * \brief Dynamic loading definitions and SDK fallbacks for 128-bit ReFS file IDs.
+ *
+ * These definitions are required because older Windows SDKs (prior to Windows 8)
+ * do not define `FILE_ID_INFO` or `FileIdInfo`. Furthermore, `GetFileInformationByHandleEx` 
+ * must be resolved dynamically via `GetProcAddress` to maintain runtime compatibility 
+ * with Windows XP and Windows 7 while still supporting ReFS on newer Windows versions.
+ * @{
  */
+#if defined(_WIN32) && !defined(MPTARIO_NO_REFS)
+/** \brief Function pointer type for dynamically loading GetFileInformationByHandleEx. */
+typedef BOOL (WINAPI *PFN_GetFileInformationByHandleEx)(
+    HANDLE hFile,
+    int    FileInformationClass,
+    LPVOID lpFileInformation,
+    DWORD  dwBufferSize
+);
 
+#ifndef FileIdInfo
+/** \brief File information class value for querying 128-bit file IDs (FileIdInfo = 18). */
+#define FileIdInfo 18
+#endif
+
+#ifndef FILE_ID_INFO
+/** \brief Fallback structure for 128-bit file identification when compiling with older Windows SDKs. */
+typedef struct {
+    ULONGLONG VolumeSerialNumber; /**< Volume serial number containing the file. */
+    BYTE      Identifier[16];     /**< 128-bit unique file identifier byte array. */
+} MPTAR_FILE_ID_INFO;
+#define MPTAR_USING_FALLBACK_ID
+#else
+/** \brief Standard FILE_ID_INFO type alias. */
+typedef FILE_ID_INFO MPTAR_FILE_ID_INFO;
+#endif
+#endif
+/** @} */
 
  */
 
