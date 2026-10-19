@@ -125,7 +125,25 @@ typedef FILE_ID_INFO MPTAR_FILE_ID_INFO;
 #endif
 /** @} */
 
+/**
+ * \brief Cross-platform unique file identifier used for hard link detection.
  */
+typedef struct {
+#if defined(_WIN32) && !defined(MPTARIO_NO_REFS)
+    mptar_uint64 volume_serial; /**< Windows volume serial number. */
+    mptar_uint64 low;           /**< Lower 64 bits of the file ID. */
+    mptar_uint64 high;          /**< Upper 64 bits (used for 128-bit ReFS IDs, 0 on NTFS). */
+#else
+    /** 
+     * \brief Shared 2-field layout for Windows (without ReFS) and POSIX.
+     * 
+     * - Windows: primary = volume serial, secondary = file index.
+     * - POSIX: primary = device ID (st_dev), secondary = inode number (st_ino).
+     */
+    mptar_uint64 primary;       /**< Primary scope or device identifier. (volume serial)/(st_dev) */
+    mptar_uint64 secondary;     /**< Secondary local file or inode identifier. (file index)/(st_ino) */
+#endif
+} mptario_file_id;
 
  */
 
@@ -135,6 +153,7 @@ typedef FILE_ID_INFO MPTAR_FILE_ID_INFO;
  */
 typedef struct {
     mptar_typeflags type;         /**< Broad classification of the file system entry. */
+    mptario_file_id file_id;      /**< Unique file/entry identifier. Values might depend on system - see: \ref mptario_file_id. */
     mptar_uint64 size;            /**< Total size in bytes; zero or unassigned for directories. */
     mptar_int32 hardlink_count;   /**< Number of hard links referencing this file node. */
     mptar_int32 attributes;       /**< Platform-specific bitmask of raw attribute flags. */

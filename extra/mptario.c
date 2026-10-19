@@ -270,6 +270,20 @@ void mptario_init_refs(void) {
     }
 }
 #endif
+
+int mptario_file_id_compare(const mptario_file_id *a, const mptario_file_id *b) {
+#if defined(_WIN32) && !defined(MPTARIO_NO_REFS)
+    if (a->volume_serial != b->volume_serial) return (a->volume_serial < b->volume_serial) ? -1 : 1;
+    if (a->high != b->high) return (a->high < b->high) ? -1 : 1;
+    if (a->low != b->low) return (a->low < b->low) ? -1 : 1;
+    return 0;
+#else
+    if (a->primary != b->primary) return (a->primary < b->primary) ? -1 : 1;
+    if (a->secondary != b->secondary) return (a->secondary < b->secondary) ? -1 : 1;
+    return 0;
+#endif
+}
+
 int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem) {
     if (!path || !out_info || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
@@ -295,6 +309,14 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 
         if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
             out_info->type = MPTARIO_UNKNOWN_TYPE;
+#ifndef MPTARIO_NO_REFS
+            out_info->file_id.volume_serial = 0;
+            out_info->file_id.high = 0;
+            out_info->file_id.low = 0;
+#else
+            out_info->file_id.primary = 0;
+            out_info->file_id.secondary = 0;
+#endif
             out_info->size = 0;
             out_info->hardlink_count = 0;
             out_info->attributes = 0;
@@ -329,12 +351,38 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     );
 
     if (hFile != INVALID_HANDLE_VALUE) {
+#ifndef MPTARIO_NO_REFS
+        bool got_id = false;
+        // Uses the modern FILE_ID_INFO that handles ReFS
+        if (s_pfnGetFileInformationByHandleEx) {
+            MPTAR_FILE_ID_INFO file_id_info;            
+            if (s_pfnGetFileInformationByHandleEx(hFile, FileIdInfo, &file_id_info, sizeof(file_id_info))) {
+                mptar_uint64 low, high;
+                mptar_memcpy(&low, &file_id_info.Identifier[0], 8);
+                mptar_memcpy(&high, &file_id_info.Identifier[8], 8);                
+                out_info->file_id.volume_serial = file_id_info.VolumeSerialNumber;
+                out_info->file_id.low = low;
+                out_info->file_id.high = high;
+                got_id = true;
+            }
+        }
+#endif
         BY_HANDLE_FILE_INFORMATION handle_info;
         if (GetFileInformationByHandle(hFile, &handle_info)) {
             out_info->hardlink_count = (mptar_int32)handle_info.nNumberOfLinks;
+#ifndef MPTARIO_NO_REFS
+            if(!got_id){
+                out_info->file_id.volume_serial = handle_info.dwVolumeSerialNumber;
+                out_info->file_id.low = ((mptar_uint64)handle_info.nFileIndexHigh << 32) | handle_info.nFileIndexLow;
+            } 
+#else
+            out_info->file_id.primary = handle_info.dwVolumeSerialNumber;
+            out_info->file_id.secondary = ((mptar_uint64)handle_info.nFileIndexHigh << 32) | handle_info.nFileIndexLow;
+#endif
         } else {
             out_info->hardlink_count = 1;
         }
+
         CloseHandle(hFile);
     } else {
         DWORD err = GetLastError();
@@ -342,8 +390,17 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 
         if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
             out_info->type = MPTARIO_UNKNOWN_TYPE;
+#ifndef MPTARIO_NO_REFS
+            out_info->file_id.volume_serial = 0;
+            out_info->file_id.high = 0;
+            out_info->file_id.low = 0;
+#else
+            out_info->file_id.primary = 0;
+            out_info->file_id.secondary = 0;
+#endif
             out_info->size = 0;
             out_info->hardlink_count = 0;
+            out_info->attributes = 0;
             return MPTARIO_OK;
         }
 
@@ -375,6 +432,8 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
         if (errno == ENOENT || errno == ENOTDIR) {
             out_info->type = MPTARIO_UNKNOWN_TYPE;
             out_info->size = 0;
+            out_info->file_id.primary = 0;
+            out_info->file_id.secondary = 0;
             out_info->hardlink_count = 0;
             out_info->attributes = 0;
             return MPTARIO_OK;
@@ -405,6 +464,8 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     out_info->size = (mptar_uint64)st.st_size;
     out_info->hardlink_count = (mptar_int32)st.st_nlink;
     out_info->attributes = (mptar_int32)st.st_mode;
+    out_info->file_id.primary = (mptar_uint64)st.st_dev;
+    out_info->file_id.secondary = (mptar_uint64)st.st_ino;
 
     #if defined(__APPLE__)
         out_info->mtime.value.sec = (mptar_int64)st.st_mtimespec.tv_sec;
