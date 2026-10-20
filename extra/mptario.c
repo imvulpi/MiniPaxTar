@@ -299,11 +299,13 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 
     out_info->attributes = (mptar_int32)attr_data.dwFileAttributes;
     out_info->size = ((mptar_uint64)attr_data.nFileSizeHigh << 32) | attr_data.nFileSizeLow;
+    out_info->mode = MPTAR_MODE_REG;
 
     if (attr_data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) {
         out_info->type = MPTAR_TYPE_SYMLINK;
     } else if (attr_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
         out_info->type = MPTAR_TYPE_DIRECTORY;
+        out_info->mode = MPTAR_MODE_DIR;
     } else {
         out_info->type = MPTAR_TYPE_FILE;
     }
@@ -429,6 +431,7 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
         out_info->type = MPTARIO_UNKNOWN_TYPE;
     } // Sockets not handled.
 
+    out_info->mode = (mptar_uint32)(st.st_mode & 07777);
     out_info->size = (mptar_uint64)st.st_size;
     out_info->hardlink_count = (mptar_int32)st.st_nlink;
     out_info->attributes = (mptar_int32)st.st_mode;
@@ -888,7 +891,7 @@ static int mptario_write_recursive(const char *path, mptar_size_t base_len, mpta
         mptar_memcpy(full_path + base_len, ent.name, name_len + 1);
         const char *relative_path = full_path + initial_base_len;
 
-        mptario_fileinfo info;
+        mptario_fileinfo info = {0};
         int info_err = mptario_get_fileinfo(full_path, &info, mem);
 
         if (info_err == 0) {
