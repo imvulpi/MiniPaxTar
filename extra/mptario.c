@@ -964,3 +964,30 @@ int mptario_pack_stream(mptario_write_context *ctx, const char *path)
     if (res < 0) return res;
     return mptar_close_archive(ctx->writer);
 }
+
+#if defined(_WIN32)
+/**
+ * \brief Converts an mptar_timespec to a Windows FILETIME.
+ * 
+ * Transforms Unix time represented in seconds and nanoseconds since January 1, 1970 
+ * into a Windows file time (100-nanosecond ticks since January 1, 1601). 
+ * Timestamps predating the Unix epoch are clamped to zero.
+ * 
+ * \param ts Pointer to the source mptar_timespec structure.
+ * \param ft Pointer to the destination FILETIME structure.
+ */
+static void mptar_timespec_to_filetime(const mptar_timespec *ts, FILETIME *ft) {
+    if (ts->sec < 0) {
+        ft->dwLowDateTime = 0;
+        ft->dwHighDateTime = 0;
+        return;
+    }
+
+    unsigned long long unix_intervals = ((unsigned long long)ts->sec * 10000000ULL) + (ts->nsec / 100ULL);
+    unsigned long long intervals = unix_intervals + UNIX_EPOCH_INTERVALS;
+
+    ft->dwLowDateTime = (DWORD)(intervals & 0xFFFFFFFFULL);
+    ft->dwHighDateTime = (DWORD)(intervals >> 32);
+}
+#endif
+}
