@@ -209,6 +209,32 @@ typedef struct {
     char name[MPTARIO_MAX_NAME]; /**< Null-terminated UTF-8 entry name relative to parent directory. */
 } mptario_dirent;
 
+/**
+ * @brief Configuration options controlling archive extraction behavior.
+ */
+typedef struct {
+    bool skip_symlinks;                       /**< Unconditionally skip creating symbolic links during extraction.*/
+    bool skip_symlinks_on_privilege_error;    /**< Automatically skip subsequent symbolic links if creation fails due to Windows privilege restrictions  */
+} mptario_read_options;
+
+/**
+ * @brief Archive read operation context.
+ */
+typedef struct {
+    mptar_reader *reader; /**< Pointer to the underlying minipaxtar stream reader. */
+    char *buf;            /**< I/O chunk buffer used to optimize read throughput. */
+    mptar_size_t buf_size;      /**< Capacity of the chunk buffer in bytes. */
+
+#if defined(_WIN32)
+    /**
+     * \brief Internal runtime flag tracking whether symbolic link creation 
+     * has failed due to privilege restrictions, caching the state 
+     * to avoid redundant system calls.
+     */
+    bool internal_symlink_privilege_failed;
+#endif
+} mptario_read_context;
+
 #ifdef MPTARIO_CUSTOM_ALLOC
 
 /**
