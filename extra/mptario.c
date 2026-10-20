@@ -1224,4 +1224,61 @@ static int mptario_extract_symlink(mptar_reader *reader, const char *full_path, 
     return MPTARIO_OK;
 }
 
+static int mptario_extract_hardlink(mptar_reader *reader, const char *full_path, mptar_metadata meta, 
+    const char *dest, mptar_size_t dest_len, mptar_memory_cfg *mem) {
+    if (!meta.link_target || !mem || !mem->alloc) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    mptar_size_t target_len = mptar_strlen(meta.link_target); // TODO: absolute paths handling
+    char* existing_path = (char*)mem->alloc(mem->alloc_user_data, target_len + dest_len + 1);
+    if(!existing_path) return MPTARIO_ERR_OUT_OF_MEMORY;
+    mptar_memcpy(existing_path, dest, dest_len);
+    mptar_memcpy(existing_path + dest_len, meta.link_target, target_len);
+    existing_path[target_len + dest_len] = '\0';
+
+#if defined(_WIN32)
+    int req_new = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, NULL, 0);
+    int req_existing = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, existing_path, -1, NULL, 0);
+    if (req_new <= 0 || req_existing <= 0) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    wchar_t *wnew = (wchar_t *)mem->alloc(mem->alloc_user_data, req_new * sizeof(wchar_t));
+    if (!wnew){
+        if(mem->free) mem->free(mem->alloc_user_data, existing_path);
+        return MPTARIO_ERR_OUT_OF_MEMORY;
+    }
+
+    wchar_t* wexisting = (wchar_t *)mem->alloc(mem->alloc_user_data, req_existing * sizeof(wchar_t));
+    if(!wexisting){
+        if(mem->free) mem->free(mem->alloc_user_data, existing_path);
+        if(mem->free) mem->free(mem->alloc_user_data, wnew);
+        return MPTARIO_ERR_OUT_OF_MEMORY;
+    }
+
+    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, wnew, req_new);
+    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, existing_path, -1, wexisting, req_existing);
+
+    BOOL success = CreateHardLinkW(wnew, wexisting, NULL);
+    DWORD err = success ? 0 : GetLastError();
+
+    if (mem->free) mem->free(mem->alloc_user_data, wnew);
+    if (mem->free) mem->free(mem->alloc_user_data, wexisting);
+    if (mem->free) mem->free(mem->alloc_user_data, existing_path);
+
+    if (!success) {
+        if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) return MPTARIO_ERR_NOT_FOUND;
+        return (err == ERROR_ACCESS_DENIED) ? MPTARIO_ERR_ACCESS_DENIED : err;
+    }
+#else
+    if (link(existing_path, full_path) < 0) {
+        if (errno == ENOENT) return MPTARIO_ERR_NOT_FOUND;
+        return (errno == EACCES) ? MPTARIO_ERR_ACCESS_DENIED : errno;
+    }
+#endif
+
+    return MPTARIO_OK;
+}
+
 }
