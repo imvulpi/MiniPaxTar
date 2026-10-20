@@ -990,4 +990,49 @@ static void mptar_timespec_to_filetime(const mptar_timespec *ts, FILETIME *ft) {
     ft->dwHighDateTime = (DWORD)(intervals >> 32);
 }
 #endif
+
+int mptario_create_directory(const char *path, mptar_uint32 mode, mptar_memory_cfg *mem) {
+    if (!path) return MPTARIO_ERR_INVALID_ARG;
+
+#if defined(_WIN32)
+    if(!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
+
+    int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
+    if (required_len <= 0) return MPTARIO_ERR_INVALID_ARG;
+    
+    wchar_t *wpath = NULL;
+    wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_len * sizeof(wchar_t));
+    if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
+
+    int path_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_len);
+    if (path_len <= 0) {
+        if (mem->free) mem->free(mem->alloc_user_data, wpath);
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    BOOL success = CreateDirectoryW(wpath, NULL);
+    DWORD err = success ? 0 : GetLastError();
+    if (mem->free)mem->free(mem->alloc_user_data, wpath);
+   
+    if (!success && err != ERROR_ALREADY_EXISTS) {
+        if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
+        if (err == ERROR_PATH_NOT_FOUND || err == ERROR_FILE_NOT_FOUND) return MPTARIO_ERR_NOT_FOUND;
+        return err;
+    }
+
+    return MPTARIO_OK;
+#else
+    mode_t unix_mode = mode ? (mode_t)mode : MPTAR_MODE_DIR;
+    if (mkdir(path, unix_mode) < 0) {
+        if (errno == EEXIST) {
+            return MPTARIO_OK;
+        }
+        if (errno == EACCES) return MPTARIO_ERR_ACCESS_DENIED;
+        if (errno == ENOENT) return MPTARIO_ERR_NOT_FOUND;
+        return errno;
+    }
+    return MPTARIO_OK;
+#endif
+}
+
 }
