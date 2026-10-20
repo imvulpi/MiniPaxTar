@@ -369,6 +369,15 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
  */
 int mptario_pack_stream(mptario_write_context* ctx, const char* path);
 
+/**
+ * \brief Unpacks a tar archive stream into a destination directory.
+ *
+ * \param ctx Read operation context containing the stream reader and buffer.
+ * \param dest_dir Target directory path for extracted contents.
+ * \return Zero on success, or a negative error code on failure.
+ */
+int mptario_unpack_stream(mptario_read_context* ctx, const char *dest_dir, const mptario_read_options *options);
+
 #ifdef __cplusplus
 }
 #endif

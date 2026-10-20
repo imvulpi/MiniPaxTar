@@ -1281,4 +1281,131 @@ static int mptario_extract_hardlink(mptar_reader *reader, const char *full_path,
     return MPTARIO_OK;
 }
 
+int mptario_unpack_stream(mptario_read_context* ctx, const char *dest, const mptario_read_options *options) {
+    if (!ctx->reader || !dest) return MPTARIO_ERR_INVALID_ARG;
+
+    mptar_memory_cfg* mem = &ctx->reader->memory;
+    int status = mptario_create_directory(dest, 0777, mem);
+    if (status != MPTARIO_OK) {
+        return status;
+    }
+
+    mptar_size_t dest_len = mptar_strlen(dest);
+    int needs_slash = (dest_len > 0 && dest[dest_len - 1] != '/' && dest[dest_len - 1] != '\\');
+    mptar_size_t dest_buf_size = dest_len + (needs_slash ? 2 : 1);
+    char* fixed_dest = (char*)mem->alloc(mem->alloc_user_data, dest_buf_size);
+    if(fixed_dest == MPTAR_NULL) return MPTARIO_ERR_OUT_OF_MEMORY;
+
+    for (mptar_size_t i = 0; i < dest_len; i++) fixed_dest[i] = (dest[i] == '\\') ? '/' : dest[i];
+    if (needs_slash) {
+        fixed_dest[dest_len] = '/';
+        fixed_dest[dest_len + 1] = '\0';
+        dest_len++;
+    }
+    dest = fixed_dest;
+
+    mptar_size_t combined_buf_size = 2048 + dest_buf_size; // Some space for the meta->path to fit, also for / and \0
+    char* combined_path = (char*)mem->alloc(mem->alloc_user_data, combined_buf_size);
+    if(combined_path == MPTAR_NULL) {
+        if(mem->free) mem->free(mem->alloc_user_data, fixed_dest);
+        return MPTARIO_ERR_OUT_OF_MEMORY;
+    }
+
+    mptar_memcpy(combined_path, dest, dest_buf_size);
+
+    size_t chunk_size = ctx->buf_size;
+    bool needs_buf_free = false;
+    if (!ctx->buf) {
+        size_t target_size = MPTARIO_DEFAULT_CHUNK_SIZE;
+        ctx->buf = (char*)mem->alloc(mem->alloc_user_data, target_size);
+        if (!ctx->buf) {
+            if(mem->free) mem->free(mem->alloc_user_data, combined_path);
+            if(mem->free) mem->free(mem->alloc_user_data, fixed_dest);
+            return MPTARIO_ERR_OUT_OF_MEMORY;
+        }
+        chunk_size = target_size;
+        needs_buf_free = true;
+    }
+
+    bool should_free_buf = needs_buf_free && mem->free;
+    mptar_size_t combined_base_need = dest_len + 1; // 1 for the \0!
+    char* combined_join_loc = combined_path + dest_len;
+
+    mptar_metadata meta;
+    int entry_count = 0;
+    while ((status = mptar_read_header(ctx->reader, &meta)) == MPTAR_OK) {
+        if (!meta.path) continue;
+
+        mptar_size_t entry_path_len = mptar_strlen(meta.path);
+        if(entry_path_len < 0) {
+            status = MPTARIO_ERR_CORRUPTED;
+            break;
+        }
+
+        // Realloc if it's too big (rare case).
+        if(entry_path_len + combined_base_need > combined_buf_size){
+            combined_buf_size = entry_path_len + combined_base_need + 1024; // Always a bit more space to prevent reallocs
+            char* temp_path = mem->alloc(mem->alloc_user_data, combined_buf_size);
+            if(temp_path == MPTAR_NULL){
+                status = MPTARIO_ERR_OUT_OF_MEMORY;
+                break;
+            }
+
+            mptar_memcpy(temp_path, combined_path, dest_len);
+            temp_path[dest_len] = '\0';
+
+            if (mem->free) mem->free(mem->alloc_user_data, combined_path);
+            combined_path = temp_path;
+            combined_join_loc = combined_path + dest_len; // We need to this because we updated the pointer.
+        }
+
+        mptar_memcpy(combined_join_loc, meta.path, entry_path_len);
+        combined_join_loc[entry_path_len] = '\0';
+
+        entry_count++;
+
+        if (meta.typeflag == MPTAR_DIRECTORY) {
+            status = mptario_create_directory(combined_path, meta.mode, mem);
+        }
+        else if (meta.typeflag == MPTAR_FILE || meta.typeflag == MPTAR_FILE_LEGACY) {
+            status = mptario_extract_file(ctx->reader, combined_path, meta, ctx->buf, chunk_size, mem);
+        }
+        else if (meta.typeflag == MPTAR_SYMLINK) {
+            if (options && options->skip_symlinks) goto discard_continue;
+            #if defined(_WIN32)
+            if (ctx->internal_symlink_privilege_failed) {
+                if (options && options->skip_symlinks_on_privilege_error) goto discard_continue;
+                status = MPTARIO_ERR_ACCESS_DENIED;
+            }
+            #endif
+
+            status = mptario_extract_symlink(ctx->reader, combined_path, meta, mem);
+            #if defined(_WIN32)
+            if(status == ERROR_PRIVILEGE_NOT_HELD){
+                ctx->internal_symlink_privilege_failed = true;
+                if (options && options->skip_symlinks_on_privilege_error) {
+                    status = MPTARIO_OK;
+                    goto discard_continue;
+                }
+                status = MPTARIO_ERR_ACCESS_DENIED;
+            }
+            #endif
+        }
+        else if (meta.typeflag == MPTAR_HARD_LINK) {
+            status = mptario_extract_hardlink(ctx->reader, combined_path, meta, dest, dest_len, mem);
+        }
+        else{
+discard_continue:
+            status = mptar_discard_data(ctx->reader);
+        }
+
+        mptar_reader_free_metadata(ctx->reader, &meta);
+        if (status != MPTARIO_OK) break;
+    }
+
+    mptar_discard_data(ctx->reader);
+    if(mem->free) mem->free(mem->alloc_user_data, fixed_dest);
+    if (mem->free) mem->free(mem->alloc_user_data, combined_path);
+    if (should_free_buf) mem->free(mem->alloc_user_data, ctx->buf);
+    return status == MPTAR_EOF ? MPTAR_OK : status;
 }
