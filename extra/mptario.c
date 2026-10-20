@@ -1035,4 +1035,137 @@ int mptario_create_directory(const char *path, mptar_uint32 mode, mptar_memory_c
 #endif
 }
 
+static int mptario_extract_file(mptar_reader *reader, const char *full_path, mptar_metadata meta, char *chunk_buf, size_t chunk_size, mptar_memory_cfg *mem) {
+#if defined(_WIN32)
+    if (!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
+
+    int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, NULL, 0);
+    if (required_len <= 0) return MPTARIO_ERR_INVALID_ARG;
+
+    wchar_t *wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, required_len * sizeof(wchar_t));
+    if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
+
+    int len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, wpath, required_len);
+    if (len <= 0) {
+        if (mem->free) mem->free(mem->alloc_user_data, wpath);
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    HANDLE out_file = CreateFileW(wpath, GENERIC_WRITE | FILE_WRITE_ATTRIBUTES, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (mem->free) mem->free(mem->alloc_user_data, wpath);
+    if (out_file == INVALID_HANDLE_VALUE) {
+        return GetLastError();
+    }
+
+    mptar_size_t bytes_read;
+    int status = MPTAR_OK;
+    while ((bytes_read = mptar_read_data_chunk(reader, chunk_buf, chunk_size, &status)) > 0) {
+        if (status != MPTAR_OK) goto error;
+        
+        DWORD written;
+        if (!WriteFile(out_file, chunk_buf, (DWORD)bytes_read, &written, NULL) || written != bytes_read) {
+            status = GetLastError();
+            goto error;
+        }
+    }
+
+    FILETIME ft_mtime, ft_atime, ft_ctime;
+    FILETIME *lp_mtime = NULL;
+    FILETIME *lp_atime = NULL;
+    FILETIME *lp_ctime = NULL;
+
+    if (meta.mtime.has_value) {
+        mptar_timespec_to_filetime(&meta.mtime.value, &ft_mtime);
+        lp_mtime = &ft_mtime;
+    }
+
+#ifndef MPTAR_NO_EXTRA_TIMES
+    if (meta.atime.has_value) {
+        mptar_timespec_to_filetime(&meta.atime.value, &ft_atime);
+        lp_atime = &ft_atime;
+    }
+    if (meta.ctime.has_value) {
+        mptar_timespec_to_filetime(&meta.ctime.value, &ft_ctime);
+        lp_ctime = &ft_ctime;
+    }
+#endif
+
+    if (lp_ctime || lp_atime || lp_mtime) SetFileTime(out_file, lp_ctime, lp_atime, lp_mtime);
+
+error:
+    CloseHandle(out_file);
+    return status;
+#else
+    mode_t file_mode = meta.mode ? (mode_t)meta.mode : MPTAR_MODE_REG;
+    int out_fd = open(full_path, O_WRONLY | O_CREAT | O_TRUNC, file_mode);
+    if (out_fd < 0) {
+        return (errno == EACCES) ? MPTARIO_ERR_ACCESS_DENIED : errno;
+    }
+
+    int status = MPTAR_OK;
+    mptar_size_t bytes_read;
+    while ((bytes_read = mptar_read_data_chunk(reader, chunk_buf, chunk_size, &status)) > 0) {
+        if (status != MPTAR_OK) goto error;
+
+        size_t total_written = 0;
+        while (total_written < bytes_read) {
+            ssize_t written;
+            do {
+                written = write(out_fd, chunk_buf + total_written, bytes_read - total_written);
+            } while (written < 0 && errno == EINTR);
+
+            if (written < 0) {
+                status = errno;
+                goto error;
+            }
+            
+            if (written == 0) {
+                errno = ENOSPC;
+                status = errno;
+                goto error;
+            }
+
+            total_written += (size_t)written;
+        }
+    }
+
+    if (meta.mode) chmod(full_path, (mode_t)meta.mode);
+
+    struct timespec times[2];
+    bool update_times = false;
+
+#ifndef MPTAR_NO_EXTRA_TIMES
+    if (meta.atime.has_value) {
+        times[0].tv_sec = (time_t)meta.atime.value.sec;
+        times[0].tv_nsec = (long)meta.atime.value.nsec;
+        update_times = true;
+    } else {
+        times[0].tv_sec = 0;
+        times[0].tv_nsec = UTIME_OMIT;
+    }
+#else
+    times[0].tv_sec = 0;
+    times[0].tv_nsec = UTIME_OMIT;
+#endif
+
+    if (meta.mtime.has_value) {
+        times[1].tv_sec = (time_t)meta.mtime.value.sec;
+        times[1].tv_nsec = (long)meta.mtime.value.nsec;
+        update_times = true;
+    } else {
+        times[1].tv_sec = 0;
+        times[1].tv_nsec = UTIME_OMIT;
+    }
+
+    if (update_times) {
+        utimensat(AT_FDCWD, full_path, times, 0);
+    }
+
+error:
+    close(out_fd);
+    if(status != MPTAR_OK) unlink(full_path);
+    return status;
+#endif
+}
+
 }
