@@ -1168,4 +1168,60 @@ error:
 #endif
 }
 
+static int mptario_extract_symlink(mptar_reader *reader, const char *full_path, mptar_metadata meta, mptar_memory_cfg *mem) {
+    if (!meta.link_target) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+#if defined(_WIN32)
+    if(!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
+
+    int req_path = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, NULL, 0);
+    int req_target = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, meta.link_target, -1, NULL, 0);
+    if (req_path <= 0 || req_target <= 0) {
+        return MPTARIO_ERR_INVALID_ARG;
+    }
+
+    wchar_t *wpath = MPTAR_NULL;
+    wchar_t *wtarget = MPTAR_NULL;
+
+    wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, req_path * sizeof(wchar_t));
+    if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
+
+    wtarget = (wchar_t*)mem->alloc(mem->alloc_user_data, req_target * sizeof(wchar_t));
+    if (!wtarget) {
+        if (mem->free) mem->free(mem->alloc_user_data, wpath);
+        return MPTARIO_ERR_OUT_OF_MEMORY;
+    }
+
+    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, wpath, req_path);
+    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, meta.link_target, -1, wtarget, req_target);
+
+    DWORD flags = wtarget[req_target-2] == '/' ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0;
+    BOOL success = CreateSymbolicLinkW(wpath, wtarget, flags);
+    DWORD err = success ? 0 : GetLastError();
+
+    if (mem->free) mem->free(mem->alloc_user_data, wpath);
+    if (mem->free) mem->free(mem->alloc_user_data, wtarget);
+
+    if (!success) {
+        return (err == ERROR_ACCESS_DENIED) ? MPTARIO_ERR_ACCESS_DENIED : err;
+    }
+#else
+    int res = symlink(meta.link_target, full_path);
+
+    if (res < 0 && errno == EEXIST) {
+        if (unlink(full_path) == 0) {
+            res = symlink(meta.link_target, full_path);
+        }
+    }
+
+    if (res < 0) {
+        return (errno == EACCES) ? MPTARIO_ERR_ACCESS_DENIED : errno;
+    }
+#endif
+
+    return MPTARIO_OK;
+}
+
 }
