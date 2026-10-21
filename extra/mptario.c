@@ -917,6 +917,22 @@ static int mptario_write_recursive(const char *path, mptar_size_t base_len, mpta
     return (err == MPTARIO_ERR_NOT_FOUND) ? 0 : err; // End of enumeration is a normal completion.
 }
 
+static void mptario_free_hardlink_registry(mptario_hardlink_registry* registry, mptar_memory_cfg* mem){
+    if(registry == MPTAR_NULL || !mem->free) return;
+    if(registry->entries != MPTAR_NULL){
+        for (mptar_size_t i = 0; i < registry->count; i++)
+        {
+            char* archive_path = registry->entries[i].archive_path;
+            if(archive_path != MPTAR_NULL){
+                mem->free(mem->alloc_user_data, archive_path);
+            }
+        }
+
+        mem->free(mem->alloc_user_data, registry->entries);
+    }
+}
+
+
 int mptario_pack_stream(mptario_write_context *ctx, const char *path)
 {
     if (!ctx || !ctx->writer || !ctx->writer->write || !path || !ctx->writer->memory.alloc) return MPTARIO_ERR_INVALID_ARG;
@@ -961,6 +977,9 @@ int mptario_pack_stream(mptario_write_context *ctx, const char *path)
         ctx->buf = MPTAR_NULL;
     }
 
+    mptario_free_hardlink_registry(ctx->hardlink_registry, mem);
+    ctx->hardlink_registry = MPTAR_NULL;
+    
     if (res < 0) return res;
     return mptar_close_archive(ctx->writer);
 }
