@@ -780,7 +780,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
         int required_wpath_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
         if (required_wpath_len <= 0) return GetLastError();
 
-        wchar_t *wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_wpath_len * sizeof(wchar_t)); // leak - double check pls
+        wchar_t *wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_wpath_len * sizeof(wchar_t));
         if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
 
         int wpath_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_wpath_len);
@@ -810,7 +810,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
             if(info->hardlink_count > 1){
                 mptario_hardlink_entry* entry;
                 int status = mptario_get_hardlink_entry(info, ctx, &entry);
-                if(status < 0) goto path_cleanup; // alloc error
+                if(status < 0) goto path_cleanup; 
 
                 if(entry != MPTAR_NULL){
                     has_hardlink_entry = true;
