@@ -59,23 +59,40 @@ void mptario_free_wrapper(void *user_data, void *ptr)
 
 #endif
 
-int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) {
-    if (!path || !dir || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
-
 #if defined(_WIN32)
+
+int mptario_convert_path_to_wchar(const char* path, wchar_t **out_wpath, int* out_wpath_len, int additional_space, mptar_memory_cfg *mem){
+    if(!path || !out_wpath) return MPTARIO_ERR_INVALID_ARG;
+
     int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
     if (required_len <= 0) return MPTARIO_ERR_INVALID_ARG;
 
-    wchar_t *wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, ((mptar_size_t)required_len + MPTARIO_SEARCH_SUFFIX_LEN) * sizeof(wchar_t));
+    wchar_t *wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, ((mptar_size_t)required_len + additional_space) * sizeof(wchar_t));
     if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
 
-    int path_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_len);
-    if (path_len <= 0) {
+    int wpath_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_len);
+    if (wpath_len <= 0) {
         if(mem->free) mem->free(mem->alloc_user_data, wpath);
         return MPTARIO_ERR_INVALID_ARG;
     }
 
-    int actual_len = path_len - 1; // Index of the original null terminator
+    *out_wpath = wpath; 
+    if(out_wpath_len) *out_wpath_len = wpath_len;
+    return MPTARIO_OK;
+}
+
+#endif
+
+int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) {
+    if (!path || !dir || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
+
+#if defined(_WIN32)
+    int wpath_len = 0;
+    wchar_t *wpath = MPTAR_NULL;
+    int result = mptario_convert_path_to_wchar(path, &wpath, &wpath_len, MPTARIO_SEARCH_SUFFIX_LEN, mem);
+    if(result != MPTARIO_OK) return result;
+
+    int actual_len = wpath_len - 1; // Index of the original null terminator
     bool has_trailing_sep = (actual_len > 0) && (wpath[actual_len - 1] == L'\\' || wpath[actual_len - 1] == L'/');
 
     if (has_trailing_sep) {
@@ -256,19 +273,9 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     if (!path || !out_info || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
 #if defined(_WIN32)
-    int required_wpath_c = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
-    if (required_wpath_c <= 0) {
-        return MPTARIO_ERR_INVALID_ARG;
-    }
-
-    wchar_t *wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, required_wpath_c * sizeof(wchar_t));
-    if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
-
-    int path_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_wpath_c);
-    if (path_len <= 0) {
-        if(mem->free) mem->free(mem->alloc_user_data, wpath);
-        return MPTARIO_ERR_INVALID_ARG;
-    }
+    wchar_t *wpath = MPTAR_NULL;
+    int result = mptario_convert_path_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
+    if(result != MPTARIO_OK) return result;
 
     WIN32_FILE_ATTRIBUTE_DATA attr_data;
     if (!GetFileAttributesExW(wpath, GetFileExInfoStandard, &attr_data)) {
@@ -293,8 +300,7 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 
         if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
         if (err == ERROR_FILE_CORRUPT || err == ERROR_DISK_CORRUPT) return MPTARIO_ERR_CORRUPTED;
-
-        return MPTARIO_ERR_IO;
+        return (int)err;
     }
 
     out_info->attributes = (mptar_int32)attr_data.dwFileAttributes;
@@ -777,17 +783,9 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
     
     if (uses_path) {
 #if defined(_WIN32)
-        int required_wpath_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
-        if (required_wpath_len <= 0) return GetLastError();
-
-        wchar_t *wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_wpath_len * sizeof(wchar_t));
-        if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
-
-        int wpath_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_wpath_len);
-        if (wpath_len <= 0) {
-            status = GetLastError();
-            goto path_cleanup;
-        }
+        wchar_t *wpath = MPTAR_NULL;
+        int result = mptario_convert_path_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
+        if(result != MPTARIO_OK) return result;
 #endif
         if(info->type == MPTAR_TYPE_SYMLINK){
 #if defined(_WIN32)
@@ -820,7 +818,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
                 }
             }
 
-            int status = mptar_write_header(ctx->writer, &meta);
+            status = mptar_write_header(ctx->writer, &meta);
             if (status < 0) goto path_cleanup;
 
             if(!has_hardlink_entry){
@@ -1045,18 +1043,9 @@ int mptario_create_directory(const char *path, mptar_uint32 mode, mptar_memory_c
 #if defined(_WIN32)
     if(!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
-    int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
-    if (required_len <= 0) return MPTARIO_ERR_INVALID_ARG;
-    
-    wchar_t *wpath = NULL;
-    wpath = (wchar_t *)mem->alloc(mem->alloc_user_data, required_len * sizeof(wchar_t));
-    if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
-
-    int path_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wpath, required_len);
-    if (path_len <= 0) {
-        if (mem->free) mem->free(mem->alloc_user_data, wpath);
-        return MPTARIO_ERR_INVALID_ARG;
-    }
+    wchar_t *wpath = MPTAR_NULL;
+    int result = mptario_convert_path_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
+    if(result != MPTARIO_OK) return result;
 
     BOOL success = CreateDirectoryW(wpath, NULL);
     DWORD err = success ? 0 : GetLastError();
@@ -1087,17 +1076,9 @@ static int mptario_extract_file(mptar_reader *reader, const char *full_path, mpt
 #if defined(_WIN32)
     if (!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
-    int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, NULL, 0);
-    if (required_len <= 0) return MPTARIO_ERR_INVALID_ARG;
-
-    wchar_t *wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, required_len * sizeof(wchar_t));
-    if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
-
-    int len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, wpath, required_len);
-    if (len <= 0) {
-        if (mem->free) mem->free(mem->alloc_user_data, wpath);
-        return MPTARIO_ERR_INVALID_ARG;
-    }
+    wchar_t *wpath = MPTAR_NULL;
+    int result = mptario_convert_path_to_wchar(full_path, &wpath, MPTAR_NULL, 0, mem);
+    if(result != MPTARIO_OK) return result;
 
     HANDLE out_file = CreateFileW(wpath, GENERIC_WRITE | FILE_WRITE_ATTRIBUTES, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (mem->free) mem->free(mem->alloc_user_data, wpath);
@@ -1223,26 +1204,20 @@ static int mptario_extract_symlink(mptar_reader *reader, const char *full_path, 
 
 #if defined(_WIN32)
     if(!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
+    
+    wchar_t *wpath = MPTAR_NULL;
+    int result = mptario_convert_path_to_wchar(full_path, &wpath, MPTAR_NULL, 0, mem);
+    if(result != MPTARIO_OK) return result;
 
-    int req_path = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, NULL, 0);
-    int req_target = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, meta.link_target, -1, NULL, 0);
-    if (req_path <= 0 || req_target <= 0) {
-        return MPTARIO_ERR_INVALID_ARG;
-    }
-
-    wchar_t* wpath = (wchar_t*)mem->alloc(mem->alloc_user_data, req_path * sizeof(wchar_t));
-    if (!wpath) return MPTARIO_ERR_OUT_OF_MEMORY;
-
-    wchar_t* wtarget = (wchar_t*)mem->alloc(mem->alloc_user_data, req_target * sizeof(wchar_t));
-    if (!wtarget) {
+    int wtarget_len = 0;
+    wchar_t *wtarget = MPTAR_NULL;
+    result = mptario_convert_path_to_wchar(meta.link_target, &wtarget, &wtarget_len, 0, mem);
+    if(result != MPTARIO_OK) {
         if (mem->free) mem->free(mem->alloc_user_data, wpath);
-        return MPTARIO_ERR_OUT_OF_MEMORY;
+        return result;
     }
-
-    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, wpath, req_path);
-    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, meta.link_target, -1, wtarget, req_target);
-
-    DWORD flags = wtarget[req_target-2] == '/' ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0;
+    
+    DWORD flags = wtarget[wtarget_len-2] == '/' ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0;
     BOOL success = CreateSymbolicLinkW(wpath, wtarget, flags);
     DWORD err = success ? 0 : GetLastError();
 
@@ -1283,35 +1258,31 @@ static int mptario_extract_hardlink(mptar_reader *reader, const char *full_path,
     existing_path[target_len + dest_len] = '\0';
 
 #if defined(_WIN32)
-    int req_new = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, NULL, 0);
-    int req_existing = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, existing_path, -1, NULL, 0);
-    if (req_new <= 0 || req_existing <= 0) {
+    wchar_t *wnew = MPTAR_NULL;
+    int result = mptario_convert_path_to_wchar(full_path, &wnew, MPTAR_NULL, 0, mem);
+    if(result != MPTARIO_OK) {
         if(mem->free) mem->free(mem->alloc_user_data, existing_path);
-        return MPTARIO_ERR_INVALID_ARG;
+        return result;
     }
 
-    wchar_t *wnew = (wchar_t *)mem->alloc(mem->alloc_user_data, req_new * sizeof(wchar_t));
-    if (!wnew){
-        if(mem->free) mem->free(mem->alloc_user_data, existing_path);
-        return MPTARIO_ERR_OUT_OF_MEMORY;
+    wchar_t *wexisting = MPTAR_NULL;
+    result = mptario_convert_path_to_wchar(existing_path, &wexisting, MPTAR_NULL, 0, mem);
+    if(result != MPTARIO_OK) {
+        if(mem->free){ 
+            mem->free(mem->alloc_user_data, existing_path);
+            mem->free(mem->alloc_user_data, wnew);
+        }
+        return result;
     }
-
-    wchar_t* wexisting = (wchar_t *)mem->alloc(mem->alloc_user_data, req_existing * sizeof(wchar_t));
-    if(!wexisting){
-        if(mem->free) mem->free(mem->alloc_user_data, existing_path);
-        if(mem->free) mem->free(mem->alloc_user_data, wnew);
-        return MPTARIO_ERR_OUT_OF_MEMORY;
-    }
-
-    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, full_path, -1, wnew, req_new);
-    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, existing_path, -1, wexisting, req_existing);
 
     BOOL success = CreateHardLinkW(wnew, wexisting, NULL);
     DWORD err = success ? 0 : GetLastError();
 
-    if (mem->free) mem->free(mem->alloc_user_data, wnew);
-    if (mem->free) mem->free(mem->alloc_user_data, wexisting);
-    if (mem->free) mem->free(mem->alloc_user_data, existing_path);
+    if (mem->free){ 
+        mem->free(mem->alloc_user_data, wnew);
+        mem->free(mem->alloc_user_data, wexisting);
+        mem->free(mem->alloc_user_data, existing_path);
+    }
 
     if (!success) {
         if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) return MPTARIO_ERR_NOT_FOUND;
