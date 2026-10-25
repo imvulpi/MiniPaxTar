@@ -12,6 +12,9 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#else
+#include <winioctl.h>
+#include <ntdef.h>
 #endif
 
 #ifdef MPTARIO_CUSTOM_ALLOC
@@ -450,40 +453,104 @@ error:
 }
 
 #if defined(_WIN32)
-static int mptario_get_symlink_target_win(const wchar_t* wpath, mptar_memory_cfg* mem, char** symlink_target, mptar_size_t* symlink_target_len){
-    HANDLE hFile = CreateFileW(wpath, 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, MPTAR_NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, MPTAR_NULL);
-    if(!hFile) return (int)GetLastError();
+static int mptario_get_symlink_target_win(const wchar_t* wpath, HANDLE hFile, mptar_memory_cfg* mem, char** symlink_target, mptar_size_t* symlink_target_len){
+    bool is_directory = false;
+    wchar_t* symlink_wchar = MPTAR_NULL;
+    DWORD symlink_wchar_len = 0;
+    if(hFile == INVALID_HANDLE_VALUE){
+safe_new_handle_fallback:
+        if(wpath == MPTAR_NULL) return MPTARIO_ERR_INVALID_ARG;
+        hFile = CreateFileW(wpath, 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, MPTAR_NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, MPTAR_NULL);
+        if(hFile == INVALID_HANDLE_VALUE) return (int)GetLastError();
+        DWORD required_wchar_len = GetFinalPathNameByHandleW(hFile, MPTAR_NULL, 0, 0);
+        if(required_wchar_len <= 0) {
+            CloseHandle(hFile);
+            return (int)GetLastError();
+        } 
+        
+        symlink_wchar = (wchar_t*)mem->alloc(mem->alloc_user_data, required_wchar_len * sizeof(wchar_t));
+        if(!symlink_wchar) {
+            CloseHandle(hFile);
+            return MPTARIO_ERR_OUT_OF_MEMORY;
+        }
 
-    DWORD required_wchar_len = GetFinalPathNameByHandleW(hFile, MPTAR_NULL, 0, 0);
-    if(required_wchar_len <= 0) {
+        symlink_wchar_len = GetFinalPathNameByHandleW(hFile, symlink_wchar, required_wchar_len, 0);
+        if(symlink_wchar_len <= 0) {
+            if(mem->free) mem->free(mem->alloc_user_data, symlink_wchar);
+            CloseHandle(hFile);
+            return (int)GetLastError();
+        }
+
+        BY_HANDLE_FILE_INFORMATION info;
+        WINBOOL infoRes = GetFileInformationByHandle(hFile, &info);
+        if(!infoRes){
+            if(mem->free) mem->free(mem->alloc_user_data, symlink_wchar);
+            CloseHandle(hFile);
+            return (int)GetLastError();
+        }
+
         CloseHandle(hFile);
-        return (int)GetLastError();
-    } 
-    
-    wchar_t* symlink_wchar = (wchar_t*)mem->alloc(mem->alloc_user_data, required_wchar_len * sizeof(wchar_t));
-    if(!symlink_wchar) {
-        CloseHandle(hFile);
-        return MPTARIO_ERR_OUT_OF_MEMORY;
+        is_directory = (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    }else{
+        unsigned char* buffer = mem->alloc(mem->alloc_user_data, MAXIMUM_REPARSE_DATA_BUFFER_SIZE);
+        if(!buffer) return MPTARIO_ERR_OUT_OF_MEMORY;
+
+        DWORD bytesReturned = 0;
+        BOOL success = DeviceIoControl(
+            hFile,
+            FSCTL_GET_REPARSE_POINT,
+            NULL, 0,                // No input buffer needed
+            buffer, MAXIMUM_REPARSE_DATA_BUFFER_SIZE, // Output buffer
+            &bytesReturned,
+            NULL                    // Not overlapped
+        );
+
+        if (!success) {
+            if(mem->free) mem->free(mem->alloc_user_data, buffer);
+            hFile = INVALID_HANDLE_VALUE;
+            goto safe_new_handle_fallback;
+        }
+
+        DWORD targetBufferChars = 0;
+        REPARSE_DATA_BUFFER* reparseData = (REPARSE_DATA_BUFFER*)buffer;
+        wchar_t* path_buffer = NULL;
+        USHORT sub_offset = 0;
+        USHORT sub_len = 0;
+
+        if (reparseData->ReparseTag == IO_REPARSE_TAG_SYMLINK) {
+            is_directory = (reparseData->SymbolicLinkReparseBuffer.Flags & 0x1) != 0;
+            path_buffer = reparseData->SymbolicLinkReparseBuffer.PathBuffer;
+            sub_offset = reparseData->SymbolicLinkReparseBuffer.SubstituteNameOffset;
+            sub_len = reparseData->SymbolicLinkReparseBuffer.SubstituteNameLength;
+        } 
+        else if (reparseData->ReparseTag == IO_REPARSE_TAG_MOUNT_POINT) {
+            is_directory = true;
+            path_buffer = reparseData->MountPointReparseBuffer.PathBuffer;
+            sub_offset = reparseData->MountPointReparseBuffer.SubstituteNameOffset;
+            sub_len = reparseData->MountPointReparseBuffer.SubstituteNameLength;
+        }
+
+        if (path_buffer && sub_len > 0) {
+            wchar_t* sub_name = (wchar_t*)((char*)path_buffer + sub_offset);
+            size_t wchar_count = sub_len / sizeof(wchar_t);
+
+            symlink_wchar = (wchar_t*)mem->alloc(mem->alloc_user_data, (wchar_count + 1) * sizeof(wchar_t));
+            if (symlink_wchar) {
+                mptar_memcpy(symlink_wchar, sub_name, sub_len);
+                symlink_wchar[wchar_count] = L'\0';
+                symlink_wchar_len = wchar_count - 1;
+            }else{
+                hFile = INVALID_HANDLE_VALUE;
+                goto safe_new_handle_fallback;
+            }
+        }else{
+            hFile = INVALID_HANDLE_VALUE;
+            goto safe_new_handle_fallback;
+        }
+
+        if(mem->free) mem->free(mem->alloc_user_data, buffer);
     }
 
-    DWORD symlink_wchar_len = GetFinalPathNameByHandleW(hFile, symlink_wchar, required_wchar_len, 0);
-    if(symlink_wchar_len <= 0) {
-        if(mem->free) mem->free(mem->alloc_user_data, symlink_wchar);
-        CloseHandle(hFile);
-        return (int)GetLastError();
-    }
-
-    BY_HANDLE_FILE_INFORMATION info;
-    WINBOOL infoRes = GetFileInformationByHandle(hFile, &info);
-    if(!infoRes){
-        if(mem->free) mem->free(mem->alloc_user_data, symlink_wchar);
-        CloseHandle(hFile);
-        return (int)GetLastError();
-    }
-
-    CloseHandle(hFile);
-
-    bool is_directory = (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
     int additional_space = (is_directory && (symlink_wchar[symlink_wchar_len-1] != L'\\' && symlink_wchar[symlink_wchar_len-1] != L'/')) ? 1 : 0;
     int required_utf8_len = WideCharToMultiByte(CP_UTF8, 0, symlink_wchar, -1, MPTAR_NULL, 0, MPTAR_NULL, MPTAR_NULL);
     if(required_utf8_len <= 0) {
@@ -523,10 +590,10 @@ static int mptario_get_symlink_target_win(const wchar_t* wpath, mptar_memory_cfg
 
 // This assumes relpath is a part of path (so path has relpath thus it being absolute path it also means removing relpath gives abs.)
 // Only sets the symlinks target in meta->link_target!
-static int mptario_set_symlink_win(mptar_metadata *meta, const char *path, const char *relpath, const wchar_t* wpath, mptar_memory_cfg* mem) {
+static int mptario_set_symlink_win(mptar_metadata *meta, const char *path, HANDLE hFile, const char *relpath, const wchar_t* wpath, mptar_memory_cfg* mem) {
     char* symlink_target = MPTAR_NULL;
     mptar_size_t symlink_target_len = 0;
-    int result = mptario_get_symlink_target_win(wpath, mem, &symlink_target, &symlink_target_len);
+    int result = mptario_get_symlink_target_win(wpath, hFile, mem, &symlink_target, &symlink_target_len);
     if(result != MPTARIO_OK) return result;
 
     // Checks for extended paths, sets an offest to skip the extended path prefix.
@@ -617,12 +684,14 @@ static int mptario_set_symlink_posix(mptar_metadata *meta, mptario_fileinfo *inf
 
 #if defined(_WIN32)
 static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx, HANDLE hFile){
+    bool localhFile = true;
     if (hFile == INVALID_HANDLE_VALUE){
         if(!wpath) return MPTARIO_ERR_INVALID_ARG;
         hFile = CreateFileW(
             wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
             FILE_ATTRIBUTE_NORMAL, NULL
         );
+        localhFile = true;
     }
 
     DWORD bytes_read = 0;
@@ -630,21 +699,21 @@ static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_wri
     while (remaining > 0) {
         DWORD to_read = (remaining < ctx->buf_size) ? (DWORD)remaining : ctx->buf_size;
         if (!ReadFile(hFile, ctx->buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
-            CloseHandle(hFile);
+            if(localhFile) CloseHandle(hFile);
             return MPTARIO_ERR_IO;
         }
 
         int chunk_err = 0;
         mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
         if (chunk_err != 0 || written != bytes_read) {
-            CloseHandle(hFile);
+            if(localhFile) CloseHandle(hFile);
             return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
         }
 
         remaining -= bytes_read;
     }
     
-    CloseHandle(hFile);
+    if(localhFile) CloseHandle(hFile);
 
     return MPTARIO_OK;
 }
@@ -766,7 +835,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
 #endif
         if(info->type == MPTAR_TYPE_SYMLINK){
 #if defined(_WIN32)
-            status = mptario_set_symlink_win(&meta, path, relpath, wpath, mem);
+            status = mptario_set_symlink_win(&meta, path, (HANDLE)handle, relpath, wpath, mem);
 #else
             status = mptario_set_symlink_posix(&meta, info, path, relpath, mem);
 #endif      
@@ -833,6 +902,7 @@ path_cleanup: // Cleans up wpath on windows.
 #else
         ; // Needs to have a statement before } (Prevents C23 extension warning on non-Windows)
 #endif
+        if(status != MPTAR_OK) return status;
     }
     else{
         status = mptar_write_header(ctx->writer, &meta);
@@ -895,7 +965,7 @@ static int mptario_write_recursive(const char *path, mptar_size_t base_len, mpta
         if (info_err == 0) {
             int status = mptario_write_entry(&info, full_path, relative_path, ctx, handle);
 #if defined(_WIN32)
-            CloseHandle(handle);
+            if(handle != INVALID_HANDLE_VALUE) CloseHandle(handle);
 #endif
             if(err != MPTARIO_OK) {
                 if(mem->free) mem->free(mem->alloc_user_data, full_path);
