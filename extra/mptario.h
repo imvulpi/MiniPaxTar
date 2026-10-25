@@ -352,7 +352,7 @@ void mptario_dir_close(mptario_dir *dir);
  *
  * \return Returns 0 on success, or a non-zero error code on failure.
  */
-int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem);
+int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem, void** handle);
 
 /**
  * \brief Recursively packs a filesystem directory stream using an initialized mptar_writer.

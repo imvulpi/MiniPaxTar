@@ -269,7 +269,7 @@ int mptario_file_id_compare(const mptario_file_id *a, const mptario_file_id *b) 
 #endif
 }
 
-int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem) {
+int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_memory_cfg *mem, void** handle) {
     if (!path || !out_info || !mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
 #if defined(_WIN32)
@@ -277,130 +277,105 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
     int result = mptario_convert_path_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
     if(result != MPTARIO_OK) return result;
 
-    WIN32_FILE_ATTRIBUTE_DATA attr_data;
-    if (!GetFileAttributesExW(wpath, GetFileExInfoStandard, &attr_data)) {
-        DWORD err = GetLastError();
-        if(mem->free) mem->free(mem->alloc_user_data, wpath);
-
-        if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
-            out_info->type = MPTARIO_UNKNOWN_TYPE;
-#ifndef MPTARIO_NO_REFS
-            out_info->file_id.volume_serial = 0;
-            out_info->file_id.high = 0;
-            out_info->file_id.low = 0;
-#else
-            out_info->file_id.primary = 0;
-            out_info->file_id.secondary = 0;
-#endif
-            out_info->size = 0;
-            out_info->hardlink_count = 0;
-            out_info->attributes = 0;
-            return MPTARIO_OK;
-        }
-
-        if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
-        if (err == ERROR_FILE_CORRUPT || err == ERROR_DISK_CORRUPT) return MPTARIO_ERR_CORRUPTED;
-        return (int)err;
-    }
-
-    out_info->attributes = (mptar_int32)attr_data.dwFileAttributes;
-    out_info->size = ((mptar_uint64)attr_data.nFileSizeHigh << 32) | attr_data.nFileSizeLow;
-    out_info->mode = MPTAR_MODE_REG;
-
-    if (attr_data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) {
-        out_info->type = MPTAR_TYPE_SYMLINK;
-    } else if (attr_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-        out_info->type = MPTAR_TYPE_DIRECTORY;
-        out_info->mode = MPTAR_MODE_DIR;
-    } else {
-        out_info->type = MPTAR_TYPE_FILE;
-    }
-
     HANDLE hFile = CreateFileW(
         wpath,
-        0,
+        FILE_READ_ATTRIBUTES | GENERIC_READ,
         FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
         NULL,
         OPEN_EXISTING,
         FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
         NULL
     );
+    *handle = hFile;
+    if(hFile == INVALID_HANDLE_VALUE) goto error;
 
-    if (hFile != INVALID_HANDLE_VALUE) {
 #ifndef MPTARIO_NO_REFS
-        bool got_id = false;
-        // Uses the modern FILE_ID_INFO that handles ReFS
-        if (s_pfnGetFileInformationByHandleEx) {
-            MPTAR_FILE_ID_INFO file_id_info;            
-            if (s_pfnGetFileInformationByHandleEx(hFile, FileIdInfo, &file_id_info, sizeof(file_id_info))) {
-                mptar_uint64 low, high;
-                mptar_memcpy(&low, &file_id_info.Identifier[0], 8);
-                mptar_memcpy(&high, &file_id_info.Identifier[8], 8);                
-                out_info->file_id.volume_serial = file_id_info.VolumeSerialNumber;
-                out_info->file_id.low = low;
-                out_info->file_id.high = high;
-                got_id = true;
-            }
+    bool got_id = false;
+    // Uses the modern FILE_ID_INFO that handles ReFS
+    if (s_pfnGetFileInformationByHandleEx) {
+        MPTAR_FILE_ID_INFO file_id_info;            
+        if (s_pfnGetFileInformationByHandleEx(hFile, FileIdInfo, &file_id_info, sizeof(file_id_info))) {
+            mptar_uint64 low, high;
+            mptar_memcpy(&low, &file_id_info.Identifier[0], 8);
+            mptar_memcpy(&high, &file_id_info.Identifier[8], 8);                
+            out_info->file_id.volume_serial = file_id_info.VolumeSerialNumber;
+            out_info->file_id.low = low;
+            out_info->file_id.high = high;
+            got_id = true;
         }
+    }
 #endif
-        BY_HANDLE_FILE_INFORMATION handle_info;
-        if (GetFileInformationByHandle(hFile, &handle_info)) {
-            out_info->hardlink_count = (mptar_int32)handle_info.nNumberOfLinks;
+
+    BY_HANDLE_FILE_INFORMATION handle_info;
+    if (GetFileInformationByHandle(hFile, &handle_info)) {
+        out_info->attributes = (mptar_int32)handle_info.dwFileAttributes;
+        out_info->hardlink_count = (mptar_int32)handle_info.nNumberOfLinks;
+        out_info->size = ((mptar_uint64)handle_info.nFileSizeHigh << 32) | handle_info.nFileSizeLow;
 #ifndef MPTARIO_NO_REFS
-            if(!got_id){
-                out_info->file_id.volume_serial = handle_info.dwVolumeSerialNumber;
-                out_info->file_id.low = ((mptar_uint64)handle_info.nFileIndexHigh << 32) | handle_info.nFileIndexLow;
-            } 
+        if(!got_id){
+            out_info->file_id.volume_serial = handle_info.dwVolumeSerialNumber;
+            out_info->file_id.low = ((mptar_uint64)handle_info.nFileIndexHigh << 32) | handle_info.nFileIndexLow;
+        } 
 #else
-            out_info->file_id.primary = handle_info.dwVolumeSerialNumber;
-            out_info->file_id.secondary = ((mptar_uint64)handle_info.nFileIndexHigh << 32) | handle_info.nFileIndexLow;
+        out_info->file_id.primary = handle_info.dwVolumeSerialNumber;
+        out_info->file_id.secondary = ((mptar_uint64)handle_info.nFileIndexHigh << 32) | handle_info.nFileIndexLow;
 #endif
+        out_info->mode = MPTAR_MODE_REG;
+        if (handle_info.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) {
+            out_info->type = MPTAR_TYPE_SYMLINK;
+        } else if (handle_info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            out_info->type = MPTAR_TYPE_DIRECTORY;
+            out_info->mode = MPTAR_MODE_DIR;
         } else {
-            out_info->hardlink_count = 1;
+            out_info->type = MPTAR_TYPE_FILE;
         }
 
-        CloseHandle(hFile);
-    } else {
-        DWORD err = GetLastError();
-        if(mem->free) mem->free(mem->alloc_user_data, wpath);
+        mptar_filetime_to_timespec(&handle_info.ftLastWriteTime, &out_info->mtime.value);
+        out_info->mtime.has_value = true;
+        out_info->mtime.value.nsec = 0;
 
-        if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
-            out_info->type = MPTARIO_UNKNOWN_TYPE;
-#ifndef MPTARIO_NO_REFS
-            out_info->file_id.volume_serial = 0;
-            out_info->file_id.high = 0;
-            out_info->file_id.low = 0;
-#else
-            out_info->file_id.primary = 0;
-            out_info->file_id.secondary = 0;
+#ifndef MPTAR_NO_EXTRA_TIMES
+        mptar_filetime_to_timespec(&handle_info.ftLastAccessTime, &out_info->atime.value);
+        out_info->atime.has_value = true;
+
+        mptar_filetime_to_timespec(&handle_info.ftCreationTime, &out_info->ctime.value);
+        out_info->ctime.has_value = true;
 #endif
-            out_info->size = 0;
-            out_info->hardlink_count = 0;
-            out_info->attributes = 0;
-            return MPTARIO_OK;
-        }
-
-        if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
-        if (err == ERROR_FILE_CORRUPT || err == ERROR_DISK_CORRUPT) return MPTARIO_ERR_CORRUPTED;
-
-        out_info->hardlink_count = 1;
+    } else {
+        goto error;
     }
 
     if(mem->free) mem->free(mem->alloc_user_data, wpath);
-
-    mptar_filetime_to_timespec(&attr_data.ftLastWriteTime, &out_info->mtime.value);
-    out_info->mtime.has_value = true;
-
-    #ifndef MPTAR_NO_EXTRA_TIMES
-    mptar_filetime_to_timespec(&attr_data.ftLastAccessTime, &out_info->atime.value);
-    out_info->atime.has_value = true;
-
-    mptar_filetime_to_timespec(&attr_data.ftCreationTime, &out_info->ctime.value);
-    out_info->ctime.has_value = true;
-    #endif
+    // CloseHandle(hFile); // we reuse handle
 
     return MPTARIO_OK;
 
+error:
+    if(hFile != INVALID_HANDLE_VALUE) CloseHandle(hFile);
+    *handle = INVALID_HANDLE_VALUE;
+    DWORD err = GetLastError();
+    if(mem->free) mem->free(mem->alloc_user_data, wpath);
+
+    if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) {
+        out_info->type = MPTARIO_UNKNOWN_TYPE;
+#ifndef MPTARIO_NO_REFS
+        out_info->file_id.volume_serial = 0;
+        out_info->file_id.high = 0;
+        out_info->file_id.low = 0;
+#else
+        out_info->file_id.primary = 0;
+        out_info->file_id.secondary = 0;
+#endif
+        out_info->size = 0;
+        out_info->hardlink_count = 0;
+        out_info->attributes = 0;
+        return MPTARIO_OK;
+    }
+
+    out_info->hardlink_count = 1;
+    if (err == ERROR_ACCESS_DENIED) return MPTARIO_ERR_ACCESS_DENIED;
+    if (err == ERROR_FILE_CORRUPT || err == ERROR_DISK_CORRUPT) return MPTARIO_ERR_CORRUPTED;
+    return (int)err;
 #else
     (void)mem;
     struct stat st;
@@ -641,12 +616,14 @@ static int mptario_set_symlink_posix(mptar_metadata *meta, mptario_fileinfo *inf
 #endif
 
 #if defined(_WIN32)
-static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx){
-    HANDLE hFile = CreateFileW(
-        wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL, NULL
-    );
-    if (hFile == INVALID_HANDLE_VALUE) return MPTARIO_ERR_IO;
+static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx, HANDLE hFile){
+    if (hFile == INVALID_HANDLE_VALUE){
+        if(!wpath) return MPTARIO_ERR_INVALID_ARG;
+        hFile = CreateFileW(
+            wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+            FILE_ATTRIBUTE_NORMAL, NULL
+        );
+    }
 
     DWORD bytes_read = 0;
     mptar_uint64 remaining = size;
@@ -761,7 +738,7 @@ static int mptario_get_hardlink_entry(mptario_fileinfo *info, mptario_write_cont
  * \param ctx Pointer to the working context holding the buffer and writer instance.
  * \return Zero on success, or a negative error code on failure.
  */
-static int mptario_write_entry(mptario_fileinfo *info, const char *path, const char *relpath, mptario_write_context *ctx) {
+static int mptario_write_entry(mptario_fileinfo *info, const char *path, const char *relpath, mptario_write_context *ctx, void* handle) {
     if (!info || !relpath || !ctx || info->type == -1 || !ctx->writer || !ctx->writer->memory.alloc) return MPTARIO_ERR_INVALID_ARG;
 
     bool is_file = info->type == MPTAR_TYPE_FILE || info->type == MPTAR_TYPE_FILE_LEGACY;
@@ -823,7 +800,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
 
             if(!has_hardlink_entry){
                 #if defined(_WIN32)
-                    status = mptario_write_file_win(wpath, info->size, ctx);
+                    status = mptario_write_file_win(wpath, info->size, ctx, handle);
                 #else
                     status = mptario_write_file_posix(path, info->size, ctx);
                 #endif
@@ -912,10 +889,14 @@ static int mptario_write_recursive(const char *path, mptar_size_t base_len, mpta
         const char *relative_path = full_path + initial_base_len;
 
         mptario_fileinfo info = {0};
-        int info_err = mptario_get_fileinfo(full_path, &info, mem);
+        void* handle = (void*)-1;
+        int info_err = mptario_get_fileinfo(full_path, &info, mem, &handle);
 
         if (info_err == 0) {
-            int status = mptario_write_entry(&info, full_path, relative_path, ctx);
+            int status = mptario_write_entry(&info, full_path, relative_path, ctx, handle);
+#if defined(_WIN32)
+            CloseHandle(handle);
+#endif
             if(err != MPTARIO_OK) {
                 if(mem->free) mem->free(mem->alloc_user_data, full_path);
                 mptario_dir_close(&dir);
