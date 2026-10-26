@@ -107,7 +107,7 @@ int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) 
         wpath[actual_len + 2] = L'\0';
     }
 
-    HANDLE hFind = FindFirstFileW(wpath, &dir->fdata);
+    HANDLE hFind = FindFirstFileExW(wpath, FindExInfoBasic, &dir->fdata, 0, MPTAR_NULL, 0);
     if(mem->free) mem->free(mem->alloc_user_data, wpath);
     if (hFind == INVALID_HANDLE_VALUE) {
         DWORD err = GetLastError();
