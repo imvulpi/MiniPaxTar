@@ -17,8 +17,7 @@
 #include <ntdef.h>
 #endif
 
-#ifdef MPTARIO_CUSTOM_ALLOC
-
+#ifdef MPTARIO_CUSTOM_ALLOC // mptario_alloc, mptario_free and wrappers
 void* mptario_alloc(mptar_size_t size){
     if (size == 0) return MPTAR_NULL;
 
@@ -59,12 +58,10 @@ void mptario_free_wrapper(void *user_data, void *ptr)
     (void)user_data;
     return mptario_free(ptr);
 }
-
 #endif
 
-#if defined(_WIN32)
-
-int mptario_convert_path_to_wchar(const char* path, wchar_t **out_wpath, int* out_wpath_len, int additional_space, mptar_memory_cfg *mem){
+#if defined(_WIN32) // mptario_convert_path_to_wchar
+static int mptario_convert_utf8_to_wchar(const char* path, wchar_t **out_wpath, int* out_wpath_len, int additional_space, mptar_memory_cfg *mem){
     if(!path || !out_wpath) return MPTARIO_ERR_INVALID_ARG;
 
     int required_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
@@ -83,7 +80,6 @@ int mptario_convert_path_to_wchar(const char* path, wchar_t **out_wpath, int* ou
     if(out_wpath_len) *out_wpath_len = wpath_len;
     return MPTARIO_OK;
 }
-
 #endif
 
 int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) {
@@ -92,7 +88,7 @@ int mptario_dir_open(const char *path, mptario_dir *dir, mptar_memory_cfg *mem) 
 #if defined(_WIN32)
     int wpath_len = 0;
     wchar_t *wpath = MPTAR_NULL;
-    int result = mptario_convert_path_to_wchar(path, &wpath, &wpath_len, MPTARIO_SEARCH_SUFFIX_LEN, mem);
+    int result = mptario_convert_utf8_to_wchar(path, &wpath, &wpath_len, MPTARIO_SEARCH_SUFFIX_LEN, mem);
     if(result != MPTARIO_OK) return result;
 
     int actual_len = wpath_len - 1; // Index of the original null terminator
@@ -217,7 +213,24 @@ void mptario_dir_close(mptario_dir *dir) {
 #endif
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) // mptario_init_refs, mptar_filetime_to_timespec
+
+#ifndef MPTARIO_NO_REFS // mptario_init_refs
+static PFN_GetFileInformationByHandleEx s_pfnGetFileInformationByHandleEx = NULL;
+static int s_checked_getfileinfo_ex = 0;
+
+void mptario_init_refs(void) {
+    if (!s_checked_getfileinfo_ex) {
+        HMODULE hKernel32 = GetModuleHandleW(L"kernel32.dll");
+        if (hKernel32) {
+            s_pfnGetFileInformationByHandleEx = (PFN_GetFileInformationByHandleEx)
+                GetProcAddress(hKernel32, "GetFileInformationByHandleEx");
+        }
+        s_checked_getfileinfo_ex = 1;
+    }
+}
+#endif
+
 /**
  * \brief Converts a Windows FILETIME to a mptar_timespec.
  * 
@@ -243,22 +256,6 @@ static void mptar_filetime_to_timespec(const FILETIME *ft, mptar_timespec *ts) {
 }
 #endif
 
-#if defined(_WIN32) && !defined(MPTARIO_NO_REFS)
-static PFN_GetFileInformationByHandleEx s_pfnGetFileInformationByHandleEx = NULL;
-static int s_checked_getfileinfo_ex = 0;
-
-void mptario_init_refs(void) {
-    if (!s_checked_getfileinfo_ex) {
-        HMODULE hKernel32 = GetModuleHandleW(L"kernel32.dll");
-        if (hKernel32) {
-            s_pfnGetFileInformationByHandleEx = (PFN_GetFileInformationByHandleEx)
-                GetProcAddress(hKernel32, "GetFileInformationByHandleEx");
-        }
-        s_checked_getfileinfo_ex = 1;
-    }
-}
-#endif
-
 int mptario_file_id_compare(const mptario_file_id *a, const mptario_file_id *b) {
 #if defined(_WIN32) && !defined(MPTARIO_NO_REFS)
     if (a->volume_serial != b->volume_serial) return (a->volume_serial < b->volume_serial) ? -1 : 1;
@@ -277,7 +274,7 @@ int mptario_get_fileinfo(const char *path, mptario_fileinfo *out_info, mptar_mem
 
 #if defined(_WIN32)
     wchar_t *wpath = MPTAR_NULL;
-    int result = mptario_convert_path_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
+    int result = mptario_convert_utf8_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
     if(result != MPTARIO_OK) return result;
 
     HANDLE hFile = CreateFileW(
@@ -452,7 +449,7 @@ error:
 #endif
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) // mptario_get_symlink_target_win, mptario_set_symlink_win
 static int mptario_get_symlink_target_win(const wchar_t* wpath, HANDLE hFile, mptar_memory_cfg* mem, char** symlink_target, mptar_size_t* symlink_target_len){
     bool is_directory = false;
     wchar_t* symlink_wchar = MPTAR_NULL;
@@ -635,7 +632,7 @@ static int mptario_set_symlink_win(mptar_metadata *meta, const char *path, HANDL
 
     return result;
 }
-#else 
+#else // mptario_set_symlink_posix
 static int mptario_set_symlink_posix(mptar_metadata *meta, mptario_fileinfo *info, const char *path, const char *relpath, mptar_memory_cfg* mem) {
     size_t buf_size = (info->size > 0) ? info->size + 1 : 1024;
     char* symlink_target = (char*)mem->alloc(mem->alloc_user_data, buf_size);
@@ -677,73 +674,6 @@ static int mptario_set_symlink_posix(mptar_metadata *meta, mptario_fileinfo *inf
         // TODO(safety): Allow disabling absolute symlinks (By default should disable them).
         meta->link_target = symlink_target;
     }
-
-    return MPTARIO_OK;
-}
-#endif
-
-#if defined(_WIN32)
-static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx, HANDLE hFile){
-    bool localhFile = true;
-    if (hFile == INVALID_HANDLE_VALUE){
-        if(!wpath) return MPTARIO_ERR_INVALID_ARG;
-        hFile = CreateFileW(
-            wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
-            FILE_ATTRIBUTE_NORMAL, NULL
-        );
-        localhFile = true;
-    }
-
-    DWORD bytes_read = 0;
-    mptar_uint64 remaining = size;
-    while (remaining > 0) {
-        DWORD to_read = (remaining < ctx->buf_size) ? (DWORD)remaining : ctx->buf_size;
-        if (!ReadFile(hFile, ctx->buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
-            if(localhFile) CloseHandle(hFile);
-            return MPTARIO_ERR_IO;
-        }
-
-        int chunk_err = 0;
-        mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
-        if (chunk_err != 0 || written != bytes_read) {
-            if(localhFile) CloseHandle(hFile);
-            return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
-        }
-
-        remaining -= bytes_read;
-    }
-    
-    if(localhFile) CloseHandle(hFile);
-
-    return MPTARIO_OK;
-}
-#else
-static int mptario_write_file_posix(const char* path, mptar_uint64 size, mptario_write_context *ctx){
-    int fd = open(path, O_RDONLY);
-    if (fd < 0) {
-        return MPTARIO_ERR_IO;
-    }
-
-    mptar_uint64 remaining = size;
-    while (remaining > 0) {
-        mptar_size_t to_read = (remaining < ctx->buf_size) ? (mptar_size_t)remaining : ctx->buf_size;
-        ssize_t bytes_read = read(fd, ctx->buf, to_read);
-        if (bytes_read <= 0) {
-            close(fd);
-            return MPTARIO_ERR_IO;
-        }
-
-        int chunk_err = 0;
-        mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
-        if (chunk_err != 0 || written != (mptar_size_t)bytes_read) {
-            close(fd);
-            return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
-        }
-
-        remaining -= (mptar_uint64)bytes_read;
-    }
-
-    close(fd);
 
     return MPTARIO_OK;
 }
@@ -795,6 +725,89 @@ static int mptario_get_hardlink_entry(mptario_fileinfo *info, mptario_write_cont
     return MPTARIO_OK;
 }
 
+static void mptario_free_hardlink_registry(mptario_hardlink_registry* registry, mptar_memory_cfg* mem){
+    if(registry == MPTAR_NULL || !mem->free) return;
+    if(registry->entries != MPTAR_NULL){
+        for (mptar_size_t i = 0; i < registry->count; i++)
+        {
+            char* archive_path = registry->entries[i].archive_path;
+            if(archive_path != MPTAR_NULL){
+                mem->free(mem->alloc_user_data, archive_path);
+            }
+        }
+
+        mem->free(mem->alloc_user_data, registry->entries);
+    }
+    mem->free(mem->alloc_user_data, registry);
+}
+
+#if defined(_WIN32) // mptario_write_file_win
+static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx, HANDLE hFile){
+    bool localhFile = true;
+    if (hFile == INVALID_HANDLE_VALUE){
+        if(!wpath) return MPTARIO_ERR_INVALID_ARG;
+        hFile = CreateFileW(
+            wpath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+            FILE_ATTRIBUTE_NORMAL, NULL
+        );
+        localhFile = true;
+    }
+
+    DWORD bytes_read = 0;
+    mptar_uint64 remaining = size;
+    while (remaining > 0) {
+        DWORD to_read = (remaining < ctx->buf_size) ? (DWORD)remaining : ctx->buf_size;
+        if (!ReadFile(hFile, ctx->buf, to_read, &bytes_read, NULL) || bytes_read == 0) {
+            if(localhFile) CloseHandle(hFile);
+            return MPTARIO_ERR_IO;
+        }
+
+        int chunk_err = 0;
+        mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
+        if (chunk_err != 0 || written != bytes_read) {
+            if(localhFile) CloseHandle(hFile);
+            return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
+        }
+
+        remaining -= bytes_read;
+    }
+    
+    if(localhFile) CloseHandle(hFile);
+
+    return MPTARIO_OK;
+}
+#else // mptario_write_file_posix
+static int mptario_write_file_posix(const char* path, mptar_uint64 size, mptario_write_context *ctx){
+    int fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        return MPTARIO_ERR_IO;
+    }
+
+    mptar_uint64 remaining = size;
+    while (remaining > 0) {
+        mptar_size_t to_read = (remaining < ctx->buf_size) ? (mptar_size_t)remaining : ctx->buf_size;
+        ssize_t bytes_read = read(fd, ctx->buf, to_read);
+        if (bytes_read <= 0) {
+            close(fd);
+            return MPTARIO_ERR_IO;
+        }
+
+        int chunk_err = 0;
+        mptar_size_t written = mptar_write_data_chunk(ctx->writer, ctx->buf, (mptar_size_t)bytes_read, &chunk_err);
+        if (chunk_err != 0 || written != (mptar_size_t)bytes_read) {
+            close(fd);
+            return (chunk_err != 0) ? chunk_err : MPTARIO_ERR_IO;
+        }
+
+        remaining -= (mptar_uint64)bytes_read;
+    }
+
+    close(fd);
+
+    return MPTARIO_OK;
+}
+#endif
+
 /**
  * \brief Writes a tar archive entry using the minipaxtar library.
  *
@@ -830,7 +843,7 @@ static int mptario_write_entry(mptario_fileinfo *info, const char *path, const c
     if (uses_path) {
 #if defined(_WIN32)
         wchar_t *wpath = MPTAR_NULL;
-        int result = mptario_convert_path_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
+        int result = mptario_convert_utf8_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
         if(result != MPTARIO_OK) return result;
 #endif
         if(info->type == MPTAR_TYPE_SYMLINK){
@@ -994,23 +1007,6 @@ static int mptario_write_recursive(const char *path, mptar_size_t base_len, mpta
     return (err == MPTARIO_ERR_NOT_FOUND) ? 0 : err; // End of enumeration is a normal completion.
 }
 
-static void mptario_free_hardlink_registry(mptario_hardlink_registry* registry, mptar_memory_cfg* mem){
-    if(registry == MPTAR_NULL || !mem->free) return;
-    if(registry->entries != MPTAR_NULL){
-        for (mptar_size_t i = 0; i < registry->count; i++)
-        {
-            char* archive_path = registry->entries[i].archive_path;
-            if(archive_path != MPTAR_NULL){
-                mem->free(mem->alloc_user_data, archive_path);
-            }
-        }
-
-        mem->free(mem->alloc_user_data, registry->entries);
-    }
-    mem->free(mem->alloc_user_data, registry);
-}
-
-
 int mptario_pack_stream(mptario_write_context *ctx, const char *path)
 {
     if (!ctx || !ctx->writer || !ctx->writer->write || !path || !ctx->writer->memory.alloc) return MPTARIO_ERR_INVALID_ARG;
@@ -1062,7 +1058,7 @@ int mptario_pack_stream(mptario_write_context *ctx, const char *path)
     return mptar_close_archive(ctx->writer);
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) // mptar_timespec_to_filetime
 /**
  * \brief Converts an mptar_timespec to a Windows FILETIME.
  * 
@@ -1095,7 +1091,7 @@ int mptario_create_directory(const char *path, mptar_uint32 mode, mptar_memory_c
     if(!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
     wchar_t *wpath = MPTAR_NULL;
-    int result = mptario_convert_path_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
+    int result = mptario_convert_utf8_to_wchar(path, &wpath, MPTAR_NULL, 0, mem);
     if(result != MPTARIO_OK) return result;
 
     BOOL success = CreateDirectoryW(wpath, NULL);
@@ -1128,7 +1124,7 @@ static int mptario_extract_file(mptar_reader *reader, const char *full_path, mpt
     if (!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
 
     wchar_t *wpath = MPTAR_NULL;
-    int result = mptario_convert_path_to_wchar(full_path, &wpath, MPTAR_NULL, 0, mem);
+    int result = mptario_convert_utf8_to_wchar(full_path, &wpath, MPTAR_NULL, 0, mem);
     if(result != MPTARIO_OK) return result;
 
     HANDLE out_file = CreateFileW(wpath, GENERIC_WRITE | FILE_WRITE_ATTRIBUTES, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -1257,12 +1253,12 @@ static int mptario_extract_symlink(mptar_reader *reader, const char *full_path, 
     if(!mem || !mem->alloc) return MPTARIO_ERR_INVALID_ARG;
     
     wchar_t *wpath = MPTAR_NULL;
-    int result = mptario_convert_path_to_wchar(full_path, &wpath, MPTAR_NULL, 0, mem);
+    int result = mptario_convert_utf8_to_wchar(full_path, &wpath, MPTAR_NULL, 0, mem);
     if(result != MPTARIO_OK) return result;
 
     int wtarget_len = 0;
     wchar_t *wtarget = MPTAR_NULL;
-    result = mptario_convert_path_to_wchar(meta.link_target, &wtarget, &wtarget_len, 0, mem);
+    result = mptario_convert_utf8_to_wchar(meta.link_target, &wtarget, &wtarget_len, 0, mem);
     if(result != MPTARIO_OK) {
         if (mem->free) mem->free(mem->alloc_user_data, wpath);
         return result;
@@ -1295,8 +1291,7 @@ static int mptario_extract_symlink(mptar_reader *reader, const char *full_path, 
     return MPTARIO_OK;
 }
 
-static int mptario_extract_hardlink(mptar_reader *reader, const char *full_path, mptar_metadata meta, 
-    const char *dest, mptar_size_t dest_len, mptar_memory_cfg *mem) {
+static int mptario_extract_hardlink(mptar_reader *reader, const char *full_path, mptar_metadata meta, const char *dest, mptar_size_t dest_len, mptar_memory_cfg *mem) {
     if (!meta.link_target || !mem || !mem->alloc) {
         return MPTARIO_ERR_INVALID_ARG;
     }
@@ -1310,14 +1305,14 @@ static int mptario_extract_hardlink(mptar_reader *reader, const char *full_path,
 
 #if defined(_WIN32)
     wchar_t *wnew = MPTAR_NULL;
-    int result = mptario_convert_path_to_wchar(full_path, &wnew, MPTAR_NULL, 0, mem);
+    int result = mptario_convert_utf8_to_wchar(full_path, &wnew, MPTAR_NULL, 0, mem);
     if(result != MPTARIO_OK) {
         if(mem->free) mem->free(mem->alloc_user_data, existing_path);
         return result;
     }
 
     wchar_t *wexisting = MPTAR_NULL;
-    result = mptario_convert_path_to_wchar(existing_path, &wexisting, MPTAR_NULL, 0, mem);
+    result = mptario_convert_utf8_to_wchar(existing_path, &wexisting, MPTAR_NULL, 0, mem);
     if(result != MPTARIO_OK) {
         if(mem->free){ 
             mem->free(mem->alloc_user_data, existing_path);
