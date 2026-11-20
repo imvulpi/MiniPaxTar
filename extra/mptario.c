@@ -743,7 +743,7 @@ static void mptario_free_hardlink_registry(mptario_hardlink_registry* registry, 
 
 #if defined(_WIN32) // mptario_write_file_win
 static int mptario_write_file_win(wchar_t* wpath, mptar_uint64 size, mptario_write_context *ctx, HANDLE hFile){
-    bool localhFile = true;
+    bool localhFile = false;
     if (hFile == INVALID_HANDLE_VALUE){
         if(!wpath) return MPTARIO_ERR_INVALID_ARG;
         hFile = CreateFileW(
